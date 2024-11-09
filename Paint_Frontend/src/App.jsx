@@ -1,10 +1,11 @@
-import Test from './test'
+import { useState } from 'react';
+import Paint from './Paint';
 
 function App() {
 
   return (
     <>
-      <Test></Test>
+      <Paint/>
     </>
   )
 }

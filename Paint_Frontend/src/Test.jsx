@@ -1,4 +1,4 @@
-import {Layer, Stage } from "react-konva"
+//import {Layer, Stage } from "react-konva"
 
 
 function Test(){
