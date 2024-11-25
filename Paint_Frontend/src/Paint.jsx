@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { Layer, Line, Stage } from 'react-konva';
-// for generating unique id's for shapes
-import { v4 as uuidv4 } from 'uuid';
+import { Layer, Stage } from 'react-konva';
+//import './Paint.css';
 
 const Tool = {
     Select: "select",
@@ -193,20 +192,7 @@ const Paint = () => {
                     ref={stageRef} //For getting positions (cursor)
                 >
                     <Layer>
-                        {/* Show each scribble in scribbles */}
-                        {scribbles.map((scribble) => {
-                            return (
-                                <Line
-                                key = {scribble.id}
-                                id = {scribble.id}
-                                points = {scribble.points}
-                                stroke = {scribble.color}
-                                strokeWidth = {scribble.strokeWidth}
-                                >
-
-                                </Line>
-                            )
-                        })}
+                        
                     </Layer>
                 </Stage>
             </div>

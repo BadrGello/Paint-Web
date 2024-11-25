@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import Paint from './Paint';
+import Canvas from './squareExample';
 
 function App() {
 
   return (
     <>
-      <Paint/>
+      <Canvas/>
     </>
   )
 }
