@@ -128,9 +128,9 @@ const Paint = () => {
                     <img src="../icons/fill-drip.svg" alt="Fill Drip" />
                 </button>
 
-                <input type="color" title="Color Selector"/>
+                <input type="color" title="Color Selector" onChange={(e) => setStrokeColor(e.target.value)}/>
                 
-                <input type="range" class="slider" min="1" max="100"  title="Size Adjustor"/>
+                <input type="range" class="slider" min="1" max="100"  title="Size Adjustor" onChange={(e) => setStrokeWidth(e.target.value)}/>
 
                 <button className="toolbar-button" title="Line" onClick={() => setTool(Tool.Line)}>
                     <img src="../icons/line.svg" alt="Line" />
