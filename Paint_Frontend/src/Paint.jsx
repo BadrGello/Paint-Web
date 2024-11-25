@@ -13,6 +13,7 @@ const Tool = {
     Ellipse: "ellipse",
     Scribble: "freedraw",
     Line: "line",
+    Triangle: "triangle",
     //more to be added//
 };
 
@@ -20,18 +21,40 @@ const Paint = () => {
 
     const stageRef = useRef()
     const [tool, setTool] = useState(Tool.Select)
+    const isDrawing = useRef(false);
+
+    //Shapes
+    const [scribbles, setScribbles] = useState([]);    
+    ////
+    ////
+    ////    
+  
+
     
     function handleMouseDown(){
+        if (tool === Tool.Select) return;
 
+        isDrawing.current = true;
+
+
+        switch(tool){
+
+        }
     }
 
     function handleMouseMove(){
-
+        // If im not drawing and moving the cursor (in not clicking and moving), nothing should happen
+        if (!isDrawing.current || tool === Tool.Select) return;
+        
+        
+        switch(tool){
+            
+        }
 
     }
 
     function handleMouseUp(){
-
+        isDrawing.current = false;
     }
 
 
@@ -42,7 +65,7 @@ const Paint = () => {
 
             <div className="toolbar">
                 
-                <button className="toolbar-button" title="Pen">
+                <button className="toolbar-button" title="Pen" onClick={() => setTool(Tool.Scribble)}>
                     <img src="../icons/pen.svg" alt="Pen" />
                 </button>
 
@@ -54,27 +77,27 @@ const Paint = () => {
                 
                 <input type="range" class="slider" min="1" max="100"  title="Size Adjustor"/>
 
-                <button className="toolbar-button" title="Line">
+                <button className="toolbar-button" title="Line" onClick={() => setTool(Tool.Line)}>
                     <img src="../icons/line.svg" alt="Line" />
                 </button>
 
-                <button className="toolbar-button" title="Square">
+                <button className="toolbar-button" title="Square" onClick={() => setTool(Tool.Square)}>
                     <img src="../icons/square.svg" alt="Square" />
                 </button>
 
-                <button className="toolbar-button" title="Rectangle">
+                <button className="toolbar-button" title="Rectangle" onClick={() => setTool(Tool.Rectangle)}>
                     <img src="../icons/rectangle.svg" alt="Rectangle" />  {/*cant find one so I put it as a placeholder for now*/}
                 </button>
 
-                <button className="toolbar-button" title="Circle">
+                <button className="toolbar-button" title="Circle" onClick={() => setTool(Tool.Circle)}>
                     <img src="../icons/circle.svg" alt="Circle" />
                 </button>
 
-                <button className="toolbar-button" title="Ellipse">
+                <button className="toolbar-button" title="Ellipse" onClick={() => setTool(Tool.Ellipse)}>
                     <img src="../icons/ellipse.svg" alt="Ellipse" />  {/*cant find one so I put it as a placeholder for now*/}
                 </button>
 
-                <button className="toolbar-button" title="Triangle">
+                <button className="toolbar-button" title="Triangle" onClick={() => setTool(Tool.Triangle)}>
                     <img src="../icons/triangle.svg" alt="Triangle" />  {/*cant find one so I put it as a placeholder for now*/}
                 </button>
 
@@ -86,7 +109,7 @@ const Paint = () => {
                     <img src="../icons/arrow-rotate-right-redo.svg" alt="Redo" />
                 </button>
 
-                <button className="toolbar-button" title="Select">
+                <button className="toolbar-button" title="Select" onClick={() => setTool(Tool.Select)}>
                     <img src="../icons/select.svg" alt="Select" />
                 </button>
 
