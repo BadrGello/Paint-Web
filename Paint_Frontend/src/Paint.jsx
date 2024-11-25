@@ -1,10 +1,40 @@
 //import React, { useState, useRef } from 'react';
 //import { Stage, Layer, Rect, Circle, Line } from 'react-konva';
 
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import { Layer, Stage } from 'react-konva';
 //import './Paint.css';
 
+const Tool = {
+    Select: "select",
+    Rectangle: "rectangle",
+    Square: "square",
+    Circle: "circle",
+    Ellipse: "ellipse",
+    Scribble: "freedraw",
+    Line: "line",
+    //more to be added//
+};
+
 const Paint = () => {
+
+    const stageRef = useRef()
+    const [tool, setTool] = useState(Tool.Select)
+    
+    function handleMouseDown(){
+
+    }
+
+    function handleMouseMove(){
+
+
+    }
+
+    function handleMouseUp(){
+
+    }
+
+
     return (
         <div className="container">
 
@@ -75,7 +105,19 @@ const Paint = () => {
             {/*-------------------------------------------------------------------------------Start Canvas-------------------------------------------------------------------------------*/}
 
             <div className="canvas">
-                <p>CANVAS</p>
+                {/* <p>CANVAS</p> */}
+                <Stage
+                    width={window.innerWidth}
+                    height={window.innerHeight}
+                    onMouseDown={handleMouseDown}
+                    onMouseUp={handleMouseUp}
+                    onMouseMove={handleMouseMove}
+                    ref={stageRef}
+                >
+                    <Layer>
+                        
+                    </Layer>
+                </Stage>
             </div>
 
             {/*-------------------------------------------------------------------------------End Canvas-------------------------------------------------------------------------------*/}
