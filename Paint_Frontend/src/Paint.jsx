@@ -29,6 +29,7 @@ const Paint = () => {
     const [scribbles, setScribbles] = useState([]);
     const [lines, setLines] = useState([]);
     const [rectangles, setRectangles] = useState([]);
+    const [squares, setSquares] = useState([]);
     ////
     ////
     ////    
@@ -99,6 +100,23 @@ const Paint = () => {
                         strokeWidth: strokeWidth,
                         width:0,
                         height:0
+                    }
+                ])
+
+            break;
+            }
+            case Tool.Square:{
+                console.log("Start Square")
+                setSquares((prevSquares) => [
+                    ...prevSquares,
+                    {
+                        id: id,
+                        X: x, 
+                        Y: y,
+                        color: strokeColor,
+                        strokeWidth: strokeWidth,
+                        width:0,
+                        D:1
                     }
                 ])
 
@@ -176,6 +194,26 @@ const Paint = () => {
 
                 break;
             }
+
+            case Tool.Square:{
+                //Debugging//
+                console.log("Squaring...")
+                //         //
+                setSquares((prevSquares) => prevSquares.map((square) => {
+                   // We search for the current scribble that was initialized in handleMouseDown and append new (x, y) to its points[] array
+                   if (square.id === currentShapeId.current){
+                       return {
+                       ...square,
+                           width:x-square.X,
+                           D: (y - square.Y<0) ? -1 : 1
+                       }
+                   }
+
+                   return square;
+               }))
+
+               break;
+           }
 
         }
 
@@ -319,6 +357,22 @@ const Paint = () => {
                             )
                         })}
 
+                        {squares.map((square) => {
+                            return (
+                                <Rect
+                                key = {square.id}
+                                id = {square.id}
+                                x={square.X}
+                                y={square.Y}
+                                width={square.width}
+                                height={square.D*((square.width>0)*square.width+(square.width<0)*-1*square.width)}
+                                stroke = {square.color}
+                                strokeWidth = {square.strokeWidth}
+                                >
+
+                                </Rect>
+                            )
+                        })}
 
                     </Layer>
                 </Stage>
