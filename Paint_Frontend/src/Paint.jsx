@@ -1,5 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { Layer, Stage } from 'react-konva';
+import { Layer, Line, Rect, Stage } from 'react-konva';
+// for generating unique id's for shapes
+import { v4 as uuidv4 } from 'uuid';
 //import './Paint.css';
 
 const Tool = {
@@ -26,8 +28,7 @@ const Paint = () => {
 
     //Shapes
     const [scribbles, setScribbles] = useState([]);
-    const [lines, setLines] = useState([]);
-    
+    const [rectangles, setRectangles] = useState([]);    
     ////
     ////
     ////    
@@ -66,25 +67,29 @@ const Paint = () => {
                         strokeWidth: strokeWidth,
 
                     }
-                ])
-
+                ]
+                )
                 break;
             }
-           
-            case Tool.Line:{
-                
-                setLines((prevLines) => [
-                    ...prevLines,
+
+            case Tool.Rectangle:{
+                console.log("Start Rectangle")
+                setRectangles((prevRectangles) => [
+                    ...prevRectangles,
                     {
                         id: id,
-                        points: [x, y, x+5, y+5],
+                        X: x, 
+                        Y: y,
                         color: strokeColor,
                         strokeWidth: strokeWidth,
+                        width:0,
+                        height:0
                     }
-                ])
-
-                break;
+                ]
+            )
+            break;
             }
+            
         }
     }
 
@@ -118,26 +123,27 @@ const Paint = () => {
 
                 break;
             }
-
-            case Tool.Line:{
+            case Tool.Rectangle:{
                 //Debugging//
-                console.log("Line...")
+                console.log("Rectangling...")
                 //         //
 
-                setLines((prevLines) => prevLines.map((line) => {
-                    if (line.id === currentShapeId.current){
+                setRectangles((prevRectangles) => prevRectangles.map((rectangle) => {
+                    // We search for the current scribble that was initialized in handleMouseDown and append new (x, y) to its points[] array
+                    if (rectangle.id === currentShapeId.current){
                         return {
-                            ...line,
-                            points: [line.points[0], line.points[1], x, y]
+                            ...rectangle,
+                            width:x-rectangle.X,
+                            height:y-rectangle.Y
                         }
                     }
 
-                    return line;
-                }))
+                    return rectangle;
+                })
+                )
 
                 break;
-            }
-
+            } 
         }
 
     }
@@ -163,9 +169,9 @@ const Paint = () => {
                     <img src="../icons/fill-drip.svg" alt="Fill Drip" />
                 </button>
 
-                <input type="color" title="Color Selector" onChange={(e) => {setStrokeColor(e.target.value); setFillColor(e.target.value)}}/>
+                <input type="color" title="Color Selector" onChange={(e) => setStrokeColor(e.target.value)}/>
                 
-                <input type="range" class="slider" min="1" max="100" value={strokeWidth} title="Size Adjustor" onChange={(e) => setStrokeWidth(e.target.value)}/>
+                <input type="range" class="slider" min="1" max="100"  title="Size Adjustor" onChange={(e) => setStrokeWidth(e.target.value)}/>
 
                 <button className="toolbar-button" title="Line" onClick={() => setTool(Tool.Line)}>
                     <img src="../icons/line.svg" alt="Line" />
@@ -228,7 +234,36 @@ const Paint = () => {
                     ref={stageRef} //For getting positions (cursor)
                 >
                     <Layer>
-                        
+                        {/* Show each scribble in scribbles */}
+                        {scribbles.map((scribble) => {
+                            return (
+                                <Line
+                                key = {scribble.id}
+                                id = {scribble.id}
+                                points = {scribble.points}
+                                stroke = {scribble.color}
+                                strokeWidth = {scribble.strokeWidth}
+                                >
+
+                                </Line>
+                            )
+                        })}
+                        {rectangles.map((rectangle) => {
+                            return (
+                                <Rect
+                                key = {rectangle.id}
+                                id = {rectangle.id}
+                                x={rectangle.X}
+                                y={rectangle.Y}
+                                width={rectangle.width}
+                                height={rectangle.height}
+                                stroke = {rectangle.color}
+                                strokeWidth = {rectangle.strokeWidth}
+                                >
+
+                                </Rect>
+                            )
+                        })}
                     </Layer>
                 </Stage>
             </div>
