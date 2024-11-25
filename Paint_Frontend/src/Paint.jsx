@@ -1,9 +1,7 @@
-//import React, { useState, useRef } from 'react';
-//import { Stage, Layer, Rect, Circle, Line } from 'react-konva';
-
 import React, { useRef, useState } from 'react';
-import { Layer, Stage } from 'react-konva';
-//import './Paint.css';
+import { Layer, Line, Stage } from 'react-konva';
+// for generating unique id's for shapes
+import { v4 as uuidv4 } from 'uuid';
 
 const Tool = {
     Select: "select",
@@ -22,9 +20,10 @@ const Paint = () => {
     const stageRef = useRef()
     const [tool, setTool] = useState(Tool.Select)
     const isDrawing = useRef(false);
-    const [strokeColor, setStrokeColor] = useState()
-    const [strokeWidth, setStrokeWidth] = useState()
+    const [strokeColor, setStrokeColor] = useState("black")
+    const [strokeWidth, setStrokeWidth] = useState(5)
     const [fillColor, setFillColor] = useState()
+    const currentShapeId = useRef()
 
     //Shapes
     const [scribbles, setScribbles] = useState([]);    
@@ -36,17 +35,41 @@ const Paint = () => {
     
     function handleMouseDown(){
         if (tool === Tool.Select) return;
+        
+        //Debugging//
+        console.log(tool)
 
         // User is clicking
         isDrawing.current = true;
 
-        //Get position from stageRef
+        //Get position of cursor from stageRef
         const stage = stageRef.current;
-        const {x, y} = stage.getPointerPosition;
-
+        const {x, y} = stage.getPointerPosition();
+        //Generate unique id for the shape and stores the current shape id in ref for usage in handleMouseMove()
+        const id = uuidv4();
+        currentShapeId.current = id;
 
         switch(tool){
+            // We add a new scribble object with the following properties to the old scribbles
+            case Tool.Scribble:{
+                //Debugging//
+                console.log("Start Scribble")
+                //         //
 
+                setScribbles((prevScribbles) => [
+                    ...prevScribbles,
+                    {
+                        id: id,
+                        points: [x, y],
+                        color: strokeColor,
+                        strokeWidth: strokeWidth,
+
+                    }
+                ]
+                )
+            }
+
+            break;
         }
     }
 
@@ -56,10 +79,30 @@ const Paint = () => {
         
         //Get position from stageRef
         const stage = stageRef.current;
-        const {x, y} = stage.getPointerPosition;
+        const {x, y} = stage.getPointerPosition();
 
         switch(tool){
-            
+            // Append new x, y to points[] array, to the object that has same id as currentShapeId ref
+            case Tool.Scribble:{
+                //Debugging//
+                console.log("Scribbling...")
+                //         //
+
+                setScribbles((prevScribbles) => prevScribbles.map((scribble) => {
+                    // We search for the current scribble that was initialized in handleMouseDown and append new (x, y) to its points[] array
+                    if (scribble.id === currentShapeId.current){
+                        return {
+                            ...scribble,
+                            points: [...scribble.points, x, y]
+                        }
+                    }
+
+                    return scribble;
+                })
+                )
+
+                break;
+            }
         }
 
     }
@@ -147,10 +190,23 @@ const Paint = () => {
                     onMouseDown={handleMouseDown}
                     onMouseUp={handleMouseUp}
                     onMouseMove={handleMouseMove}
-                    ref={stageRef} //For getting positions and id's
+                    ref={stageRef} //For getting positions (cursor)
                 >
                     <Layer>
-                        
+                        {/* Show each scribble in scribbles */}
+                        {scribbles.map((scribble) => {
+                            return (
+                                <Line
+                                key = {scribble.id}
+                                id = {scribble.id}
+                                points = {scribble.points}
+                                stroke = {scribble.color}
+                                strokeWidth = {scribble.strokeWidth}
+                                >
+
+                                </Line>
+                            )
+                        })}
                     </Layer>
                 </Stage>
             </div>
