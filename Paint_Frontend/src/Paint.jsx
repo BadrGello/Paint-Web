@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Layer, Line, Stage, Rect } from 'react-konva';
+import { Layer, Line, Stage, Rect   ,RegularPolygon } from 'react-konva';
 // for generating unique id's for shapes
 import { v4 as uuidv4 } from 'uuid';
 
@@ -30,6 +30,7 @@ const Paint = () => {
     const [lines, setLines] = useState([]);
     const [rectangles, setRectangles] = useState([]);
     const [squares, setSquares] = useState([]);
+    const [triangles, setTriangles] = useState([]);
     ////
     ////
     ////    
@@ -117,6 +118,25 @@ const Paint = () => {
                         strokeWidth: strokeWidth,
                         width:0,
                         height:0,
+                    }
+                ])
+
+            break;
+            }
+
+            case Tool.Triangle:{
+                console.log("Start triangle")
+                setTriangles((prevTriangles) => [
+                    ...prevTriangles,
+                    {
+                        id: id,
+                        X: x, 
+                        Y: y,
+                        color: strokeColor,
+                        strokeWidth: strokeWidth,
+                        radius:0,
+                        rotate:0,
+                        
                     }
                 ])
 
@@ -215,6 +235,27 @@ const Paint = () => {
 
                break;
            }
+           case Tool.Triangle:{
+            //Debugging//
+            console.log("triangling...")
+            //         //
+            setTriangles((prevTriangles) => prevTriangles.map((triangle) => {
+
+                if (triangle.id === currentShapeId.current){
+                   const r = Math.sqrt(Math.pow(x-triangle.X,2)+Math.pow(y-triangle.Y,2))
+                   const d= Math.atan2((x-triangle.X),(triangle.Y-y))*(180/Math.PI)
+                   return {
+                   ...triangle,
+                       radius:r,
+                       rotate:d,
+                   }
+               }
+
+               return triangle;
+           }))
+
+           break;
+       }
 
         }
 
@@ -374,7 +415,19 @@ const Paint = () => {
                                 </Rect>
                             )
                         })}
-
+                        {triangles.map((triangle) => {
+                        return(
+                        <RegularPolygon
+                        x={triangle.X}
+                        y={triangle.Y} 
+                        sides={3} 
+                        radius={triangle.radius} 
+                        stroke = {triangle.color}
+                        strokeWidth = {triangle.strokeWidth}
+                        rotation={triangle.rotate} 
+                    />
+                     )
+                     })}
                     </Layer>
                 </Stage>
             </div>
