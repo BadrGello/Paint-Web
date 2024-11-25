@@ -7,17 +7,19 @@ public abstract class Shape {
      private double y;
      private String fill_Colour;
      private String stroke_Colour;
+     private double strokeWidth;
      private double scaleX;
      private double scaleY;
 
 
-    public Shape(String ID, String type, double x, double y, String fill_Colour, String stroke_Colour, double scaleX, double scaleY) {
+    public Shape(String ID, String type, double x, double y, String fill_Colour, String stroke_Colour,double strokeWidth, double scaleX, double scaleY) {
         this.ID = ID;
         this.type = type;
         this.x = x;
         this.y = y;
         this.fill_Colour = fill_Colour;
         this.stroke_Colour = stroke_Colour;
+        this.strokeWidth = strokeWidth;
         this.scaleX = scaleX;
         this.scaleY = scaleY;
     }
@@ -69,6 +71,14 @@ public abstract class Shape {
 
     public void setStroke_Colour(String stroke_Colour) {
         this.stroke_Colour = stroke_Colour;
+    }
+
+    public double getStrokeWidth() {
+        return this.strokeWidth;
+    }
+
+    public void setStrokeWidth(double strokeWidth) {
+        this.strokeWidth = strokeWidth;
     }
 
     public double getScaleX() {
