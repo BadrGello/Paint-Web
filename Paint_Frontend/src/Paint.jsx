@@ -98,7 +98,7 @@ const Paint = () => {
                 </button>
 
                 <button className="toolbar-button" title="Rectangle" onClick={() => setTool(Tool.Rectangle)}>
-                    <img src="../icons/rectangle.svg" alt="Rectangle" />  {/*cant find one so I put it as a placeholder for now*/}
+                    <img src="../icons/rectangle.svg" alt="Rectangle" />  
                 </button>
 
                 <button className="toolbar-button" title="Circle" onClick={() => setTool(Tool.Circle)}>
@@ -106,11 +106,11 @@ const Paint = () => {
                 </button>
 
                 <button className="toolbar-button" title="Ellipse" onClick={() => setTool(Tool.Ellipse)}>
-                    <img src="../icons/ellipse.svg" alt="Ellipse" />  {/*cant find one so I put it as a placeholder for now*/}
+                    <img src="../icons/ellipse.ico" alt="Ellipse" />  
                 </button>
 
                 <button className="toolbar-button" title="Triangle" onClick={() => setTool(Tool.Triangle)}>
-                    <img src="../icons/triangle.svg" alt="Triangle" />  {/*cant find one so I put it as a placeholder for now*/}
+                    <img src="../icons/triangle.svg" alt="Triangle" />  
                 </button>
 
                 <button className="toolbar-button" title="Undo">
