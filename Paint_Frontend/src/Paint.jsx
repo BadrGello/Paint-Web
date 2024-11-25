@@ -9,13 +9,47 @@ const Tool = {
     Square: "square",
     Circle: "circle",
     Ellipse: "ellipse",
-    Scribble: "freedraw",
+    Scribble: "scribble",
     Line: "line",
     Triangle: "triangle",
     //more to be added//
 };
 
+const Properties = {
+    
+}
+
 const Paint = () => {
+
+    //////////Connection to Spring////////////
+    // const [response, setResponse] = useState("");
+    // const [receivedMessage, setReceivedMessage] = useState("");
+
+    // GET request (Receive)
+    // useEffect(() => {
+        
+    // }, []);
+
+    // POST request (Send)
+    const sendShape = async (object) => {
+        try {
+            const response = await fetch("http://localhost:8080/api/shape", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(object),
+            }).then(() => {console.log("Sent Data Successfully: ", object)})
+
+            // const responseData = await response.text();
+            // setReceivedMessage(responseData); // Update received message state
+            // return data; // Return the response for further processing
+        } 
+        catch (error) {
+            console.error("Error: ", error);
+        }
+    };
+    //////////Connection to Spring////////////
+
+
 
     const stageRef = useRef()
     const [tool, setTool] = useState(Tool.Select)
@@ -64,6 +98,7 @@ const Paint = () => {
                 setScribbles((prevScribbles) => [
                     ...prevScribbles,
                     {
+                        type: Tool.Scribble,
                         id: id,
                         points: [x, y],
                         color: strokeColor,
@@ -81,6 +116,7 @@ const Paint = () => {
                 setLines((prevLines) => [
                     ...prevLines,
                     {
+                        type: Tool.Line,
                         id: id,
                         points: [x, y, x+5, y+5],
                         color: strokeColor,
@@ -96,6 +132,7 @@ const Paint = () => {
                 setRectangles((prevRectangles) => [
                     ...prevRectangles,
                     {
+                        type: Tool.Rectangle,
                         id: id,
                         X: x, 
                         Y: y,
@@ -113,6 +150,7 @@ const Paint = () => {
                 setSquares((prevSquares) => [
                     ...prevSquares,
                     {
+                        type: Tool.Square,
                         id: id,
                         X: x, 
                         Y: y,
@@ -131,6 +169,7 @@ const Paint = () => {
                 setCircle((prevCircles) => [
                     ...prevCircles,
                     {
+                        type: Tool.Circle,
                         id: id,
                         X: x, 
                         Y: y,
@@ -150,6 +189,7 @@ const Paint = () => {
                 setEllipse((prevEllipses) => [
                     ...prevEllipses,
                     {
+                        type: Tool.Ellipse,
                         id: id,
                         X: x, 
                         Y: y,
