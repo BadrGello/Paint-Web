@@ -22,6 +22,9 @@ const Paint = () => {
     const stageRef = useRef()
     const [tool, setTool] = useState(Tool.Select)
     const isDrawing = useRef(false);
+    const [strokeColor, setStrokeColor] = useState()
+    const [strokeWidth, setStrokeWidth] = useState()
+    const [fillColor, setFillColor] = useState()
 
     //Shapes
     const [scribbles, setScribbles] = useState([]);    
@@ -34,7 +37,12 @@ const Paint = () => {
     function handleMouseDown(){
         if (tool === Tool.Select) return;
 
+        // User is clicking
         isDrawing.current = true;
+
+        //Get position from stageRef
+        const stage = stageRef.current;
+        const {x, y} = stage.getPointerPosition;
 
 
         switch(tool){
@@ -43,10 +51,13 @@ const Paint = () => {
     }
 
     function handleMouseMove(){
-        // If im not drawing and moving the cursor (in not clicking and moving), nothing should happen
+        // If user is not drawing (clicking) and moving the cursor, nothing should happen
         if (!isDrawing.current || tool === Tool.Select) return;
         
-        
+        //Get position from stageRef
+        const stage = stageRef.current;
+        const {x, y} = stage.getPointerPosition;
+
         switch(tool){
             
         }
@@ -54,6 +65,7 @@ const Paint = () => {
     }
 
     function handleMouseUp(){
+        // User is not clicking anymore
         isDrawing.current = false;
     }
 
@@ -135,7 +147,7 @@ const Paint = () => {
                     onMouseDown={handleMouseDown}
                     onMouseUp={handleMouseUp}
                     onMouseMove={handleMouseMove}
-                    ref={stageRef}
+                    ref={stageRef} //For getting positions and id's
                 >
                     <Layer>
                         
