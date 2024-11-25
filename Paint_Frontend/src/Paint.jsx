@@ -1,8 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { Layer, Line, Rect, Stage } from 'react-konva';
+import { Layer, Line, Stage, Rect } from 'react-konva';
 // for generating unique id's for shapes
 import { v4 as uuidv4 } from 'uuid';
-//import './Paint.css';
 
 const Tool = {
     Select: "select",
@@ -28,7 +27,8 @@ const Paint = () => {
 
     //Shapes
     const [scribbles, setScribbles] = useState([]);
-    const [rectangles, setRectangles] = useState([]);    
+    const [lines, setLines] = useState([]);
+    const [rectangles, setRectangles] = useState([]);
     ////
     ////
     ////    
@@ -67,8 +67,23 @@ const Paint = () => {
                         strokeWidth: strokeWidth,
 
                     }
-                ]
-                )
+                ])
+
+                break;
+            }
+           
+            case Tool.Line:{
+                
+                setLines((prevLines) => [
+                    ...prevLines,
+                    {
+                        id: id,
+                        points: [x, y, x+5, y+5],
+                        color: strokeColor,
+                        strokeWidth: strokeWidth,
+                    }
+                ])
+
                 break;
             }
 
@@ -85,11 +100,10 @@ const Paint = () => {
                         width:0,
                         height:0
                     }
-                ]
-            )
+                ])
+
             break;
             }
-            
         }
     }
 
@@ -123,27 +137,46 @@ const Paint = () => {
 
                 break;
             }
-            case Tool.Rectangle:{
+
+            case Tool.Line:{
                 //Debugging//
-                console.log("Rectangling...")
+                console.log("Line...")
                 //         //
 
-                setRectangles((prevRectangles) => prevRectangles.map((rectangle) => {
+                setLines((prevLines) => prevLines.map((line) => {
+                    if (line.id === currentShapeId.current){
+                        return {
+                            ...line,
+                            points: [line.points[0], line.points[1], x, y]
+                        }
+                    }
+
+                    return line;
+                }))
+
+                break;
+            }
+
+            case Tool.Rectangle:{
+                 //Debugging//
+                 console.log("Rectangling...")
+                 //         //
+                 setRectangles((prevRectangles) => prevRectangles.map((rectangle) => {
                     // We search for the current scribble that was initialized in handleMouseDown and append new (x, y) to its points[] array
                     if (rectangle.id === currentShapeId.current){
                         return {
-                            ...rectangle,
+                        ...rectangle,
                             width:x-rectangle.X,
                             height:y-rectangle.Y
                         }
                     }
 
                     return rectangle;
-                })
-                )
+                }))
 
                 break;
-            } 
+            }
+
         }
 
     }
@@ -169,9 +202,9 @@ const Paint = () => {
                     <img src="../icons/fill-drip.svg" alt="Fill Drip" />
                 </button>
 
-                <input type="color" title="Color Selector" onChange={(e) => setStrokeColor(e.target.value)}/>
+                <input type="color" title="Color Selector" onChange={(e) => {setStrokeColor(e.target.value); setFillColor(e.target.value)}}/>
                 
-                <input type="range" class="slider" min="1" max="100"  title="Size Adjustor" onChange={(e) => setStrokeWidth(e.target.value)}/>
+                <input type="range" class="slider" min="1" max="100" value={strokeWidth} title="Size Adjustor" onChange={(e) => setStrokeWidth(e.target.value)}/>
 
                 <button className="toolbar-button" title="Line" onClick={() => setTool(Tool.Line)}>
                     <img src="../icons/line.svg" alt="Line" />
@@ -234,20 +267,41 @@ const Paint = () => {
                     ref={stageRef} //For getting positions (cursor)
                 >
                     <Layer>
+
                         {/* Show each scribble in scribbles */}
                         {scribbles.map((scribble) => {
                             return (
                                 <Line
-                                key = {scribble.id}
-                                id = {scribble.id}
-                                points = {scribble.points}
-                                stroke = {scribble.color}
-                                strokeWidth = {scribble.strokeWidth}
+                                    key = {scribble.id}
+                                    id = {scribble.id}
+                                    points = {scribble.points}
+                                    stroke = {scribble.color}
+                                    strokeWidth = {scribble.strokeWidth}
+                                    lineCap="round"
+                                    lineJoin="round"
                                 >
 
                                 </Line>
                             )
                         })}
+
+                        {lines.map((line) => {
+                            console.log("Update Lines")
+                            return (
+                                <Line
+                                    key = {line.id}
+                                    id = {line.id}
+                                    points = {line.points}
+                                    stroke = {line.color}
+                                    strokeWidth = {line.strokeWidth}
+                                    lineCap="round"
+                                    lineJoin="round"
+                                >
+
+                                </Line>
+                            )
+                        })}
+
                         {rectangles.map((rectangle) => {
                             return (
                                 <Rect
@@ -264,6 +318,8 @@ const Paint = () => {
                                 </Rect>
                             )
                         })}
+
+
                     </Layer>
                 </Stage>
             </div>
@@ -298,7 +354,3 @@ const Paint = () => {
 };
 
 export default Paint;
-
-
-
-
