@@ -116,7 +116,7 @@ const Paint = () => {
                         color: strokeColor,
                         strokeWidth: strokeWidth,
                         width:0,
-                        D:1
+                        height:0,
                     }
                 ])
 
@@ -180,7 +180,7 @@ const Paint = () => {
                  console.log("Rectangling...")
                  //         //
                  setRectangles((prevRectangles) => prevRectangles.map((rectangle) => {
-                    // We search for the current scribble that was initialized in handleMouseDown and append new (x, y) to its points[] array
+
                     if (rectangle.id === currentShapeId.current){
                         return {
                         ...rectangle,
@@ -200,12 +200,13 @@ const Paint = () => {
                 console.log("Squaring...")
                 //         //
                 setSquares((prevSquares) => prevSquares.map((square) => {
-                   // We search for the current scribble that was initialized in handleMouseDown and append new (x, y) to its points[] array
-                   if (square.id === currentShapeId.current){
+
+                    if (square.id === currentShapeId.current){
+                       const D = (y - square.Y<0) ? -1 : 1
                        return {
                        ...square,
                            width:x-square.X,
-                           D: (y - square.Y<0) ? -1 : 1
+                           height:D*((x-square.X>0)*(x-square.X)+(x-square.X<0)*-1*(x-square.X)),
                        }
                    }
 
@@ -242,7 +243,7 @@ const Paint = () => {
 
                 <input type="color" title="Color Selector" onChange={(e) => {setStrokeColor(e.target.value); setFillColor(e.target.value)}}/>
                 
-                <input type="range" class="slider" min="1" max="100" value={strokeWidth} title="Size Adjustor" onChange={(e) => setStrokeWidth(e.target.value)}/>
+                <input type="range" class="slider" min="1" max="100" value={strokeWidth} title="Size Adjustor" onChange={(e) => setStrokeWidth(Number(e.target.value))}/>
 
                 <button className="toolbar-button" title="Line" onClick={() => setTool(Tool.Line)}>
                     <img src="../icons/line.svg" alt="Line" />
@@ -365,7 +366,7 @@ const Paint = () => {
                                 x={square.X}
                                 y={square.Y}
                                 width={square.width}
-                                height={square.D*((square.width>0)*square.width+(square.width<0)*-1*square.width)}
+                                height={square.height}
                                 stroke = {square.color}
                                 strokeWidth = {square.strokeWidth}
                                 >
