@@ -26,7 +26,9 @@ const Paint = () => {
     const currentShapeId = useRef()
 
     //Shapes
-    const [scribbles, setScribbles] = useState([]);    
+    const [scribbles, setScribbles] = useState([]);
+    const [lines, setLines] = useState([]);
+    
     ////
     ////
     ////    
@@ -65,11 +67,25 @@ const Paint = () => {
                         strokeWidth: strokeWidth,
 
                     }
-                ]
-                )
-            }
+                ])
 
-            break;
+                break;
+            }
+           
+            case Tool.Line:{
+                
+                setLines((prevLines) => [
+                    ...prevLines,
+                    {
+                        id: id,
+                        points: [x, y, x+5, y+5],
+                        color: strokeColor,
+                        strokeWidth: strokeWidth,
+                    }
+                ])
+
+                break;
+            }
         }
     }
 
@@ -103,6 +119,26 @@ const Paint = () => {
 
                 break;
             }
+
+            case Tool.Line:{
+                //Debugging//
+                console.log("Line...")
+                //         //
+
+                setLines((prevLines) => prevLines.map((line) => {
+                    if (line.id === currentShapeId.current){
+                        return {
+                            ...line,
+                            points: [line.points[0], line.points[1], x, y]
+                        }
+                    }
+
+                    return line;
+                }))
+
+                break;
+            }
+
         }
 
     }
@@ -128,9 +164,9 @@ const Paint = () => {
                     <img src="../icons/fill-drip.svg" alt="Fill Drip" />
                 </button>
 
-                <input type="color" title="Color Selector" onChange={(e) => setStrokeColor(e.target.value)}/>
+                <input type="color" title="Color Selector" onChange={(e) => {setStrokeColor(e.target.value); setFillColor(e.target.value)}}/>
                 
-                <input type="range" class="slider" min="1" max="100"  title="Size Adjustor" onChange={(e) => setStrokeWidth(e.target.value)}/>
+                <input type="range" class="slider" min="1" max="100" value={strokeWidth} title="Size Adjustor" onChange={(e) => setStrokeWidth(e.target.value)}/>
 
                 <button className="toolbar-button" title="Line" onClick={() => setTool(Tool.Line)}>
                     <img src="../icons/line.svg" alt="Line" />
@@ -193,20 +229,42 @@ const Paint = () => {
                     ref={stageRef} //For getting positions (cursor)
                 >
                     <Layer>
+
                         {/* Show each scribble in scribbles */}
                         {scribbles.map((scribble) => {
                             return (
                                 <Line
-                                key = {scribble.id}
-                                id = {scribble.id}
-                                points = {scribble.points}
-                                stroke = {scribble.color}
-                                strokeWidth = {scribble.strokeWidth}
+                                    key = {scribble.id}
+                                    id = {scribble.id}
+                                    points = {scribble.points}
+                                    stroke = {scribble.color}
+                                    strokeWidth = {scribble.strokeWidth}
+                                    lineCap="round"
+                                    lineJoin="round"
                                 >
 
                                 </Line>
                             )
                         })}
+
+                        {lines.map((line) => {
+                            console.log("Update Lines")
+                            return (
+                                <Line
+                                    key = {line.id}
+                                    id = {line.id}
+                                    points = {line.points}
+                                    stroke = {line.color}
+                                    strokeWidth = {line.strokeWidth}
+                                    lineCap="round"
+                                    lineJoin="round"
+                                >
+
+                                </Line>
+                            )
+                        })}
+
+
                     </Layer>
                 </Stage>
             </div>
