@@ -180,7 +180,7 @@ const Paint = () => {
                  console.log("Rectangling...")
                  //         //
                  setRectangles((prevRectangles) => prevRectangles.map((rectangle) => {
-                    // We search for the current scribble that was initialized in handleMouseDown and append new (x, y) to its points[] array
+
                     if (rectangle.id === currentShapeId.current){
                         return {
                         ...rectangle,
@@ -200,8 +200,8 @@ const Paint = () => {
                 console.log("Squaring...")
                 //         //
                 setSquares((prevSquares) => prevSquares.map((square) => {
-                   // We search for the current scribble that was initialized in handleMouseDown and append new (x, y) to its points[] array
-                   if (square.id === currentShapeId.current){
+
+                    if (square.id === currentShapeId.current){
                        return {
                        ...square,
                            width:x-square.X,
@@ -242,7 +242,7 @@ const Paint = () => {
 
                 <input type="color" title="Color Selector" onChange={(e) => {setStrokeColor(e.target.value); setFillColor(e.target.value)}}/>
                 
-                <input type="range" class="slider" min="1" max="100" value={strokeWidth} title="Size Adjustor" onChange={(e) => setStrokeWidth(e.target.value)}/>
+                <input type="range" class="slider" min="1" max="100" value={strokeWidth} title="Size Adjustor" onChange={(e) => setStrokeWidth(Number(e.target.value))}/>
 
                 <button className="toolbar-button" title="Line" onClick={() => setTool(Tool.Line)}>
                     <img src="../icons/line.svg" alt="Line" />
