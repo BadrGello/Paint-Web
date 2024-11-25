@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Layer, Line, Stage, Rect } from 'react-konva';
+import { Layer, Line, Stage, Rect, Circle, Ellipse } from 'react-konva';
 // for generating unique id's for shapes
 import { v4 as uuidv4 } from 'uuid';
 
@@ -30,6 +30,8 @@ const Paint = () => {
     const [lines, setLines] = useState([]);
     const [rectangles, setRectangles] = useState([]);
     const [squares, setSquares] = useState([]);
+    const [circles, setCircle] = useState([]);
+    const [ellipses, setEllipse] = useState([]);
     ////
     ////
     ////    
@@ -66,6 +68,7 @@ const Paint = () => {
                         points: [x, y],
                         color: strokeColor,
                         strokeWidth: strokeWidth,
+                        radius: 0,
 
                     }
                 ])
@@ -117,6 +120,44 @@ const Paint = () => {
                         strokeWidth: strokeWidth,
                         width:0,
                         height:0,
+                    }
+                ])
+
+            break;
+            }
+
+            case Tool.Circle:{
+                console.log("Start Circle")
+                setCircle((prevCircles) => [
+                    ...prevCircles,
+                    {
+                        id: id,
+                        X: x, 
+                        Y: y,
+                        color: strokeColor,
+                        strokeWidth: strokeWidth,
+                        radius: 0,
+
+                    }
+                ])
+
+            break;
+            }
+
+
+            case Tool.Ellipse:{
+                console.log("Start Ellipse")
+                setEllipse((prevEllipses) => [
+                    ...prevEllipses,
+                    {
+                        id: id,
+                        X: x, 
+                        Y: y,
+                        color: strokeColor,
+                        strokeWidth: strokeWidth,
+                        radiusX: 0,
+                        radiusY: 0,
+
                     }
                 ])
 
@@ -215,6 +256,47 @@ const Paint = () => {
 
                break;
            }
+
+
+           case Tool.Circle: {
+            console.log("Drawing Circle...");
+            setCircle((prevCircles) =>
+                prevCircles.map((circle) => {
+                    if (circle.id === currentShapeId.current) {
+                        const radius = Math.sqrt(
+                            Math.pow(x - circle.X, 2) + Math.pow(y - circle.Y, 2)
+                        ); 
+                        return {
+                            ...circle,
+                            radius: radius,
+                        };
+                    }
+                    return circle;
+                })
+            );
+            break;
+        }
+
+        case Tool.Ellipse: {
+            console.log("Drawing Ellipse...");
+            setEllipse((prevEllipses) =>
+                prevEllipses.map((ellipse) => {
+                    if (ellipse.id === currentShapeId.current) {
+                        const radiusX = Math.abs(x - ellipse.X);
+                        const radiusY = Math.abs(y - ellipse.Y); 
+        
+                        return {
+                            ...ellipse,
+                            radiusX: radiusX,
+                            radiusY: radiusY,
+                        };
+                    }
+                    return ellipse;
+                })
+            );
+            break;
+        }
+        
 
         }
 
@@ -374,6 +456,38 @@ const Paint = () => {
                                 </Rect>
                             )
                         })}
+
+                        {circles.map((circle) => {
+                            return (
+                                <Circle
+                                    key={circle.id}
+                                    id={circle.id}
+                                    x={circle.X}
+                                    y={circle.Y}
+                                    radius={circle.radius}
+                                    stroke={circle.color}
+                                    strokeWidth={circle.strokeWidth}
+                                />
+                            );
+                        })}
+
+                        {ellipses.map((ellipse) => {
+                            return (
+                                <Ellipse
+                                    key={ellipse.id}
+                                    id={ellipse.id}
+                                    x={ellipse.X}
+                                    y={ellipse.Y}
+                                    radiusX={ellipse.radiusX}
+                                    radiusY={ellipse.radiusY}
+                                    stroke={ellipse.color}
+                                    strokeWidth={ellipse.strokeWidth}
+                                />
+                            );
+                        })}
+
+  
+       
 
                     </Layer>
                 </Stage>
