@@ -24,20 +24,24 @@ const Paint = () => {
                 
                 <input type="range" class="slider" min="1" max="100"  title="Size Adjustor"/>
 
+                <button className="toolbar-button" title="Line">
+                    <img src="../icons/line.svg" alt="Line" />
+                </button>
+
                 <button className="toolbar-button" title="Square">
                     <img src="../icons/square.svg" alt="Square" />
                 </button>
 
                 <button className="toolbar-button" title="Rectangle">
-                    <img src="../icons/square.svg" alt="Rectangle" />  {/*cant find one so I put it as a placeholder for now*/}
+                    <img src="../icons/rectangle.svg" alt="Rectangle" />  {/*cant find one so I put it as a placeholder for now*/}
                 </button>
 
                 <button className="toolbar-button" title="Circle">
                     <img src="../icons/circle.svg" alt="Circle" />
                 </button>
 
-                <button className="toolbar-button" title="Circle">
-                    <img src="../icons/circle.svg" alt="Ellipse" />  {/*cant find one so I put it as a placeholder for now*/}
+                <button className="toolbar-button" title="Ellipse">
+                    <img src="../icons/ellipse.svg" alt="Ellipse" />  {/*cant find one so I put it as a placeholder for now*/}
                 </button>
 
                 <button className="toolbar-button" title="Triangle">
