@@ -99,7 +99,6 @@ const Paint = () => {
     ////
     ////
     ////    
-  
     // We can only drag shapes if we select them
     const isDraggable = (tool === Tool.Select);
     const transformerRef = useRef();
@@ -249,8 +248,6 @@ const Paint = () => {
                         ...Properties,
                         type: Tool.Circle,
                         ID: id,
-                        X: x, 
-                        Y: y,
                         stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
                         radius: 0,
@@ -342,6 +339,82 @@ const Paint = () => {
             }
         }
     }
+    const handleDragEnd = (e, id,type) => {
+        const { x, y } = e.target.position();
+        switch(type){
+            case Tool.Scribble:{
+                setScribbles((prevScribbles) =>
+                    prevScribbles.map((scribble) =>{
+                        if(scribble.id === id) {
+                            return { ...scribble,
+                                X:x,Y:y
+                    }
+                } return scribble;
+            }
+                        
+                )
+            );
+        break;     
+        }
+            case Tool.Line:{
+                setLines((prevLines) =>
+                    prevLines.map((line) =>{
+                        if(line.id === id) {
+                            const dx=x-line.points[0];
+                            const dy=y-line.points[1];
+                            return { ...line,
+                                 point:[line.points[0]+dx,line.points[1]+dy,line.points[2]+dx,line.points[3]+dy] 
+                    } 
+                } return line;
+            }
+                        
+                )
+            );
+        break;     
+        }
+            case Tool.Circle:{
+                setCircle((prevCircles) =>
+                    prevCircles.map((circle) =>
+                    circle.id === id ?  { ...circle, X:x, Y:y } : circle
+                )
+                );
+                break;
+            }
+            case Tool.Ellipse:{
+                setEllipse((prevEllipses) =>
+                    prevEllipses.map((Ellipse) =>
+                    Ellipse.id === id ? { ...Ellipse, X:x, Y:y } : Ellipse
+                )
+                );
+                break;
+            }
+            case Tool.Rectangle:{
+                setRectangles((prevRectangles) =>
+                    prevRectangles.map((rectangle) =>
+                    rectangle.id === id ? { ...rectangle, X:x, Y:y } : rectangle
+                )
+                );
+                break;
+            }
+            case Tool.Square:{
+                setSquares((prevSquares) =>
+                    prevSquares.map((square) =>
+                    square.id === id ? { ...square,X:x, Y:y } : square
+                )
+                );
+                break;
+            }
+            case Tool.Triangle:{
+                setTriangles((prevTriangles) =>
+                    prevTriangles.map((triangle) =>
+                    triangle.id === id ? { ...triangle, X:x, Y:y } : triangle
+                    )
+                );
+                break;
+            }
+        }
+        
+      };
 
     function handleMouseMove(){
         // If user is not drawing (clicking) and moving the cursor, nothing should happen
@@ -591,6 +664,8 @@ const Paint = () => {
                                     key = {scribble.ID}
                                     id = {scribble.ID}
                                     points = {scribble.points}
+                                    x={scribble.X}
+                                    y={scribble.Y}
                                     stroke = {scribble.stroke_Colour}
                                     strokeWidth = {scribble.strokeWidth}
                                     lineCap="round"
@@ -603,6 +678,7 @@ const Paint = () => {
 
                                     //Drag and Transform (Resize/Rotate)
                                     draggable = {isDraggable}
+                                    onDragEnd={(e) => handleDragEnd(e, scribble.id,scribble.type)}
                                     // Idk yet which of the following we don't need
                                     // onClick = {}
                                     // onDragStart = {}
@@ -626,6 +702,8 @@ const Paint = () => {
                                     strokeWidth = {line.strokeWidth}
                                     lineCap="round"
                                     lineJoin="round"
+                                    draggable = {isDraggable}
+                                    onDragEnd={(e) => handleDragEnd(e, line.id,line.type)}
                                 >
 
                                 </Line>
@@ -645,6 +723,8 @@ const Paint = () => {
                                     strokeWidth = {rectangle.strokeWidth}
                                     fill={rectangle.fill_Colour}
                                     onClick={() => handleFill(rectangle.ID,rectangle.type)}
+                                    draggable = {isDraggable}
+                                    onDragEnd={(e) => handleDragEnd(e, rectangle.id,rectangle.type)}
                                 >
                                     
                                 </Rect>
@@ -664,6 +744,8 @@ const Paint = () => {
                                     strokeWidth = {square.strokeWidth}
                                     fill={square.fill_Colour}
                                     onClick={() => handleFill(square.ID,square.type)}
+                                    draggable = {isDraggable}
+                                    onDragEnd={(e) => handleDragEnd(e, square.id,square.type)}
                                 >
                                     
                                 </Rect>
@@ -683,6 +765,8 @@ const Paint = () => {
                                     rotation={triangle.rotate}
                                     fill={triangle.fill_Colour}
                                     onClick={() => handleFill(triangle.ID,triangle.type)} 
+                                    draggable = {isDraggable}
+                                    onDragEnd={(e) => handleDragEnd(e, triangle.id,triangle.type)}
                                 />
                             )
                         })}
@@ -698,6 +782,8 @@ const Paint = () => {
                                     strokeWidth={circle.strokeWidth}
                                     fill={circle.fill_Colour}
                                     onClick={() => handleFill(circle.ID,circle.type)}
+                                    draggable = {isDraggable}
+                                    onDragEnd={(e) => handleDragEnd(e, circle.id,circle.type)}
                                 />
                             );
                         })}
@@ -715,6 +801,8 @@ const Paint = () => {
                                     strokeWidth={ellipse.strokeWidth}
                                     fill={ellipse.fill_Colour}
                                     onClick={() => handleFill(ellipse.ID,ellipse.type)}
+                                    draggable = {isDraggable}
+                                    onDragEnd={(e) => handleDragEnd(e, ellipse.id,ellipse.type)}
                                 />
                             );
                         })}
