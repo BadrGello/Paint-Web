@@ -1,30 +1,24 @@
 package com.team.Paint_Backend;
 
-public abstract class Shape {
-     private String ID;
-     private String type;
-     private double x;
-     private double y;
-     private String fill_Colour;
-     private String stroke_Colour;
-     private double strokeWidth;
-     private double scaleX;
-     private double scaleY;
-     private double rotation;
+import java.util.Vector;
 
-    public Shape(String ID, String type, double x, double y, String fill_Colour, String stroke_Colour,double strokeWidth, double scaleX, double scaleY, double rotation) {
-        this.ID = ID;
-        this.type = type;
-        this.x = x;
-        this.y = y;
-        this.fill_Colour = fill_Colour;
-        this.stroke_Colour = stroke_Colour;
-        this.strokeWidth = strokeWidth;
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-        this.rotation = rotation;
-    }
-
+public class DefaultShape {
+    private String ID;
+    private String type;
+    private double x;
+    private double y;
+    private String fill_Colour;
+    private String stroke_Colour;
+    private double strokeWidth;
+    private double scaleX;
+    private double scaleY;
+    private double rotation;
+    private double width;
+    private double height;
+    private double radius;
+    private double radiusX;
+    private double radiusY;
+    private Vector<Double> points;
 
     public String getID() {
         return this.ID;
@@ -97,7 +91,6 @@ public abstract class Shape {
     public void setScaleY(double scaleY) {
         this.scaleY = scaleY;
     }
-    
 
     public double getRotation() {
         return this.rotation;
@@ -105,6 +98,55 @@ public abstract class Shape {
 
     public void setRotation(double rotation) {
         this.rotation = rotation;
+    }
+
+
+    public double getWidth() {
+        return this.width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public double getHeight() {
+        return this.height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public double getRadius() {
+        return this.radius;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    public double getRadiusX() {
+        return this.radiusX;
+    }
+
+    public void setRadiusX(double radiusX) {
+        this.radiusX = radiusX;
+    }
+
+    public double getRadiusY() {
+        return this.radiusY;
+    }
+
+    public void setRadiusY(double radiusY) {
+        this.radiusY = radiusY;
+    }
+
+    public Vector<Double> getPoints() {
+        return this.points;
+    }
+
+    public void setPoints(Vector<Double> points) {
+        this.points = points;
     }
 
 }

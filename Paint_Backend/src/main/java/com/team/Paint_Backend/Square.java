@@ -5,9 +5,9 @@ public class Square  extends Shape  {
 
 
     public Square(String ID, String type, double x, double y, String fill_Colour
-                ,String stroke_Colour,double strokeWidth, double scaleX, double scaleY,double width) {
+                ,String stroke_Colour,double strokeWidth, double scaleX, double scaleY,double width, double rotation) {
 
-        super( ID,  type,  x,  y,  fill_Colour,  stroke_Colour, strokeWidth,  scaleX,  scaleY);
+        super( ID,  type,  x,  y,  fill_Colour,  stroke_Colour, strokeWidth,  scaleX,  scaleY, rotation);
         this.width = width;
     }
 
