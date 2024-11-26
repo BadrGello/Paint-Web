@@ -16,7 +16,23 @@ const Tool = {
 };
 
 const Properties = {
-    
+    id: null,
+    type: null,
+    x: null,
+    y: null,
+    fillColor: null,
+    strokeColor: null,
+    strokeWidth: null,
+    scaleX: null,
+    scaleY: null,
+    width: null,
+    height: null,
+    radius: null,
+    radiusX: null,
+    radiusY: null,
+    points: null,
+    rotation: null,
+
 }
 
 const Paint = () => {
@@ -101,6 +117,7 @@ const Paint = () => {
                 setScribbles((prevScribbles) => [
                     ...prevScribbles,
                     {
+                        ...Properties,
                         type: Tool.Scribble,
                         id: id,
                         points: [x, y],
@@ -121,6 +138,7 @@ const Paint = () => {
                 setLines((prevLines) => [
                     ...prevLines,
                     {
+                        ...Properties,
                         type: Tool.Line,
                         id: id,
                         points: [x, y, x+5, y+5],
@@ -132,7 +150,7 @@ const Paint = () => {
                         rotation: 0,
                     }
                 ])
-
+                // console.log(lines[lines.length-1]);
                 break;
             }
 
@@ -141,6 +159,7 @@ const Paint = () => {
                 setRectangles((prevRectangles) => [
                     ...prevRectangles,
                     {
+                        ...Properties,
                         type: Tool.Rectangle,
                         id: id,
                         X: x, 
@@ -163,6 +182,7 @@ const Paint = () => {
                 setSquares((prevSquares) => [
                     ...prevSquares,
                     {
+                        ...Properties,
                         type: Tool.Square,
                         id: id,
                         X: x, 
@@ -186,6 +206,7 @@ const Paint = () => {
                 setTriangles((prevTriangles) => [
                     ...prevTriangles,
                     {
+                        ...Properties,
                         type: Tool.Triangle,
                         id: id,
                         X: x, 
@@ -209,6 +230,7 @@ const Paint = () => {
                 setCircle((prevCircles) => [
                     ...prevCircles,
                     {
+                        ...Properties,
                         type: Tool.Circle,
                         id: id,
                         X: x, 
@@ -233,6 +255,7 @@ const Paint = () => {
                 setEllipse((prevEllipses) => [
                     ...prevEllipses,
                     {
+                        ...Properties,
                         type: Tool.Ellipse,
                         id: id,
                         X: x, 
@@ -546,14 +569,14 @@ const Paint = () => {
                         {rectangles.map((rectangle) => {
                             return (
                                 <Rect
-                                key = {rectangle.id}
-                                id = {rectangle.id}
-                                x={rectangle.X}
-                                y={rectangle.Y}
-                                width={rectangle.width}
-                                height={rectangle.height}
-                                stroke = {rectangle.color}
-                                strokeWidth = {rectangle.strokeWidth}
+                                    key = {rectangle.id}
+                                    id = {rectangle.id}
+                                    x={rectangle.X}
+                                    y={rectangle.Y}
+                                    width={rectangle.width}
+                                    height={rectangle.height}
+                                    stroke = {rectangle.color}
+                                    strokeWidth = {rectangle.strokeWidth}
                                 >
 
                                 </Rect>
@@ -563,14 +586,14 @@ const Paint = () => {
                         {squares.map((square) => {
                             return (
                                 <Rect
-                                key = {square.id}
-                                id = {square.id}
-                                x={square.X}
-                                y={square.Y}
-                                width={square.width}
-                                height={square.height}
-                                stroke = {square.color}
-                                strokeWidth = {square.strokeWidth}
+                                    key = {square.id}
+                                    id = {square.id}
+                                    x={square.X}
+                                    y={square.Y}
+                                    width={square.width}
+                                    height={square.height}
+                                    stroke = {square.color}
+                                    strokeWidth = {square.strokeWidth}
                                 >
 
                                 </Rect>
@@ -579,13 +602,15 @@ const Paint = () => {
                         {triangles.map((triangle) => {
                             return(
                                 <RegularPolygon
-                                x={triangle.X}
-                                y={triangle.Y} 
-                                sides={3} 
-                                radius={triangle.radius} 
-                                stroke = {triangle.color}
-                                strokeWidth = {triangle.strokeWidth}
-                                rotation={triangle.rotate} 
+                                    key={triangle.id}
+                                    id={triangle.id}
+                                    x={triangle.X}
+                                    y={triangle.Y} 
+                                    sides={3} 
+                                    radius={triangle.radius} 
+                                    stroke = {triangle.color}
+                                    strokeWidth = {triangle.strokeWidth}
+                                    rotation={triangle.rotate} 
                                 />
                             )
                         })}
