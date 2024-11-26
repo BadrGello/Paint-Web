@@ -36,6 +36,12 @@ const Properties = {
 
 }
 
+const EndPoints = {
+    Draw: "http://localhost:8080/api/draw",
+    Edit: "http://localhost:8080/api/edit",
+    Delete: "http://localhost:8080/api/delete",
+
+}
 const Paint = () => {
 
     //////////Connection to Spring////////////
@@ -48,9 +54,15 @@ const Paint = () => {
     // }, []);
 
     // POST request (Send)
-    const sendShape = async (object) => {
+    const sendShape = async (object, endpoint ="draw") => {
         try {
-            const response = await fetch("http://localhost:8080/api/shape", {
+
+            let endpointURL = "";
+            if (endpoint === "draw") endpointURL = EndPoints.Draw;
+            else if (endpoint === "edit") endpointURL = EndPoints.Edit;
+            else if (endpoint === "delete") endpointURL = EndPoints.Delete;
+
+            const response = await fetch(endpointURL , {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(object),
@@ -130,7 +142,7 @@ const Paint = () => {
                         rotation: 0,
                     }
                 ])
-
+                
                 break;
             }
            
@@ -200,7 +212,7 @@ const Paint = () => {
                         fillColor:"rgba(0, 0, 0, 0)",
                     }
                 ])
-
+                // console.log(squares[squares.length-1])
                 break;
             }
 
@@ -546,9 +558,9 @@ const Paint = () => {
                     <img src="../icons/select.svg" alt="Select" />
                 </button>
 
-                <button className="toolbar-button" title="Move">
+                {/* <button className="toolbar-button" title="Move">
                     <img src="../icons/move.svg" alt="Move" />
-                </button>
+                </button> */}
 
                 <button className="toolbar-button" title="Delete">
                     <img src="../icons/delete.svg" alt="Delete" />
