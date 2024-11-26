@@ -5,9 +5,9 @@ public class Circle  extends Shape {
 
 
     public Circle(String ID, String type, double x, double y, String fill_Colour
-                 , String stroke_Colour,double strokeWidth, double scaleX, double scaleY,double radius) {
+                 , String stroke_Colour,double strokeWidth, double scaleX, double scaleY, double rotation,double radius) {
 
-        super( ID,  type,  x,  y,  fill_Colour,  stroke_Colour,strokeWidth,  scaleX,  scaleY);            
+        super( ID,  type,  x,  y,  fill_Colour,  stroke_Colour,strokeWidth,  scaleX,  scaleY, rotation);            
         this.radius = radius;
     }
 

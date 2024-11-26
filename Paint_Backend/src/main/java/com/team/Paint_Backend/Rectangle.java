@@ -7,9 +7,9 @@ public class Rectangle  extends Shape {
 
 
     public Rectangle(String ID, String type, double x, double y, String fill_Colour
-                    ,String stroke_Colour,double strokeWidth, double scaleX, double scaleY,double width, double height) {
+                    ,String stroke_Colour,double strokeWidth, double scaleX, double scaleY, double rotation,double width, double height) {
         
-        super( ID,  type,  x,  y,  fill_Colour,  stroke_Colour,strokeWidth,  scaleX,  scaleY);
+        super( ID,  type,  x,  y,  fill_Colour,  stroke_Colour,strokeWidth,  scaleX,  scaleY, rotation);
         this.width = width;
         this.height = height;
     }
