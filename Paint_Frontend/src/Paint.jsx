@@ -12,6 +12,7 @@ const Tool = {
     Scribble: "scribble",
     Line: "line",
     Triangle: "triangle",
+    fillColor: "fillColor",
     //more to be added//
 };
 
@@ -172,6 +173,7 @@ const Paint = () => {
                         scaleX: 1,
                         scaleY: 1,
                         rotation: 0,
+                        fillColor:"rgba(0, 0, 0, 0)",
                     }
                 ])
 
@@ -195,6 +197,7 @@ const Paint = () => {
                         scaleX: 1,
                         scaleY: 1,
                         rotation: 0,
+                        fillColor:"rgba(0, 0, 0, 0)",
                     }
                 ])
 
@@ -219,6 +222,7 @@ const Paint = () => {
                         scaleX: 1,
                         scaleY: 1,
                         rotation: 0,
+                        fillColor:"rgba(0, 0, 0, 0)",
                         
                     }
                 ])
@@ -242,6 +246,7 @@ const Paint = () => {
                         scaleX: 1,
                         scaleY: 1,
                         rotation: 0,
+                        fillColor:"rgba(0, 0, 0, 0)",
 
                     }
                 ])
@@ -268,10 +273,60 @@ const Paint = () => {
                         scaleX: 1,
                         scaleY: 1,
                         rotation: 0,
+                        fillColor:"rgba(0, 0, 0, 0)",
                     }
                 ])
 
                 break;
+            }
+            
+        }
+    }
+    const handleFill = (id,type) =>{
+        
+        if(tool==Tool.fillColor)
+        {
+            switch(type){
+                case Tool.Circle:{
+                    setCircle((prevCircles) =>
+                        prevCircles.map((circle) =>
+                          circle.id === id ? { ...circle, fillColor: strokeColor } : circle
+                        )
+                      );
+                    break;
+                }
+                case Tool.Ellipse:{
+                    setEllipse((prevEllipses) =>
+                        prevEllipses.map((Ellipse) =>
+                          Ellipse.id === id ? { ...Ellipse, fillColor: strokeColor } : Ellipse
+                        )
+                      );
+                    break;
+                }
+                case Tool.Rectangle:{
+                    setRectangles((prevRectangles) =>
+                        prevRectangles.map((rectangle) =>
+                          rectangle.id === id ? { ...rectangle, fillColor: strokeColor } : rectangle
+                        )
+                      );
+                    break;
+                }
+                case Tool.Square:{
+                    setSquares((prevSquares) =>
+                        prevSquares.map((square) =>
+                          square.id === id ? { ...square, fillColor: strokeColor } : square
+                        )
+                      );
+                    break;
+                }
+                case Tool.Triangle:{
+                    setTriangles((prevTriangles) =>
+                        prevTriangles.map((triangle) =>
+                          triangle.id === id ? { ...triangle, fillColor: strokeColor } : triangle
+                        )
+                      );
+                    break;
+                }
             }
         }
     }
@@ -426,7 +481,6 @@ const Paint = () => {
                 );
                 break;
             }
-
         }
 
     }
@@ -448,7 +502,7 @@ const Paint = () => {
                     <img src="../icons/pen.svg" alt="Pen" />
                 </button>
 
-                <button className="toolbar-button" title="Fill Drip">
+                <button className="toolbar-button" title="Fill Drip" onClick={() => setTool(Tool.fillColor)}>
                     <img src="../icons/fill-drip.svg" alt="Fill Drip" />
                 </button>
 
@@ -577,8 +631,10 @@ const Paint = () => {
                                     height={rectangle.height}
                                     stroke = {rectangle.color}
                                     strokeWidth = {rectangle.strokeWidth}
+                                    fill={rectangle.fillColor}
+                                    onClick={() => handleFill(rectangle.id,rectangle.type)}
                                 >
-
+                                    
                                 </Rect>
                             )
                         })}
@@ -594,8 +650,10 @@ const Paint = () => {
                                     height={square.height}
                                     stroke = {square.color}
                                     strokeWidth = {square.strokeWidth}
+                                    fill={square.fillColor}
+                                    onClick={() => handleFill(square.id,square.type)}
                                 >
-
+                                    
                                 </Rect>
                             )
                         })}
@@ -610,7 +668,9 @@ const Paint = () => {
                                     radius={triangle.radius} 
                                     stroke = {triangle.color}
                                     strokeWidth = {triangle.strokeWidth}
-                                    rotation={triangle.rotate} 
+                                    rotation={triangle.rotate}
+                                    fill={triangle.fillColor}
+                                    onClick={() => handleFill(triangle.id,triangle.type)} 
                                 />
                             )
                         })}
@@ -624,6 +684,8 @@ const Paint = () => {
                                     radius={circle.radius}
                                     stroke={circle.color}
                                     strokeWidth={circle.strokeWidth}
+                                    fill={circle.fillColor}
+                                    onClick={() => handleFill(circle.id,circle.type)}
                                 />
                             );
                         })}
@@ -639,6 +701,8 @@ const Paint = () => {
                                     radiusY={ellipse.radiusY}
                                     stroke={ellipse.color}
                                     strokeWidth={ellipse.strokeWidth}
+                                    fill={ellipse.fillColor}
+                                    onClick={() => handleFill(ellipse.id,ellipse.type)}
                                 />
                             );
                         })}
