@@ -144,7 +144,7 @@ const Paint = () => {
                     }
                 ])
 
-            break;
+                break;
             }
             case Tool.Square:{
                 console.log("Start Square")
@@ -162,7 +162,7 @@ const Paint = () => {
                     }
                 ])
 
-            break;
+                break;
             }
 
             case Tool.Triangle:{
@@ -181,7 +181,7 @@ const Paint = () => {
                     }
                 ])
 
-            break;
+                break;
             }
             case Tool.Circle:{
                 console.log("Start Circle")
@@ -198,7 +198,7 @@ const Paint = () => {
                     }
                 ])
 
-            break;
+                break;
             }
 
 
@@ -218,7 +218,7 @@ const Paint = () => {
                     }
                 ])
 
-            break;
+                break;
             }
         }
     }
@@ -312,66 +312,67 @@ const Paint = () => {
                }))
 
                break;
-           }
-           case Tool.Triangle:{
-            //Debugging//
-            console.log("triangling...")
-            //         //
-            setTriangles((prevTriangles) => prevTriangles.map((triangle) => {
+            }
+            case Tool.Triangle:{
+                //Debugging//
+                console.log("triangling...")
+                //         //
+                setTriangles((prevTriangles) => prevTriangles.map((triangle) => {
 
-                if (triangle.id === currentShapeId.current){
-                   const r = Math.sqrt(Math.pow(x-triangle.X,2)+Math.pow(y-triangle.Y,2))
-                   const d= Math.atan2((x-triangle.X),(triangle.Y-y))*(180/Math.PI)
-                   return {
-                   ...triangle,
-                       radius:r,
-                       rotate:d,
-                   }
-               }
-
-               return triangle;
-           }))
-
-           break;
-       }
-       case Tool.Circle: {
-        console.log("Drawing Circle...");
-        setCircle((prevCircles) =>
-            prevCircles.map((circle) => {
-                if (circle.id === currentShapeId.current) {
-                    const radius = Math.sqrt(
-                        Math.pow(x - circle.X, 2) + Math.pow(y - circle.Y, 2)
-                    ); 
+                    if (triangle.id === currentShapeId.current){
+                    const r = Math.sqrt(Math.pow(x-triangle.X,2)+Math.pow(y-triangle.Y,2))
+                    const d= Math.atan2((x-triangle.X),(triangle.Y-y))*(180/Math.PI)
                     return {
-                        ...circle,
-                        radius: radius,
-                    };
+                    ...triangle,
+                        radius:r,
+                        rotate:d,
+                    }
                 }
-                return circle;
-            })
-        );
-        break;
-    }
 
-    case Tool.Ellipse: {
-        console.log("Drawing Ellipse...");
-        setEllipse((prevEllipses) =>
-            prevEllipses.map((ellipse) => {
-                if (ellipse.id === currentShapeId.current) {
-                    const radiusX = Math.abs(x - ellipse.X);
-                    const radiusY = Math.abs(y - ellipse.Y); 
-    
-                    return {
-                        ...ellipse,
-                        radiusX: radiusX,
-                        radiusY: radiusY,
-                    };
-                }
-                return ellipse;
-            })
-        );
-        break;
-    }
+                return triangle;
+                }))
+
+                break;
+            }
+
+            case Tool.Circle: {
+                console.log("Drawing Circle...");
+                setCircle((prevCircles) =>
+                    prevCircles.map((circle) => {
+                        if (circle.id === currentShapeId.current) {
+                            const radius = Math.sqrt(
+                                Math.pow(x - circle.X, 2) + Math.pow(y - circle.Y, 2)
+                            ); 
+                            return {
+                                ...circle,
+                                radius: radius,
+                            };
+                        }
+                        return circle;
+                    })
+                );
+                break;
+            }
+
+            case Tool.Ellipse: {
+                console.log("Drawing Ellipse...");
+                setEllipse((prevEllipses) =>
+                    prevEllipses.map((ellipse) => {
+                        if (ellipse.id === currentShapeId.current) {
+                            const radiusX = Math.abs(x - ellipse.X);
+                            const radiusY = Math.abs(y - ellipse.Y); 
+            
+                            return {
+                                ...ellipse,
+                                radiusX: radiusX,
+                                radiusY: radiusY,
+                            };
+                        }
+                        return ellipse;
+                    })
+                );
+                break;
+            }
 
         }
 
@@ -475,6 +476,14 @@ const Paint = () => {
                                     strokeWidth = {scribble.strokeWidth}
                                     lineCap="round"
                                     lineJoin="round"
+
+                                    //Drag and Transformer
+                                    draggable
+                                    scaleX
+                                    scaleY
+                                    onDragStart={handleDragStart}
+                                    onDragEnd={handleDragEnd}
+
                                 >
 
                                 </Line>
@@ -532,19 +541,19 @@ const Paint = () => {
                             )
                         })}
                         {triangles.map((triangle) => {
-                        return(
-                        <RegularPolygon
-                        x={triangle.X}
-                        y={triangle.Y} 
-                        sides={3} 
-                        radius={triangle.radius} 
-                        stroke = {triangle.color}
-                        strokeWidth = {triangle.strokeWidth}
-                        rotation={triangle.rotate} 
-                    />
-                     )
-                     })}
-                     {circles.map((circle) => {
+                            return(
+                                <RegularPolygon
+                                x={triangle.X}
+                                y={triangle.Y} 
+                                sides={3} 
+                                radius={triangle.radius} 
+                                stroke = {triangle.color}
+                                strokeWidth = {triangle.strokeWidth}
+                                rotation={triangle.rotate} 
+                                />
+                            )
+                        })}
+                        {circles.map((circle) => {
                             return (
                                 <Circle
                                     key={circle.id}
@@ -573,6 +582,7 @@ const Paint = () => {
                             );
                         })}
 
+                        <Transformer ref={transformerRef} />
                     </Layer>
                 </Stage>
             </div>
