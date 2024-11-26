@@ -17,12 +17,12 @@ const Tool = {
 };
 
 const Properties = {
-    id: null,
+    ID: null,
     type: null,
     x: null,
     y: null,
-    fillColor: null,
-    strokeColor: null,
+    fill_Colour: null,
+    stroke_Colour: null,
     strokeWidth: null,
     scaleX: null,
     scaleY: null,
@@ -132,9 +132,9 @@ const Paint = () => {
                     {
                         ...Properties,
                         type: Tool.Scribble,
-                        id: id,
+                        ID: id,
                         points: [x, y],
-                        color: strokeColor,
+                        stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
                         
                         scaleX: 1,
@@ -153,9 +153,9 @@ const Paint = () => {
                     {
                         ...Properties,
                         type: Tool.Line,
-                        id: id,
+                        ID: id,
                         points: [x, y, x+5, y+5],
-                        color: strokeColor,
+                        stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
 
                         scaleX: 1,
@@ -174,10 +174,10 @@ const Paint = () => {
                     {
                         ...Properties,
                         type: Tool.Rectangle,
-                        id: id,
+                        ID: id,
                         X: x, 
                         Y: y,
-                        color: strokeColor,
+                        stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
                         width:0,
                         height:0,
@@ -185,7 +185,7 @@ const Paint = () => {
                         scaleX: 1,
                         scaleY: 1,
                         rotation: 0,
-                        fillColor:"rgba(0, 0, 0, 0)",
+                        fill_Colour:"rgba(0, 0, 0, 0)",
                     }
                 ])
 
@@ -198,10 +198,10 @@ const Paint = () => {
                     {
                         ...Properties,
                         type: Tool.Square,
-                        id: id,
+                        ID: id,
                         X: x, 
                         Y: y,
-                        color: strokeColor,
+                        stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
                         width:0,
                         height:0,
@@ -209,7 +209,7 @@ const Paint = () => {
                         scaleX: 1,
                         scaleY: 1,
                         rotation: 0,
-                        fillColor:"rgba(0, 0, 0, 0)",
+                        fill_Colour:"rgba(0, 0, 0, 0)",
                     }
                 ])
                 // console.log(squares[squares.length-1])
@@ -223,10 +223,10 @@ const Paint = () => {
                     {
                         ...Properties,
                         type: Tool.Triangle,
-                        id: id,
+                        ID: id,
                         X: x, 
                         Y: y,
-                        color: strokeColor,
+                        stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
                         radius:0,
                         rotate:0,
@@ -234,7 +234,7 @@ const Paint = () => {
                         scaleX: 1,
                         scaleY: 1,
                         rotation: 0,
-                        fillColor:"rgba(0, 0, 0, 0)",
+                        fill_Colour:"rgba(0, 0, 0, 0)",
                         
                     }
                 ])
@@ -248,17 +248,17 @@ const Paint = () => {
                     {
                         ...Properties,
                         type: Tool.Circle,
-                        id: id,
+                        ID: id,
                         X: x, 
                         Y: y,
-                        color: strokeColor,
+                        stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
                         radius: 0,
 
                         scaleX: 1,
                         scaleY: 1,
                         rotation: 0,
-                        fillColor:"rgba(0, 0, 0, 0)",
+                        fill_Colour:"rgba(0, 0, 0, 0)",
 
                     }
                 ])
@@ -274,10 +274,10 @@ const Paint = () => {
                     {
                         ...Properties,
                         type: Tool.Ellipse,
-                        id: id,
+                        ID: id,
                         X: x, 
                         Y: y,
-                        color: strokeColor,
+                        stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
                         radiusX: 0,
                         radiusY: 0,
@@ -285,7 +285,7 @@ const Paint = () => {
                         scaleX: 1,
                         scaleY: 1,
                         rotation: 0,
-                        fillColor:"rgba(0, 0, 0, 0)",
+                        fill_Colour:"rgba(0, 0, 0, 0)",
                     }
                 ])
 
@@ -302,7 +302,7 @@ const Paint = () => {
                 case Tool.Circle:{
                     setCircle((prevCircles) =>
                         prevCircles.map((circle) =>
-                          circle.id === id ? { ...circle, fillColor: strokeColor } : circle
+                          circle.ID === id ? { ...circle, fill_Colour: strokeColor } : circle
                         )
                       );
                     break;
@@ -310,7 +310,7 @@ const Paint = () => {
                 case Tool.Ellipse:{
                     setEllipse((prevEllipses) =>
                         prevEllipses.map((Ellipse) =>
-                          Ellipse.id === id ? { ...Ellipse, fillColor: strokeColor } : Ellipse
+                          Ellipse.ID === id ? { ...Ellipse, fill_Colour: strokeColor } : Ellipse
                         )
                       );
                     break;
@@ -318,7 +318,7 @@ const Paint = () => {
                 case Tool.Rectangle:{
                     setRectangles((prevRectangles) =>
                         prevRectangles.map((rectangle) =>
-                          rectangle.id === id ? { ...rectangle, fillColor: strokeColor } : rectangle
+                          rectangle.ID === id ? { ...rectangle, fill_Colour: strokeColor } : rectangle
                         )
                       );
                     break;
@@ -326,7 +326,7 @@ const Paint = () => {
                 case Tool.Square:{
                     setSquares((prevSquares) =>
                         prevSquares.map((square) =>
-                          square.id === id ? { ...square, fillColor: strokeColor } : square
+                          square.ID === id ? { ...square, fill_Colour: strokeColor } : square
                         )
                       );
                     break;
@@ -334,7 +334,7 @@ const Paint = () => {
                 case Tool.Triangle:{
                     setTriangles((prevTriangles) =>
                         prevTriangles.map((triangle) =>
-                          triangle.id === id ? { ...triangle, fillColor: strokeColor } : triangle
+                          triangle.ID === id ? { ...triangle, fill_Colour: strokeColor } : triangle
                         )
                       );
                     break;
@@ -360,7 +360,7 @@ const Paint = () => {
 
                 setScribbles((prevScribbles) => prevScribbles.map((scribble) => {
                     // We search for the current scribble that was initialized in handleMouseDown and append new (x, y) to its points[] array
-                    if (scribble.id === currentShapeId.current){
+                    if (scribble.ID === currentShapeId.current){
                         return {
                             ...scribble,
                             points: [...scribble.points, x, y]
@@ -380,7 +380,7 @@ const Paint = () => {
                 //         //
 
                 setLines((prevLines) => prevLines.map((line) => {
-                    if (line.id === currentShapeId.current){
+                    if (line.ID === currentShapeId.current){
                         return {
                             ...line,
                             points: [line.points[0], line.points[1], x, y]
@@ -399,7 +399,7 @@ const Paint = () => {
                  //         //
                  setRectangles((prevRectangles) => prevRectangles.map((rectangle) => {
 
-                    if (rectangle.id === currentShapeId.current){
+                    if (rectangle.ID === currentShapeId.current){
                         return {
                         ...rectangle,
                             width:x-rectangle.X,
@@ -419,7 +419,7 @@ const Paint = () => {
                 //         //
                 setSquares((prevSquares) => prevSquares.map((square) => {
 
-                    if (square.id === currentShapeId.current){
+                    if (square.ID === currentShapeId.current){
                        const D = (y - square.Y<0) ? -1 : 1
                        return {
                        ...square,
@@ -439,7 +439,7 @@ const Paint = () => {
                 //         //
                 setTriangles((prevTriangles) => prevTriangles.map((triangle) => {
 
-                    if (triangle.id === currentShapeId.current){
+                    if (triangle.ID === currentShapeId.current){
                     const r = Math.sqrt(Math.pow(x-triangle.X,2)+Math.pow(y-triangle.Y,2))
                     const d= Math.atan2((x-triangle.X),(triangle.Y-y))*(180/Math.PI)
                     return {
@@ -459,7 +459,7 @@ const Paint = () => {
                 console.log("Drawing Circle...");
                 setCircle((prevCircles) =>
                     prevCircles.map((circle) => {
-                        if (circle.id === currentShapeId.current) {
+                        if (circle.ID === currentShapeId.current) {
                             const radius = Math.sqrt(
                                 Math.pow(x - circle.X, 2) + Math.pow(y - circle.Y, 2)
                             ); 
@@ -478,7 +478,7 @@ const Paint = () => {
                 console.log("Drawing Ellipse...");
                 setEllipse((prevEllipses) =>
                     prevEllipses.map((ellipse) => {
-                        if (ellipse.id === currentShapeId.current) {
+                        if (ellipse.ID === currentShapeId.current) {
                             const radiusX = Math.abs(x - ellipse.X);
                             const radiusY = Math.abs(y - ellipse.Y); 
             
@@ -588,10 +588,10 @@ const Paint = () => {
                         {scribbles.map((scribble) => {
                             return (
                                 <Line
-                                    key = {scribble.id}
-                                    id = {scribble.id}
+                                    key = {scribble.ID}
+                                    id = {scribble.ID}
                                     points = {scribble.points}
-                                    stroke = {scribble.color}
+                                    stroke = {scribble.stroke_Colour}
                                     strokeWidth = {scribble.strokeWidth}
                                     lineCap="round"
                                     lineJoin="round"
@@ -619,10 +619,10 @@ const Paint = () => {
                             console.log("Update Lines")
                             return (
                                 <Line
-                                    key = {line.id}
-                                    id = {line.id}
+                                    key = {line.ID}
+                                    id = {line.ID}
                                     points = {line.points}
-                                    stroke = {line.color}
+                                    stroke = {line.stroke_Colour}
                                     strokeWidth = {line.strokeWidth}
                                     lineCap="round"
                                     lineJoin="round"
@@ -635,16 +635,16 @@ const Paint = () => {
                         {rectangles.map((rectangle) => {
                             return (
                                 <Rect
-                                    key = {rectangle.id}
-                                    id = {rectangle.id}
+                                    key = {rectangle.ID}
+                                    id = {rectangle.ID}
                                     x={rectangle.X}
                                     y={rectangle.Y}
                                     width={rectangle.width}
                                     height={rectangle.height}
-                                    stroke = {rectangle.color}
+                                    stroke = {rectangle.stroke_Colour}
                                     strokeWidth = {rectangle.strokeWidth}
-                                    fill={rectangle.fillColor}
-                                    onClick={() => handleFill(rectangle.id,rectangle.type)}
+                                    fill={rectangle.fill_Colour}
+                                    onClick={() => handleFill(rectangle.ID,rectangle.type)}
                                 >
                                     
                                 </Rect>
@@ -654,16 +654,16 @@ const Paint = () => {
                         {squares.map((square) => {
                             return (
                                 <Rect
-                                    key = {square.id}
-                                    id = {square.id}
+                                    key = {square.ID}
+                                    id = {square.ID}
                                     x={square.X}
                                     y={square.Y}
                                     width={square.width}
                                     height={square.height}
-                                    stroke = {square.color}
+                                    stroke = {square.stroke_Colour}
                                     strokeWidth = {square.strokeWidth}
-                                    fill={square.fillColor}
-                                    onClick={() => handleFill(square.id,square.type)}
+                                    fill={square.fill_Colour}
+                                    onClick={() => handleFill(square.ID,square.type)}
                                 >
                                     
                                 </Rect>
@@ -672,32 +672,32 @@ const Paint = () => {
                         {triangles.map((triangle) => {
                             return(
                                 <RegularPolygon
-                                    key={triangle.id}
-                                    id={triangle.id}
+                                    key={triangle.ID}
+                                    id={triangle.ID}
                                     x={triangle.X}
                                     y={triangle.Y} 
                                     sides={3} 
                                     radius={triangle.radius} 
-                                    stroke = {triangle.color}
+                                    stroke = {triangle.stroke_Colour}
                                     strokeWidth = {triangle.strokeWidth}
                                     rotation={triangle.rotate}
-                                    fill={triangle.fillColor}
-                                    onClick={() => handleFill(triangle.id,triangle.type)} 
+                                    fill={triangle.fill_Colour}
+                                    onClick={() => handleFill(triangle.ID,triangle.type)} 
                                 />
                             )
                         })}
                         {circles.map((circle) => {
                             return (
                                 <Circle
-                                    key={circle.id}
-                                    id={circle.id}
+                                    key={circle.ID}
+                                    id={circle.ID}
                                     x={circle.X}
                                     y={circle.Y}
                                     radius={circle.radius}
-                                    stroke={circle.color}
+                                    stroke={circle.stroke_Colour}
                                     strokeWidth={circle.strokeWidth}
-                                    fill={circle.fillColor}
-                                    onClick={() => handleFill(circle.id,circle.type)}
+                                    fill={circle.fill_Colour}
+                                    onClick={() => handleFill(circle.ID,circle.type)}
                                 />
                             );
                         })}
@@ -705,16 +705,16 @@ const Paint = () => {
                         {ellipses.map((ellipse) => {
                             return (
                                 <Ellipse
-                                    key={ellipse.id}
-                                    id={ellipse.id}
+                                    key={ellipse.ID}
+                                    id={ellipse.ID}
                                     x={ellipse.X}
                                     y={ellipse.Y}
                                     radiusX={ellipse.radiusX}
                                     radiusY={ellipse.radiusY}
-                                    stroke={ellipse.color}
+                                    stroke={ellipse.stroke_Colour}
                                     strokeWidth={ellipse.strokeWidth}
-                                    fill={ellipse.fillColor}
-                                    onClick={() => handleFill(ellipse.id,ellipse.type)}
+                                    fill={ellipse.fill_Colour}
+                                    onClick={() => handleFill(ellipse.ID,ellipse.type)}
                                 />
                             );
                         })}
