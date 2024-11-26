@@ -56,7 +56,7 @@ const Paint = () => {
     const isDrawing = useRef(false);
     const [strokeColor, setStrokeColor] = useState("black")
     const [strokeWidth, setStrokeWidth] = useState(5)
-    const [fillColor, setFillColor] = useState()
+    const [fillColor, setFillColor] = useState() //I think it will need to a property in every shape
     const currentShapeId = useRef()
 
     //Shapes
@@ -71,8 +71,10 @@ const Paint = () => {
     ////
     ////    
   
+    // We can only drag shapes if we select them
+    const isDraggable = (tool === Tool.Select);
+    const transformerRef = useRef();
 
-    
     function handleMouseDown(){
         if (tool === Tool.Select) return;
         
@@ -104,8 +106,10 @@ const Paint = () => {
                         points: [x, y],
                         color: strokeColor,
                         strokeWidth: strokeWidth,
-                        radius: 0,
-
+                        
+                        scaleX: 1,
+                        scaleY: 1,
+                        rotation: 0,
                     }
                 ])
 
@@ -122,6 +126,10 @@ const Paint = () => {
                         points: [x, y, x+5, y+5],
                         color: strokeColor,
                         strokeWidth: strokeWidth,
+
+                        scaleX: 1,
+                        scaleY: 1,
+                        rotation: 0,
                     }
                 ])
 
@@ -140,7 +148,11 @@ const Paint = () => {
                         color: strokeColor,
                         strokeWidth: strokeWidth,
                         width:0,
-                        height:0
+                        height:0,
+
+                        scaleX: 1,
+                        scaleY: 1,
+                        rotation: 0,
                     }
                 ])
 
@@ -159,6 +171,10 @@ const Paint = () => {
                         strokeWidth: strokeWidth,
                         width:0,
                         height:0,
+
+                        scaleX: 1,
+                        scaleY: 1,
+                        rotation: 0,
                     }
                 ])
 
@@ -170,6 +186,7 @@ const Paint = () => {
                 setTriangles((prevTriangles) => [
                     ...prevTriangles,
                     {
+                        type: Tool.Triangle,
                         id: id,
                         X: x, 
                         Y: y,
@@ -177,6 +194,10 @@ const Paint = () => {
                         strokeWidth: strokeWidth,
                         radius:0,
                         rotate:0,
+
+                        scaleX: 1,
+                        scaleY: 1,
+                        rotation: 0,
                         
                     }
                 ])
@@ -188,12 +209,17 @@ const Paint = () => {
                 setCircle((prevCircles) => [
                     ...prevCircles,
                     {
+                        type: Tool.Circle,
                         id: id,
                         X: x, 
                         Y: y,
                         color: strokeColor,
                         strokeWidth: strokeWidth,
                         radius: 0,
+
+                        scaleX: 1,
+                        scaleY: 1,
+                        rotation: 0,
 
                     }
                 ])
@@ -207,6 +233,7 @@ const Paint = () => {
                 setEllipse((prevEllipses) => [
                     ...prevEllipses,
                     {
+                        type: Tool.Ellipse,
                         id: id,
                         X: x, 
                         Y: y,
@@ -215,6 +242,9 @@ const Paint = () => {
                         radiusX: 0,
                         radiusY: 0,
 
+                        scaleX: 1,
+                        scaleY: 1,
+                        rotation: 0,
                     }
                 ])
 
@@ -477,12 +507,18 @@ const Paint = () => {
                                     lineCap="round"
                                     lineJoin="round"
 
-                                    //Drag and Transformer
-                                    draggable
-                                    scaleX
-                                    scaleY
-                                    onDragStart={handleDragStart}
-                                    onDragEnd={handleDragEnd}
+                                    //For transformation
+                                    scaleX = {scribble.scaleX}
+                                    scaleY = {scribble.scaleY}
+                                    rotation = {scribble.rotation}
+
+                                    //Drag and Transform (Resize/Rotate)
+                                    draggable = {isDraggable}
+                                    // Idk yet which of the following we don't need
+                                    // onClick = {}
+                                    // onDragStart = {}
+                                    // onDragEnd = {}
+                                    // onTransformEnd = {}
 
                                 >
 
@@ -582,7 +618,7 @@ const Paint = () => {
                             );
                         })}
 
-                        <Transformer ref={transformerRef} />
+                        {/* <Transformer ref={transformerRef} /> */}
                     </Layer>
                 </Stage>
             </div>
