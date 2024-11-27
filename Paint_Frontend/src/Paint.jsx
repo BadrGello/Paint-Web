@@ -303,7 +303,22 @@ const Paint = () => {
             {
                 console.log("will delete");
                 switch(type){
-                    
+                    case Tool.Scribble:{
+                        setScribbles((prevScribbles) =>
+                            prevScribbles.map((scribble) =>
+                              scribble.ID === id ? { ...scribble, deleted:true } : scribble
+                            )
+                          );
+                        break;
+                    }
+                    case Tool.Line:{
+                        setLines((prevLines) =>
+                            prevLines.map((line) =>
+                              line.ID === id ? { ...line, deleted:true } : line
+                            )
+                          );
+                        break;
+                    }
                     case Tool.Rectangle:{
                         setRectangles((prevRectangles) =>
                             prevRectangles.map((rectangle) =>
@@ -910,6 +925,7 @@ const Paint = () => {
 
                         {/* Show each scribble in scribbles */}
                         {scribbles.map((scribble) => {
+                            if(scribble.deleted)return;
                             return (
                                 <Line
                                     key = {scribble.ID}
@@ -926,7 +942,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, scribble.ID,scribble.type)}
 
                                     //For transformation
-                                    onClick = {handleSelect}
+                                    onClick={(e) => {handleSelect(e); handleDelete(scribble.ID,scribble.type)}}
                                     ref={shapeRef}
                                     scaleX = {scribble.scaleX}
                                     scaleY = {scribble.scaleY}
@@ -956,7 +972,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, line.ID,line.type)}
 
                                     //For transformation
-                                    onClick = {handleSelect}
+                                    onClick={(e) => {handleSelect(e); handleDelete(line.ID,line.type)}}
                                     ref={shapeRef}
                                     scaleX = {line.scaleX}
                                     scaleY = {line.scaleY}
