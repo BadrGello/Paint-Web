@@ -3,6 +3,8 @@ package com.team.Paint_Backend;
 import java.util.Vector;
 
 public class DefaultShape {
+    private boolean deleted;
+    private int zIndex;
     private String ID;
     private String type;
     private double x;
@@ -19,6 +21,27 @@ public class DefaultShape {
     private double radiusX;
     private double radiusY;
     private Vector<Double> points;
+
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public boolean getDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public int getZIndex() {
+        return this.zIndex;
+    }
+
+    public void setZIndex(int zIndex) {
+        this.zIndex = zIndex;
+    }
 
     public String getID() {
         return this.ID;
