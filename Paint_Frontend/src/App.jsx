@@ -1,6 +1,6 @@
 import Paint from './Paint';
 import Apps from './TransEx';
-import ScribbleExample from './ScribbleExample'
+import SeparateArraysExample from './exindex';
 
 function App() {
 
