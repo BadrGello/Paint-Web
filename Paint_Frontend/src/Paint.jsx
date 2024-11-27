@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { Layer, Line, Stage, Rect   ,RegularPolygon , Circle, Ellipse } from 'react-konva';
+import React, { useRef, useState, useEffect  } from 'react';
+import { Layer, Line, Stage, Rect   ,RegularPolygon , Circle, Ellipse, Transformer } from 'react-konva';
 // for generating unique id's for shapes
 import { v4 as uuidv4 } from 'uuid';
 
@@ -99,9 +99,6 @@ const Paint = () => {
     ////
     ////
     ////    
-    // We can only drag shapes if we select them
-    const isDraggable = (tool === Tool.Select);
-    const transformerRef = useRef();
 
     function handleMouseDown(){
         if (tool === Tool.Select) return;
@@ -228,7 +225,6 @@ const Paint = () => {
                         stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
                         radius:0,
-                        rotate:0,
 
                         scaleX: 1,
                         scaleY: 1,
@@ -248,6 +244,8 @@ const Paint = () => {
                         ...Properties,
                         type: Tool.Circle,
                         ID: id,
+                        X: x, 
+                        Y: y,
                         stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
                         radius: 0,
@@ -518,7 +516,7 @@ const Paint = () => {
                     return {
                     ...triangle,
                         radius:r,
-                        rotate:d,
+                        rotation:d,
                     }
                 }
 
@@ -574,6 +572,187 @@ const Paint = () => {
         // User is not clicking anymore
         isDrawing.current = false;
     }
+
+    // We can only drag shapes if we select them
+    const isDraggable = (tool === Tool.Select);
+    const transformerRef = useRef();
+    const shapeRef = useRef();
+    const [selectedId, setSelectedId] = useState(null); // State to track the selected shapeID
+
+    const handleSelect = (e) => {
+        if (tool === Tool.Select) setSelectedId(e.target.id());
+    };
+
+    const handleDeselect = (e) => {
+        if (e.target === e.target.getStage()) {
+            setSelectedId(null);
+            transformerRef.current.nodes([]);
+        }
+    };
+
+    useEffect(() => {
+        if (transformerRef.current && selectedId) {
+          const stage = transformerRef.current.getStage();
+          const selectedNode = stage.findOne(`#${selectedId}`);
+          if (selectedNode) {
+            transformerRef.current.nodes([selectedNode]);
+            transformerRef.current.getLayer().batchDraw();
+          }
+        }
+      }, [selectedId]);
+
+    const handleTransformerEnd = (e, id, type) => {
+        console.log("Transform End", e.target);
+        const node = e.target; // Get the transformed node (Shape)
+    
+        const scaleX = node.scaleX();
+        const scaleY = node.scaleY();
+        const rotation = node.rotation();
+
+        console.log("ScaleX:", scaleX, "ScaleY:", scaleY, "Rotation:", rotation, node.type);
+
+        // Reset scale to 1 after transformation, idk wether this is really correct
+        node.scaleX(1);
+        node.scaleY(1);
+
+        switch(type){
+            case Tool.Scribble:{
+                setScribbles((prevScribbles) => prevScribbles.map((scribble) => {
+                    if (scribble.ID === id){
+                        
+                        return {
+                            ...scribble,
+                            x: node.x(),
+                            y: node.y(),
+                            rotation: rotation,
+                            scaleX: scaleX,
+                            scaleY: scaleY,
+                        }
+                    }
+                    
+                    return scribble;
+                })
+                )
+                break;
+            }
+
+            case Tool.Line:{
+                setLines((prevLines) => prevLines.map((line) => {
+                    if (line.ID === id){
+                        return {
+                            ...line,
+                            x: node.x(),
+                            y: node.y(),
+                            rotation: rotation,
+                            scaleX: scaleX,
+                            scaleY: scaleY,
+                        }
+                    }
+
+                    return line;
+                }))
+
+                break;
+            }
+
+            case Tool.Rectangle:{
+                 setRectangles((prevRectangles) => prevRectangles.map((rectangle) => {
+                    if (rectangle.ID === id){
+                        return {
+                            ...rectangle,
+                            x: node.x(),
+                            y: node.y(),
+                            rotation: rotation,
+                            scaleX: scaleX,
+                            scaleY: scaleY,
+                        }
+                    }
+
+                    return rectangle;
+                }))
+
+                break;
+            }
+
+            case Tool.Square:{
+                setSquares((prevSquares) => prevSquares.map((square) => {
+                    if (square.ID === id){
+                       return {
+                        ...square,
+                        x: node.x(),
+                        y: node.y(),
+                        rotation: rotation,
+                        scaleX: scaleX,
+                        scaleY: scaleY,
+                       }
+                   }
+
+                   return square;
+               }))
+
+               break;
+            }
+            case Tool.Triangle:{
+                setTriangles((prevTriangles) => prevTriangles.map((triangle) => {
+
+                    if (triangle.ID === id){
+                    
+                    return {
+                        ...triangle,
+                        x: node.x(),
+                        y: node.y(),
+                        rotation: rotation,
+                        scaleX: scaleX,
+                        scaleY: scaleY,
+                    }
+                }
+
+                return triangle;
+                }))
+
+                break;
+            }
+
+            case Tool.Circle: {
+                setCircle((prevCircles) =>
+                    prevCircles.map((circle) => {
+                        if (circle.ID === id) {
+                            return {
+                                ...circle,
+                                x: node.x(),
+                                y: node.y(),
+                                rotation: rotation,
+                                scaleX: scaleX,
+                                scaleY: scaleY,
+                            };
+                        }
+                        return circle;
+                    })
+                );
+                break;
+            }
+
+            case Tool.Ellipse: {
+                setEllipse((prevEllipses) =>
+                    prevEllipses.map((ellipse) => {
+                        if (ellipse.ID === id) {
+                            return {
+                                ...ellipse,
+                                x: node.x(),
+                                y: node.y(),
+                                rotation: rotation,
+                                scaleX: scaleX,
+                                scaleY: scaleY,
+                            };
+                        }
+                        return ellipse;
+                    })
+                );
+                break;
+            }
+        }
+        
+    };
 
 
     return (
@@ -650,7 +829,17 @@ const Paint = () => {
                 <Stage
                     width={window.innerWidth}
                     height={window.innerHeight}
-                    onMouseDown={handleMouseDown}
+                    onMouseDown={(e) => {
+                        if (tool===Tool.Select){
+                            console.log("handleDeselect")
+                            handleDeselect(e);
+                        }
+                        else {
+                            handleMouseDown(e);
+                        }
+                        
+                        
+                    }}
                     onMouseUp={handleMouseUp}
                     onMouseMove={handleMouseMove}
                     ref={stageRef} //For getting positions (cursor)
@@ -671,19 +860,16 @@ const Paint = () => {
                                     lineCap="round"
                                     lineJoin="round"
 
+                                    draggable = {isDraggable}
+                                    onDragEnd={(e) => handleDragEnd(e, scribble.ID,scribble.type)}
+
                                     //For transformation
+                                    onClick = {handleSelect}
+                                    ref={shapeRef}
                                     scaleX = {scribble.scaleX}
                                     scaleY = {scribble.scaleY}
-                                    rotation = {scribble.rotation}
-
-                                    //Drag and Transform (Resize/Rotate)
-                                    draggable = {isDraggable}
-                                    onDragEnd={(e) => handleDragEnd(e, scribble.id,scribble.type)}
-                                    // Idk yet which of the following we don't need
-                                    // onClick = {}
-                                    // onDragStart = {}
-                                    // onDragEnd = {}
-                                    // onTransformEnd = {}
+                                    rotation = {scribble.rotation}    
+                                    onTransformEnd={(e) => handleTransformerEnd(e, scribble.ID, scribble.type)}
 
                                 >
 
@@ -702,8 +888,17 @@ const Paint = () => {
                                     strokeWidth = {line.strokeWidth}
                                     lineCap="round"
                                     lineJoin="round"
+
                                     draggable = {isDraggable}
-                                    onDragEnd={(e) => handleDragEnd(e, line.id,line.type)}
+                                    onDragEnd={(e) => handleDragEnd(e, line.ID,line.type)}
+
+                                    //For transformation
+                                    onClick = {handleSelect}
+                                    ref={shapeRef}
+                                    scaleX = {line.scaleX}
+                                    scaleY = {line.scaleY}
+                                    rotation = {line.rotation}    
+                                    onTransformEnd={(e) => handleTransformerEnd(e, line.ID, line.type)}
                                 >
 
                                 </Line>
@@ -722,9 +917,17 @@ const Paint = () => {
                                     stroke = {rectangle.stroke_Colour}
                                     strokeWidth = {rectangle.strokeWidth}
                                     fill={rectangle.fill_Colour}
-                                    onClick={() => handleFill(rectangle.ID,rectangle.type)}
+
                                     draggable = {isDraggable}
-                                    onDragEnd={(e) => handleDragEnd(e, rectangle.id,rectangle.type)}
+                                    onDragEnd={(e) => handleDragEnd(e, rectangle.ID,rectangle.type)}
+
+                                    //For transformation
+                                    onClick={(e) => {handleFill(rectangle.ID,rectangle.type); handleSelect(e)}}
+                                    ref={shapeRef}
+                                    scaleX = {rectangle.scaleX}
+                                    scaleY = {rectangle.scaleY}
+                                    rotation = {rectangle.rotation}    
+                                    onTransformEnd={(e) => handleTransformerEnd(e, rectangle.ID, rectangle.type)}
                                 >
                                     
                                 </Rect>
@@ -743,9 +946,17 @@ const Paint = () => {
                                     stroke = {square.stroke_Colour}
                                     strokeWidth = {square.strokeWidth}
                                     fill={square.fill_Colour}
-                                    onClick={() => handleFill(square.ID,square.type)}
+
                                     draggable = {isDraggable}
-                                    onDragEnd={(e) => handleDragEnd(e, square.id,square.type)}
+                                    onDragEnd={(e) => handleDragEnd(e, square.ID,square.type)}
+
+                                    //For transformation
+                                    onClick={(e) => {handleFill(square.ID,square.type); handleSelect(e)}}
+                                    ref={shapeRef}
+                                    scaleX = {square.scaleX}
+                                    scaleY = {square.scaleY}
+                                    rotation = {square.rotation}    
+                                    onTransformEnd={(e) => handleTransformerEnd(e, square.ID, square.type)}
                                 >
                                     
                                 </Rect>
@@ -762,11 +973,20 @@ const Paint = () => {
                                     radius={triangle.radius} 
                                     stroke = {triangle.stroke_Colour}
                                     strokeWidth = {triangle.strokeWidth}
-                                    rotation={triangle.rotate}
+                                    // rotation={triangle.rotate}
                                     fill={triangle.fill_Colour}
-                                    onClick={() => handleFill(triangle.ID,triangle.type)} 
+
                                     draggable = {isDraggable}
-                                    onDragEnd={(e) => handleDragEnd(e, triangle.id,triangle.type)}
+                                    onDragEnd={(e) => handleDragEnd(e, triangle.ID,triangle.type)}
+
+                                    //For transformation
+                                    onClick={(e) => {handleFill(triangle.ID,triangle.type); handleSelect(e)}}
+                                    ref={shapeRef}
+                                    scaleX = {triangle.scaleX}
+                                    scaleY = {triangle.scaleY}
+                                    rotation = {triangle.rotation}    
+                                    onTransformEnd={(e) => handleTransformerEnd(e, triangle.ID, triangle.type)}
+
                                 />
                             )
                         })}
@@ -781,9 +1001,17 @@ const Paint = () => {
                                     stroke={circle.stroke_Colour}
                                     strokeWidth={circle.strokeWidth}
                                     fill={circle.fill_Colour}
-                                    onClick={() => handleFill(circle.ID,circle.type)}
+
                                     draggable = {isDraggable}
-                                    onDragEnd={(e) => handleDragEnd(e, circle.id,circle.type)}
+                                    onDragEnd={(e) => handleDragEnd(e, circle.ID,circle.type)}
+
+                                    //For transformation
+                                    onClick={(e) => {handleFill(circle.ID,circle.type); handleSelect(e)}}
+                                    ref={shapeRef}
+                                    scaleX = {circle.scaleX}
+                                    scaleY = {circle.scaleY}
+                                    rotation = {circle.rotation}    
+                                    onTransformEnd={(e) => handleTransformerEnd(e, circle.ID, circle.type)}
                                 />
                             );
                         })}
@@ -800,14 +1028,23 @@ const Paint = () => {
                                     stroke={ellipse.stroke_Colour}
                                     strokeWidth={ellipse.strokeWidth}
                                     fill={ellipse.fill_Colour}
-                                    onClick={() => handleFill(ellipse.ID,ellipse.type)}
+
                                     draggable = {isDraggable}
-                                    onDragEnd={(e) => handleDragEnd(e, ellipse.id,ellipse.type)}
+                                    onDragEnd={(e) => handleDragEnd(e, ellipse.ID,ellipse.type)}
+
+                                    //For transformation
+                                    onClick={(e) => {handleFill(ellipse.ID,ellipse.type); handleSelect(e)}}
+                                    ref={shapeRef}
+                                    scaleX = {ellipse.scaleX}
+                                    scaleY = {ellipse.scaleY}
+                                    rotation = {ellipse.rotation}    
+                                    onTransformEnd={(e) => handleTransformerEnd(e, ellipse.ID, ellipse.type)}
                                 />
                             );
                         })}
 
                         {/* <Transformer ref={transformerRef} /> */}
+                        <Transformer ref={transformerRef} />
                     </Layer>
                 </Stage>
             </div>
