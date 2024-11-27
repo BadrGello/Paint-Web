@@ -192,8 +192,8 @@ const Paint = () => {
                         ...Properties,
                         type: Tool.Rectangle,
                         ID: id,
-                        X: x, 
-                        Y: y,
+                        x: x, 
+                        y: y,
                         stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
                         width:0,
@@ -220,8 +220,8 @@ const Paint = () => {
                         ...Properties,
                         type: Tool.Square,
                         ID: id,
-                        X: x, 
-                        Y: y,
+                        x: x, 
+                        y: y,
                         stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
                         width:0,
@@ -249,8 +249,8 @@ const Paint = () => {
                         ...Properties,
                         type: Tool.Triangle,
                         ID: id,
-                        X: x, 
-                        Y: y,
+                        x: x, 
+                        y: y,
                         stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
                         radius:0,
@@ -277,8 +277,8 @@ const Paint = () => {
                         ...Properties,
                         type: Tool.Circle,
                         ID: id,
-                        X: x, 
-                        Y: y,
+                        x: x, 
+                        y: y,
                         stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
                         radius: 0,
@@ -307,8 +307,8 @@ const Paint = () => {
                         ...Properties,
                         type: Tool.Ellipse,
                         ID: id,
-                        X: x, 
-                        Y: y,
+                        x: x, 
+                        y: y,
                         stroke_Colour: strokeColor,
                         strokeWidth: strokeWidth,
                         radiusX: 0,
@@ -527,7 +527,7 @@ const Paint = () => {
                     prevScribbles.map((scribble) =>{
                         if(scribble.id === id) {
                             return { ...scribble,
-                                X:x,Y:y
+                                x:x,y:y
                     }
                 } return scribble;
             }
@@ -555,7 +555,7 @@ const Paint = () => {
             case Tool.Circle:{
                 setCircle((prevCircles) =>
                     prevCircles.map((circle) =>
-                    circle.id === id ?  { ...circle, X:x, Y:y } : circle
+                    circle.id === id ?  { ...circle, x:x, y:y } : circle
                 )
                 );
                 break;
@@ -563,7 +563,7 @@ const Paint = () => {
             case Tool.Ellipse:{
                 setEllipse((prevEllipses) =>
                     prevEllipses.map((Ellipse) =>
-                    Ellipse.id === id ? { ...Ellipse, X:x, Y:y } : Ellipse
+                    Ellipse.id === id ? { ...Ellipse, x:x, y:y } : Ellipse
                 )
                 );
                 break;
@@ -571,7 +571,7 @@ const Paint = () => {
             case Tool.Rectangle:{
                 setRectangles((prevRectangles) =>
                     prevRectangles.map((rectangle) =>
-                    rectangle.id === id ? { ...rectangle, X:x, Y:y } : rectangle
+                    rectangle.id === id ? { ...rectangle, x:x, y:y } : rectangle
                 )
                 );
                 break;
@@ -579,7 +579,7 @@ const Paint = () => {
             case Tool.Square:{
                 setSquares((prevSquares) =>
                     prevSquares.map((square) =>
-                    square.id === id ? { ...square,X:x, Y:y } : square
+                    square.id === id ? { ...square,x:x, y:y } : square
                 )
                 );
                 break;
@@ -587,7 +587,7 @@ const Paint = () => {
             case Tool.Triangle:{
                 setTriangles((prevTriangles) =>
                     prevTriangles.map((triangle) =>
-                    triangle.id === id ? { ...triangle, X:x, Y:y } : triangle
+                    triangle.id === id ? { ...triangle, x:x, y:y } : triangle
                     )
                 );
                 break;
@@ -655,8 +655,8 @@ const Paint = () => {
                     if (rectangle.ID === currentShapeId.current){
                         return {
                         ...rectangle,
-                            width:x-rectangle.X,
-                            height:y-rectangle.Y
+                            width:x-rectangle.x,
+                            height:y-rectangle.y
                         }
                     }
 
@@ -673,11 +673,11 @@ const Paint = () => {
                 setSquares((prevSquares) => prevSquares.map((square) => {
 
                     if (square.ID === currentShapeId.current){
-                       const D = (y - square.Y<0) ? -1 : 1
+                       const D = (y - square.y<0) ? -1 : 1
                        return {
                        ...square,
-                           width:x-square.X,
-                           height:D*((x-square.X>0)*(x-square.X)+(x-square.X<0)*-1*(x-square.X)),
+                           width:x-square.x,
+                           height:D*((x-square.x>0)*(x-square.x)+(x-square.x<0)*-1*(x-square.x)),
                        }
                    }
 
@@ -693,8 +693,8 @@ const Paint = () => {
                 setTriangles((prevTriangles) => prevTriangles.map((triangle) => {
 
                     if (triangle.ID === currentShapeId.current){
-                    const r = Math.sqrt(Math.pow(x-triangle.X,2)+Math.pow(y-triangle.Y,2))
-                    const d= Math.atan2((x-triangle.X),(triangle.Y-y))*(180/Math.PI)
+                    const r = Math.sqrt(Math.pow(x-triangle.x,2)+Math.pow(y-triangle.y,2))
+                    const d= Math.atan2((x-triangle.x),(triangle.y-y))*(180/Math.PI)
                     return {
                     ...triangle,
                         radius:r,
@@ -714,7 +714,7 @@ const Paint = () => {
                     prevCircles.map((circle) => {
                         if (circle.ID === currentShapeId.current) {
                             const radius = Math.sqrt(
-                                Math.pow(x - circle.X, 2) + Math.pow(y - circle.Y, 2)
+                                Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2)
                             ); 
                             return {
                                 ...circle,
@@ -732,8 +732,8 @@ const Paint = () => {
                 setEllipse((prevEllipses) =>
                     prevEllipses.map((ellipse) => {
                         if (ellipse.ID === currentShapeId.current) {
-                            const radiusX = Math.abs(x - ellipse.X);
-                            const radiusY = Math.abs(y - ellipse.Y); 
+                            const radiusX = Math.abs(x - ellipse.x);
+                            const radiusY = Math.abs(y - ellipse.y); 
             
                             return {
                                 ...ellipse,
@@ -937,18 +937,101 @@ const Paint = () => {
     };
     
     //Copy and Paste
+    const [copiedShape, setCopiedShape] = useState()
+    
+    const handleCopy = (e, shape) => {
+        if (tool === Tool.Copy && shape){
+            console.log(shape)
 
-
-
-    const handleCopy = (e) => {
-        if (tool === Tool.Copy){
-
+            setCopiedShape(shape);
         }
     }
 
     const handlePaste = (e) => {
-        if (tool === Tool.Paste){
+        if (tool === Tool.Paste && copiedShape){
 
+            //Get position of cursor from stageRef
+            const stage = stageRef.current;
+            const {x, y} = stage.getPointerPosition();
+            //Generate unique id for the shape and stores the current shape id in ref for usage in handleMouseMove()
+            const id = uuidv4();
+            currentShapeId.current = id;
+
+            setZIndexTracker(zIndexTracker + 1);
+            
+            let pastedShape
+
+            if (copiedShape.type === Tool.Line){
+                const dx=x-copiedShape.points[0];
+                const dy=y-copiedShape.points[1];
+
+                pastedShape = {
+                    ...copiedShape,
+                    ID: id,
+                    points:[copiedShape.points[0]+dx, copiedShape.points[1]+dy, copiedShape.points[2]+dx, copiedShape.points[3]+dy],
+                    zIndex: zIndexTracker,
+                }
+            }
+            else if (copiedShape.type === Tool.Scribble){
+
+                pastedShape = {
+                    ...copiedShape,
+                    ID: id,
+                    x: x,
+                    y: y,
+                    zIndex: zIndexTracker,
+                    // points: copiedShape.points.map((point, index) =>
+                    // index % 2 === 0 ? point - x : point - y // Adjust x and y coordinates of each point
+                    // ),
+                }
+            }
+
+            //Flawed Logic
+            else {
+                pastedShape = {
+                    ...copiedShape,
+                    ID: id,
+                    x: x,
+                    y: y,
+                    zIndex: zIndexTracker,
+                }
+            }
+           
+            console.log("Paste...,", pastedShape);
+
+            switch(copiedShape.type){
+
+                case Tool.Scribble:{
+                    setScribbles((prevScribbles) => [...prevScribbles, pastedShape]);
+                    console.log(scribbles)
+                    break;
+                }
+                case Tool.Line:{
+                    setLines((prevLines) => [...prevLines, pastedShape]);
+                    break;
+                }
+                case Tool.Square:{
+                    setSquares((prevSquares) => [...prevSquares, pastedShape]);
+                    break;
+                }
+                case Tool.Rectangle:{
+                    setRectangles((prevRectangles) => [...prevRectangles, pastedShape]);
+                    break;
+                }
+                case Tool.Circle:{
+                    setCircle((prevCircles) => [...prevCircles, pastedShape]);
+                    break;
+                }
+                case Tool.Ellipse:{
+                    setEllipse((prevEllipses) => [...prevEllipses, pastedShape]);
+                    break;
+                }
+                case Tool.Triangle:{
+                    setTriangles((prevTriangles) => [...prevTriangles, pastedShape]);
+                    break;
+                }
+    
+            }
         }
     }
 
@@ -1028,15 +1111,17 @@ const Paint = () => {
                     width={window.innerWidth}
                     height={window.innerHeight}
                     onMouseDown={(e) => {
-                        if (tool===Tool.Select){
+                        if (tool === Tool.Select){
                             console.log("handleDeselect")
                             handleDeselect(e);
+                        }
+                        else if (tool === Tool.Paste){
+                            console.log("handlePaste")
+                            handlePaste(e);
                         }
                         else {
                             handleMouseDown(e);
                         }
-                        
-                        
                     }}
                     onMouseUp={handleMouseUp}
                     onMouseMove={handleMouseMove}
@@ -1054,8 +1139,8 @@ const Paint = () => {
                                     key = {shape.ID}
                                     id = {shape.ID}
                                     points = {shape.points}
-                                    x={shape.X}
-                                    y={shape.Y}
+                                    x={shape.x}
+                                    y={shape.y}
                                     stroke = {shape.stroke_Colour}
                                     strokeWidth = {shape.strokeWidth}
                                     lineCap="round"
@@ -1066,7 +1151,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleSelect(e); handleDelete(shape.ID,shape.type)}}
+                                    onClick={(e) => {handleSelect(e); handleDelete(shape.ID,shape.type); handleCopy(e, shape); }}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1096,7 +1181,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleSelect(e); handleDelete(shape.ID,shape.type)}}
+                                    onClick={(e) => {handleSelect(e); handleDelete(shape.ID,shape.type); handleCopy(e, shape); }}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1112,8 +1197,8 @@ const Paint = () => {
                                 <Rect
                                     key = {shape.ID}
                                     id = {shape.ID}
-                                    x={shape.X}
-                                    y={shape.Y}
+                                    x={shape.x}
+                                    y={shape.y}
                                     width={shape.width}
                                     height={shape.height}
                                     stroke = {shape.stroke_Colour}
@@ -1125,7 +1210,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type)}}
+                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type); handleCopy(e, shape); }}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1142,8 +1227,8 @@ const Paint = () => {
                                 <Rect
                                     key = {shape.ID}
                                     id = {shape.ID}
-                                    x={shape.X}
-                                    y={shape.Y}
+                                    x={shape.x}
+                                    y={shape.y}
                                     width={shape.width}
                                     height={shape.height}
                                     stroke = {shape.stroke_Colour}
@@ -1155,7 +1240,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type)}}
+                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type); handleCopy(e, shape); }}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1172,8 +1257,8 @@ const Paint = () => {
                                 <RegularPolygon
                                     key={shape.ID}
                                     id={shape.ID}
-                                    x={shape.X}
-                                    y={shape.Y} 
+                                    x={shape.x}
+                                    y={shape.y} 
                                     sides={3} 
                                     radius={shape.radius} 
                                     stroke = {shape.stroke_Colour}
@@ -1186,7 +1271,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type)}}
+                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type); handleCopy(e, shape); }}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1201,8 +1286,8 @@ const Paint = () => {
                                 <Circle
                                     key={shape.ID}
                                     id={shape.ID}
-                                    x={shape.X}
-                                    y={shape.Y}
+                                    x={shape.x}
+                                    y={shape.y}
                                     radius={shape.radius}
                                     stroke={shape.stroke_Colour}
                                     strokeWidth={shape.strokeWidth}
@@ -1213,7 +1298,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type)}}
+                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type); handleCopy(e, shape); }}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1228,8 +1313,8 @@ const Paint = () => {
                                 <Ellipse
                                     key={shape.ID}
                                     id={shape.ID}
-                                    x={shape.X}
-                                    y={shape.Y}
+                                    x={shape.x}
+                                    y={shape.y}
                                     radiusX={shape.radiusX}
                                     radiusY={shape.radiusY}
                                     stroke={shape.stroke_Colour}
@@ -1241,7 +1326,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type)}}
+                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type); handleCopy(e, shape); }}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
