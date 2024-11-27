@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect  } from 'react';
-import { Layer, Line, Stage, Rect   ,RegularPolygon , Circle, Ellipse, Transformer } from 'react-konva';
+import { Layer, Line, Stage, Rect, RegularPolygon , Circle, Ellipse, Transformer } from 'react-konva';
 // for generating unique id's for shapes
 import { v4 as uuidv4 } from 'uuid';
 
@@ -142,8 +142,6 @@ const Paint = () => {
                     {
                         ...Properties,
                         type: Tool.Scribble,
-                        // x: x,
-                        // y: y,
                         ID: id,
                         points: [x, y],
                         stroke_Colour: strokeColor,
@@ -523,29 +521,30 @@ const Paint = () => {
     }
     const handleDragEnd = (e, id,type) => {
         const { x, y } = e.target.position();
+        console.log("drag", lines)
         switch(type){
             case Tool.Scribble:{
                 setScribbles((prevScribbles) =>
                     prevScribbles.map((scribble) =>{
-                        if(scribble.id === id) {
-                            return { ...scribble,
-                                x:x,y:y
-                    }
-                } return scribble;
+                        if(scribble.ID === id) {
+                            return { 
+                                ...scribble,
+                                x:x,
+                                y:y,
+                        }} 
+                        return scribble;
+                }));
+                break;     
             }
-                        
-                )
-            );
-        break;     
-        }
             case Tool.Line:{
                 setLines((prevLines) =>
                     prevLines.map((line) =>{
-                        if(line.id === id) {
+                        if(line.ID === id) {
                             const dx=x-line.points[0];
                             const dy=y-line.points[1];
                             return { ...line,
-                                 point:[line.points[0]+dx,line.points[1]+dy,line.points[2]+dx,line.points[3]+dy] 
+                                 x:x,
+                                 y:y,
                     } 
                 } return line;
             }
@@ -557,7 +556,7 @@ const Paint = () => {
             case Tool.Circle:{
                 setCircle((prevCircles) =>
                     prevCircles.map((circle) =>
-                    circle.id === id ?  { ...circle, x:x, y:y } : circle
+                    circle.ID === id ?  { ...circle, x:x, y:y } : circle
                 )
                 );
                 break;
@@ -565,7 +564,7 @@ const Paint = () => {
             case Tool.Ellipse:{
                 setEllipse((prevEllipses) =>
                     prevEllipses.map((Ellipse) =>
-                    Ellipse.id === id ? { ...Ellipse, x:x, y:y } : Ellipse
+                    Ellipse.ID === id ? { ...Ellipse, x:x, y:y } : Ellipse
                 )
                 );
                 break;
@@ -573,7 +572,7 @@ const Paint = () => {
             case Tool.Rectangle:{
                 setRectangles((prevRectangles) =>
                     prevRectangles.map((rectangle) =>
-                    rectangle.id === id ? { ...rectangle, x:x, y:y } : rectangle
+                    rectangle.ID === id ? { ...rectangle, x:x, y:y } : rectangle
                 )
                 );
                 break;
@@ -581,7 +580,7 @@ const Paint = () => {
             case Tool.Square:{
                 setSquares((prevSquares) =>
                     prevSquares.map((square) =>
-                    square.id === id ? { ...square,x:x, y:y } : square
+                    square.ID === id ? { ...square,x:x, y:y } : square
                 )
                 );
                 break;
@@ -589,13 +588,12 @@ const Paint = () => {
             case Tool.Triangle:{
                 setTriangles((prevTriangles) =>
                     prevTriangles.map((triangle) =>
-                    triangle.id === id ? { ...triangle, x:x, y:y } : triangle
+                    triangle.ID === id ? { ...triangle, x:x, y:y } : triangle
                     )
                 );
                 break;
             }
         }
-        
       };
 
     function handleMouseMove() {
@@ -762,12 +760,15 @@ const Paint = () => {
     const transformerRef = useRef();
     const shapeRef = useRef();
     const [selectedId, setSelectedId] = useState(null); // State to track the selected shapeID
-
+    const [xCopy, setxCopy] = useState(null); 
+    const [yCopy, setyCopy] = useState(null);
+    
     const handleSelect = (e) => {
         if (tool === Tool.Select) setSelectedId(e.target.id());
     };
 
     const handleDeselect = (e) => {
+        console.log(squares[squares.length-1])
         if (e.target === e.target.getStage()) {
             setSelectedId(null);
             transformerRef.current.nodes([]);
@@ -941,7 +942,13 @@ const Paint = () => {
     //Copy and Paste
     const [copiedShape, setCopiedShape] = useState()
     
+    ////Ali////
+    //Send to backend for prototype//
     const handleCopy = (e, shape) => {
+        const {x, y} = stageRef.current.getPointerPosition();
+        setxCopy(x);
+        setyCopy(y);
+
         if (tool === Tool.Copy && shape){
             console.log(shape)
 
@@ -951,7 +958,6 @@ const Paint = () => {
 
     const handlePaste = (e) => {
         if (tool === Tool.Paste && copiedShape){
-
             //Get position of cursor from stageRef
             const stage = stageRef.current;
             const {x, y} = stage.getPointerPosition();
@@ -961,44 +967,17 @@ const Paint = () => {
 
             setZIndexTracker(zIndexTracker + 1);
             
+            //Final pastedShape to be displayed/sent
             let pastedShape
-
-            if (copiedShape.type === Tool.Line){
-                const dx=x-copiedShape.points[0];
-                const dy=y-copiedShape.points[1];
-
-                pastedShape = {
-                    ...copiedShape,
-                    ID: id,
-                    points:[copiedShape.points[0]+dx, copiedShape.points[1]+dy, copiedShape.points[2]+dx, copiedShape.points[3]+dy],
-                    zIndex: zIndexTracker,
-                }
+            pastedShape = {
+                ...copiedShape,
+                ID: id,
+                x: x-xCopy+copiedShape.x,
+                y: y-yCopy+copiedShape.y,
+                zIndex: zIndexTracker,
             }
-            else if (copiedShape.type === Tool.Scribble){
+            //We calulate relative position and add it to the copiedShape x, y 
 
-                pastedShape = {
-                    ...copiedShape,
-                    ID: id,
-                    x: x,
-                    y: y,
-                    zIndex: zIndexTracker,
-                    // points: copiedShape.points.map((point, index) =>
-                    // index % 2 === 0 ? point - x : point - y // Adjust x and y coordinates of each point
-                    // ),
-                }
-            }
-
-            //Flawed Logic
-            else {
-                pastedShape = {
-                    ...copiedShape,
-                    ID: id,
-                    x: x,
-                    y: y,
-                    zIndex: zIndexTracker,
-                }
-            }
-           
             console.log("Paste...,", pastedShape);
 
             switch(copiedShape.type){
@@ -1161,6 +1140,7 @@ const Paint = () => {
                             if(shape.deleted) return;
                             switch(shape.type){
                             case Tool.Scribble:  
+                            // console.log("Scribble",shape.x, shape.y,shape)
                             return (
                                 <Line
                                     key = {shape.ID}
@@ -1192,7 +1172,7 @@ const Paint = () => {
                         
                         
                         case Tool.Line :
-                            console.log("Update Lines")
+                            // console.log("Line Coords", shape.x, shape.y, shape)
                             return (
                                 <Line
                                     key = {shape.ID}
@@ -1202,6 +1182,8 @@ const Paint = () => {
                                     strokeWidth = {shape.strokeWidth}
                                     lineCap="round"
                                     lineJoin="round"
+                                    x = {shape.x}
+                                    y = {shape.y}
 
                                     draggable = {isDraggable}
                                     onDragStart={() => handleDragStart(shape.Id,shape.type)}
