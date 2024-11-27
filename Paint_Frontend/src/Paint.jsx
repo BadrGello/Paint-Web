@@ -142,6 +142,8 @@ const Paint = () => {
                     {
                         ...Properties,
                         type: Tool.Scribble,
+                        // x: x,
+                        // y: y,
                         ID: id,
                         points: [x, y],
                         stroke_Colour: strokeColor,
@@ -596,7 +598,7 @@ const Paint = () => {
         
       };
 
-    function handleMouseMove(){
+    function handleMouseMove() {
         // If user is not drawing (clicking) and moving the cursor, nothing should happen
         if (!isDrawing.current || tool === Tool.Select) return;
         
@@ -1035,6 +1037,31 @@ const Paint = () => {
         }
     }
 
+    //Avoiding problems when resizing the page
+    const canvasRef = useRef(null);
+    const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+
+    useEffect(() => {
+        // Update the canvas size when the component mounts
+        const updateCanvasSize = () => {
+        if (canvasRef.current) {
+            setCanvasSize({
+            width: canvasRef.current.offsetWidth,
+            height: canvasRef.current.offsetHeight,
+            });
+        }
+        };
+
+        // Call the function once on mount
+        updateCanvasSize();
+
+        // Add event listener to update size on window resize
+        window.addEventListener('resize', updateCanvasSize);
+
+        // Cleanup the event listener on unmount
+        return () => window.removeEventListener('resize', updateCanvasSize);
+    }, []);
+
     const renderShapes = [...squares, ...triangles,...rectangles, ...circles,...ellipses, ...lines,...scribbles].sort((a, b) => a.zIndex - b.zIndex);
     return (
         <div className="container">
@@ -1105,11 +1132,11 @@ const Paint = () => {
 
             {/*-------------------------------------------------------------------------------Start Canvas-------------------------------------------------------------------------------*/}
 
-            <div className="canvas">
+            <div className="canvas" ref={canvasRef}>
                 {/* <p>CANVAS</p> */}
                 <Stage
-                    width={window.innerWidth}
-                    height={window.innerHeight}
+                    width={canvasSize.width}
+                    height={canvasSize.height}
                     onMouseDown={(e) => {
                         if (tool === Tool.Select){
                             console.log("handleDeselect")
