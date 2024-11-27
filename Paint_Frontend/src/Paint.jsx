@@ -13,6 +13,7 @@ const Tool = {
     Line: "line",
     Triangle: "triangle",
     fillColor: "fillColor",
+    Delete: "delete",
     //more to be added//
 };
 
@@ -33,6 +34,7 @@ const Properties = {
     radiusY: null,
     points: null,
     rotation: null,
+    deleted: null,
     zIndex:null,
 
 }
@@ -167,6 +169,7 @@ const Paint = () => {
                         scaleY: 1,
                         rotation: 0,
                         zIndex:zIndexTracker,
+                        deleted: false,
                     }
                 ])
                 // console.log(lines[lines.length-1]);
@@ -195,6 +198,7 @@ const Paint = () => {
                         rotation: 0,
                         fill_Colour:"rgba(0, 0, 0, 0)",
                         zIndex:zIndexTracker,
+                        deleted: false,
                     }
                 ])
 
@@ -222,6 +226,7 @@ const Paint = () => {
                         rotation: 0,
                         fill_Colour:"rgba(0, 0, 0, 0)",
                         zIndex:zIndexTracker,
+                        deleted: false,
                     }
                 ])
                 // console.log(squares[squares.length-1])
@@ -249,6 +254,7 @@ const Paint = () => {
                         rotation: 0,
                         fill_Colour:"rgba(0, 0, 0, 0)",
                         zIndex:zIndexTracker,
+                        deleted: false,
                         
                     }
                 ])
@@ -276,6 +282,7 @@ const Paint = () => {
                         rotation: 0,
                         fill_Colour:"rgba(0, 0, 0, 0)",
                         zIndex:zIndexTracker,
+                        deleted: false,
 
                     }
                 ])
@@ -306,6 +313,7 @@ const Paint = () => {
                         rotation: 0,
                         fill_Colour:"rgba(0, 0, 0, 0)",
                         zIndex:zIndexTracker,
+                        deleted: false,
                     }
                 ])
 
@@ -314,6 +322,75 @@ const Paint = () => {
             
         }
     }
+
+    const handleDelete = (id,type) =>{
+        if(tool === Tool.Delete)
+            {
+                console.log("will delete");
+                switch(type){
+                    case Tool.Scribble:{
+                        setScribbles((prevScribbles) =>
+                            prevScribbles.map((scribble) =>
+                              scribble.ID === id ? { ...scribble, deleted:true } : scribble
+                            )
+                          );
+                        break;
+                    }
+                    case Tool.Line:{
+                        setLines((prevLines) =>
+                            prevLines.map((line) =>
+                              line.ID === id ? { ...line, deleted:true } : line
+                            )
+                          );
+                        break;
+                    }
+                    case Tool.Rectangle:{
+                        setRectangles((prevRectangles) =>
+                            prevRectangles.map((rectangle) =>
+                              rectangle.ID === id ? { ...rectangle, deleted:true } : rectangle
+                            )
+                          );
+                        break;
+                    }
+                    case Tool.Square:{
+                        setSquares((prevSquares) =>
+                            prevSquares.map((square) =>
+                              square.ID === id ? { ...square, deleted:true } : square
+                            )
+                          );
+                        break;
+                    }
+                    case Tool.Triangle:{
+                        setTriangles((prevTriangles) =>
+                            prevTriangles.map((triangle) =>
+                              triangle.ID === id ? { ...triangle, deleted:true } : triangle
+                            )
+                          );
+                        break;
+                    }
+                    case Tool.Circle:{
+                        setCircle((prevCircles) =>
+                            prevCircles.map((circle) =>
+                              circle.ID === id ? { ...circle, deleted:true } : circle
+                            )
+                          );
+                        break;
+                    }
+                    case Tool.Ellipse:{
+                        setEllipse((prevEllipses) =>
+                            prevEllipses.map((Ellipse) =>
+                              Ellipse.ID === id ? { ...Ellipse, deleted:true } : Ellipse
+                            )
+                          );
+                        break;
+                    }
+                }
+                setSelectedId(null);
+                transformerRef.current.nodes([]);
+            }
+    }
+
+    
     const handleFill = (id,type) =>{
         
         if(tool==Tool.fillColor)
@@ -913,7 +990,7 @@ const Paint = () => {
                     <img src="../icons/move.svg" alt="Move" />
                 </button> */}
 
-                <button className="toolbar-button" title="Delete">
+                <button className="toolbar-button" title="Delete" onClick={() => setTool(Tool.Delete)}>
                     <img src="../icons/delete.svg" alt="Delete" />
                 </button>
             </div>
@@ -966,7 +1043,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick = {handleSelect}
+                                    onClick={(e) => {handleSelect(e); handleDelete(scribble.ID,scribble.type)}}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -996,7 +1073,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick = {handleSelect}
+                                    onClick={(e) => {handleSelect(e); handleDelete(line.ID,line.type)}}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1025,7 +1102,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e)}}
+                                    onClick={(e) => {handleFill(rectangle.ID,rectangle.type); handleSelect(e); handleDelete(rectangle.ID,rectangle.type)}}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1055,7 +1132,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e)}}
+                                    onClick={(e) => {handleFill(square.ID,square.type); handleSelect(e); handleDelete(square.ID,square.type)}}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1086,7 +1163,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e)}}
+                                    onClick={(e) => {handleFill(triangle.ID,triangle.type); handleSelect(e); handleDelete(triangle.ID,triangle.type)}}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1113,7 +1190,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e)}}
+                                    onClick={(e) => {handleFill(circle.ID,circle.type); handleSelect(e); handleDelete(circle.ID,circle.type)}}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1141,7 +1218,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e)}}
+                                    onClick={(e) => {handleFill(ellipse.ID,ellipse.type); handleSelect(e); handleDelete(ellipse.ID,ellipse.type)}}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
