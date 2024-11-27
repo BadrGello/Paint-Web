@@ -14,7 +14,15 @@ const Tool = {
     Triangle: "triangle",
     fillColor: "fillColor",
     Delete: "delete",
-    //more to be added//
+    Copy: "copy",
+    Paste: "paste",
+    Undo: "undo",
+    Redo: "redo",
+    SaveXML: "savexml",
+    LoadXML: "loadxml",
+    SaveJSON: "savejson",
+    LoadJSON: "loadjson",
+    //more may be added//
 };
 
 const Properties = {
@@ -88,7 +96,7 @@ const Paint = () => {
     const isDrawing = useRef(false);
     const [strokeColor, setStrokeColor] = useState("black")
     const [strokeWidth, setStrokeWidth] = useState(5)
-    const [fillColor, setFillColor] = useState() //I think it will need to a property in every shape
+    const [fillColor, setFillColor] = useState()
     const currentShapeId = useRef()
 
     //Shapes
@@ -100,11 +108,9 @@ const Paint = () => {
     const [circles, setCircle] = useState([]);
     const [ellipses, setEllipse] = useState([]);
 
-    //zIndexTracker
+    //zIndexTracker for showing correct render of shapes (layering of them)
     const [zIndexTracker, setZIndexTracker] = useState(0); 
-    ////
-    ////
-    ////    
+    
 
     function handleMouseDown(){
         if (tool === Tool.Select) return;
@@ -929,6 +935,22 @@ const Paint = () => {
         }
         
     };
+    
+    //Copy and Paste
+
+
+
+    const handleCopy = (e) => {
+        if (tool === Tool.Copy){
+
+        }
+    }
+
+    const handlePaste = (e) => {
+        if (tool === Tool.Paste){
+
+        }
+    }
 
     const renderShapes = [...squares, ...triangles,...rectangles, ...circles,...ellipses, ...lines,...scribbles].sort((a, b) => a.zIndex - b.zIndex);
     return (
@@ -975,11 +997,11 @@ const Paint = () => {
                 </button>
 
                 <button className="toolbar-button" title="Undo">
-                    <img src="../icons/arrow-rotate-left-undo.svg" alt="Undo" />
+                    <img src="../icons/arrow-rotate-left-undo.svg" alt="Undo" onClick={() => setTool(Tool.Undo)}/>
                 </button>
 
                 <button className="toolbar-button" title="Redo">
-                    <img src="../icons/arrow-rotate-right-redo.svg" alt="Redo" />
+                    <img src="../icons/arrow-rotate-right-redo.svg" alt="Redo" onClick={() => setTool(Tool.Redo)}/>
                 </button>
 
                 <button className="toolbar-button" title="Select" onClick={() => setTool(Tool.Select)}>
@@ -1243,16 +1265,22 @@ const Paint = () => {
             {/*---------------------------------------------------------------Start Toolbar buttons for non-artistic tools--------------------------------------------------------------------------*/}
 
         <div className="toolbar">
-            <button className="toolbar-button" title="Copy">
+            <button className="toolbar-button" title="Copy" onClick={() => setTool(Tool.Copy)}>
                 <img src="../icons/copy.svg" alt="Copy" />
             </button>
-            <button className="toolbar-button" title="Paste">
+            <button className="toolbar-button" title="Paste" onClick={() => setTool(Tool.Paste)}>
                 <img src="../icons/paste.svg" alt="Paste" />
             </button>
-            <button className="toolbar-button" title="Save">
+            <button className="toolbar-button" title="Save XML" onClick={() => setTool(Tool.SaveXML)}>
                 <img src="../icons/save.svg" alt="Save" />
             </button>
-            <button className="toolbar-button" title="Load">
+            <button className="toolbar-button" title="Load XML" onClick={() => setTool(Tool.LoadXML)}>
+                <img src="../icons/load.svg" alt="Load" />
+            </button>
+            <button className="toolbar-button" title="Save JSON" onClick={() => setTool(Tool.SaveJSON)}>
+                <img src="../icons/save.svg" alt="Save" />
+            </button>
+            <button className="toolbar-button" title="Load JSON" onClick={() => setTool(Tool.LoadXML)}>
                 <img src="../icons/load.svg" alt="Load" />
             </button>
         </div>
