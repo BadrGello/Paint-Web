@@ -1,6 +1,8 @@
 package com.team.Paint_Backend;
 
 public abstract class Shape {
+     private boolean deleted;
+     private int zIndex;
      private String ID;
      private String type;
      private double x;
@@ -12,7 +14,9 @@ public abstract class Shape {
      private double scaleY;
      private double rotation;
 
-    public Shape(String ID, String type, double x, double y, String fill_Colour, String stroke_Colour,double strokeWidth, double scaleX, double scaleY, double rotation) {
+    public Shape(boolean deleted,int zIndex,String ID, String type, double x, double y, String fill_Colour, String stroke_Colour,double strokeWidth, double scaleX, double scaleY, double rotation) {
+        this.deleted = deleted;
+        this.zIndex = zIndex;
         this.ID = ID;
         this.type = type;
         this.x = x;
@@ -25,6 +29,26 @@ public abstract class Shape {
         this.rotation = rotation;
     }
 
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
+
+    public boolean getDeleted() {
+        return this.deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public int getZIndex() {
+        return this.zIndex;
+    }
+
+    public void setZIndex(int zIndex) {
+        this.zIndex = zIndex;
+    }
 
     public String getID() {
         return this.ID;

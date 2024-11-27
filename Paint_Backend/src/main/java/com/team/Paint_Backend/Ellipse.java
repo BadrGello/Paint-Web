@@ -4,10 +4,10 @@ public class Ellipse  extends Shape {
     private double radiusX;
     private double radiusY;
 
-    public Ellipse(String ID, String type, double x, double y, String fill_Colour
+    public Ellipse(boolean deleted,int zIndex,String ID, String type, double x, double y, String fill_Colour
                  , String stroke_Colour,double strokeWidth, double scaleX, double scaleY, double rotation,double radiusX, double radiusY) {
 
-        super( ID,  type,  x,  y,  fill_Colour,  stroke_Colour, strokeWidth,  scaleX,  scaleY, rotation);            
+        super(deleted, zIndex, ID,  type,  x,  y,  fill_Colour,  stroke_Colour, strokeWidth,  scaleX,  scaleY, rotation);            
         this.radiusX = radiusX;
         this.radiusY = radiusY;
     }
