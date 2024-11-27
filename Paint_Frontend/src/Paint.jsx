@@ -1024,6 +1024,7 @@ const Paint = () => {
 
                         {/* Show each scribble in scribbles */}
                         {renderShapes.map((shape) => {
+                            if(shape.deleted) return;
                             switch(shape.type){
                             case Tool.Scribble:  
                             return (
@@ -1043,7 +1044,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleSelect(e); handleDelete(scribble.ID,scribble.type)}}
+                                    onClick={(e) => {handleSelect(e); handleDelete(shape.ID,shape.type)}}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1073,7 +1074,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleSelect(e); handleDelete(line.ID,line.type)}}
+                                    onClick={(e) => {handleSelect(e); handleDelete(shape.ID,shape.type)}}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1102,7 +1103,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(rectangle.ID,rectangle.type); handleSelect(e); handleDelete(rectangle.ID,rectangle.type)}}
+                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type)}}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1132,7 +1133,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(square.ID,square.type); handleSelect(e); handleDelete(square.ID,square.type)}}
+                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type)}}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1163,7 +1164,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(triangle.ID,triangle.type); handleSelect(e); handleDelete(triangle.ID,triangle.type)}}
+                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type)}}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1190,7 +1191,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(circle.ID,circle.type); handleSelect(e); handleDelete(circle.ID,circle.type)}}
+                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type)}}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
@@ -1218,7 +1219,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(ellipse.ID,ellipse.type); handleSelect(e); handleDelete(ellipse.ID,ellipse.type)}}
+                                    onClick={(e) => {handleFill(shape.ID,shape.type); handleSelect(e); handleDelete(shape.ID,shape.type)}}
                                     ref={shapeRef}
                                     scaleX = {shape.scaleX}
                                     scaleY = {shape.scaleY}
