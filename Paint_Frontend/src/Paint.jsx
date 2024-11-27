@@ -13,6 +13,7 @@ const Tool = {
     Line: "line",
     Triangle: "triangle",
     fillColor: "fillColor",
+    Delete: "delete",
     //more to be added//
 };
 
@@ -33,6 +34,7 @@ const Properties = {
     radiusY: null,
     points: null,
     rotation: null,
+    deleted: null,
 
 }
 
@@ -157,6 +159,7 @@ const Paint = () => {
                         scaleX: 1,
                         scaleY: 1,
                         rotation: 0,
+                        deleted: false,
                     }
                 ])
                 // console.log(lines[lines.length-1]);
@@ -182,6 +185,7 @@ const Paint = () => {
                         scaleY: 1,
                         rotation: 0,
                         fill_Colour:"rgba(0, 0, 0, 0)",
+                        deleted: false,
                     }
                 ])
 
@@ -206,6 +210,7 @@ const Paint = () => {
                         scaleY: 1,
                         rotation: 0,
                         fill_Colour:"rgba(0, 0, 0, 0)",
+                        deleted: false,
                     }
                 ])
                 // console.log(squares[squares.length-1])
@@ -230,6 +235,7 @@ const Paint = () => {
                         scaleY: 1,
                         rotation: 0,
                         fill_Colour:"rgba(0, 0, 0, 0)",
+                        deleted: false,
                         
                     }
                 ])
@@ -254,6 +260,7 @@ const Paint = () => {
                         scaleY: 1,
                         rotation: 0,
                         fill_Colour:"rgba(0, 0, 0, 0)",
+                        deleted: false,
 
                     }
                 ])
@@ -281,6 +288,7 @@ const Paint = () => {
                         scaleY: 1,
                         rotation: 0,
                         fill_Colour:"rgba(0, 0, 0, 0)",
+                        deleted: false,
                     }
                 ])
 
@@ -289,6 +297,60 @@ const Paint = () => {
             
         }
     }
+
+    const handleDelete = (id,type) =>{
+        if(tool === Tool.Delete)
+            {
+                console.log("will delete");
+                switch(type){
+                    
+                    case Tool.Rectangle:{
+                        setRectangles((prevRectangles) =>
+                            prevRectangles.map((rectangle) =>
+                              rectangle.ID === id ? { ...rectangle, deleted:true } : rectangle
+                            )
+                          );
+                        break;
+                    }
+                    case Tool.Square:{
+                        setSquares((prevSquares) =>
+                            prevSquares.map((square) =>
+                              square.ID === id ? { ...square, deleted:true } : square
+                            )
+                          );
+                        break;
+                    }
+                    case Tool.Triangle:{
+                        setTriangles((prevTriangles) =>
+                            prevTriangles.map((triangle) =>
+                              triangle.ID === id ? { ...triangle, deleted:true } : triangle
+                            )
+                          );
+                        break;
+                    }
+                    case Tool.Circle:{
+                        setCircle((prevCircles) =>
+                            prevCircles.map((circle) =>
+                              circle.ID === id ? { ...circle, deleted:true } : circle
+                            )
+                          );
+                        break;
+                    }
+                    case Tool.Ellipse:{
+                        setEllipse((prevEllipses) =>
+                            prevEllipses.map((Ellipse) =>
+                              Ellipse.ID === id ? { ...Ellipse, deleted:true } : Ellipse
+                            )
+                          );
+                        break;
+                    }
+                }
+                setSelectedId(null);
+                transformerRef.current.nodes([]);
+            }
+    }
+
+    
     const handleFill = (id,type) =>{
         
         if(tool==Tool.fillColor)
@@ -814,7 +876,7 @@ const Paint = () => {
                     <img src="../icons/move.svg" alt="Move" />
                 </button> */}
 
-                <button className="toolbar-button" title="Delete">
+                <button className="toolbar-button" title="Delete" onClick={() => setTool(Tool.Delete)}>
                     <img src="../icons/delete.svg" alt="Delete" />
                 </button>
             </div>
@@ -878,6 +940,7 @@ const Paint = () => {
                         })}
 
                         {lines.map((line) => {
+                            if(line.deleted)return;
                             console.log("Update Lines")
                             return (
                                 <Line
@@ -906,6 +969,7 @@ const Paint = () => {
                         })}
 
                         {rectangles.map((rectangle) => {
+                            if(rectangle.deleted)return;
                             return (
                                 <Rect
                                     key = {rectangle.ID}
@@ -922,7 +986,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, rectangle.ID,rectangle.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(rectangle.ID,rectangle.type); handleSelect(e)}}
+                                    onClick={(e) => {handleFill(rectangle.ID,rectangle.type); handleSelect(e); handleDelete(rectangle.ID,rectangle.type)}}
                                     ref={shapeRef}
                                     scaleX = {rectangle.scaleX}
                                     scaleY = {rectangle.scaleY}
@@ -935,6 +999,7 @@ const Paint = () => {
                         })}
 
                         {squares.map((square) => {
+                            if(square.deleted)return;
                             return (
                                 <Rect
                                     key = {square.ID}
@@ -951,7 +1016,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, square.ID,square.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(square.ID,square.type); handleSelect(e)}}
+                                    onClick={(e) => {handleFill(square.ID,square.type); handleSelect(e); handleDelete(square.ID,square.type)}}
                                     ref={shapeRef}
                                     scaleX = {square.scaleX}
                                     scaleY = {square.scaleY}
@@ -963,6 +1028,7 @@ const Paint = () => {
                             )
                         })}
                         {triangles.map((triangle) => {
+                            if(triangle.deleted)return;
                             return(
                                 <RegularPolygon
                                     key={triangle.ID}
@@ -980,7 +1046,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, triangle.ID,triangle.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(triangle.ID,triangle.type); handleSelect(e)}}
+                                    onClick={(e) => {handleFill(triangle.ID,triangle.type); handleSelect(e); handleDelete(triangle.ID,triangle.type)}}
                                     ref={shapeRef}
                                     scaleX = {triangle.scaleX}
                                     scaleY = {triangle.scaleY}
@@ -991,6 +1057,7 @@ const Paint = () => {
                             )
                         })}
                         {circles.map((circle) => {
+                            if(circle.deleted)return;
                             return (
                                 <Circle
                                     key={circle.ID}
@@ -1006,7 +1073,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, circle.ID,circle.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(circle.ID,circle.type); handleSelect(e)}}
+                                    onClick={(e) => {handleFill(circle.ID,circle.type); handleSelect(e); handleDelete(circle.ID,circle.type)}}
                                     ref={shapeRef}
                                     scaleX = {circle.scaleX}
                                     scaleY = {circle.scaleY}
@@ -1017,6 +1084,7 @@ const Paint = () => {
                         })}
 
                         {ellipses.map((ellipse) => {
+                            if(ellipse.deleted)return;
                             return (
                                 <Ellipse
                                     key={ellipse.ID}
@@ -1033,7 +1101,7 @@ const Paint = () => {
                                     onDragEnd={(e) => handleDragEnd(e, ellipse.ID,ellipse.type)}
 
                                     //For transformation
-                                    onClick={(e) => {handleFill(ellipse.ID,ellipse.type); handleSelect(e)}}
+                                    onClick={(e) => {handleFill(ellipse.ID,ellipse.type); handleSelect(e); handleDelete(ellipse.ID,ellipse.type)}}
                                     ref={shapeRef}
                                     scaleX = {ellipse.scaleX}
                                     scaleY = {ellipse.scaleY}
