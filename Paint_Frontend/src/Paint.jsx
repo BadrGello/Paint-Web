@@ -81,13 +81,6 @@ const Paint = () => {
     // const [response, setResponse] = useState("");
     const [responseData, setResponseMessage] = useState("");
 
-    // GET request (Receive)
-    // useEffect(() => {
-        
-    // }, []);
-
-    // POST request (Send)
-
     const sendShape = async (object, endpointURL) => {
         try {
 
@@ -95,14 +88,14 @@ const Paint = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(object),
-            }).then(() => {console.log("Sent Data Successfully: ", object)})
-
-            const responseData = await response.text();
-            setResponseMessage(responseData); // Update received message state
-            return data; // Return the response for further processing
+            })
+            console.log("Sent Data Successfully: ", object)
+            const responseData = await response.json();
+            setResponseMessage(responseData); // Update response message state
+            return responseData; // Return the response for further processing
         } 
         catch (error) {
-            console.error("Error: ", error);
+            console.error("Error Communicating: ", error);
         }
     };
     
@@ -111,26 +104,108 @@ const Paint = () => {
     //Upon Loading: recieve the 5 states i saved and all the shapes
     
     //LOAD//
-    const [receivedShapes, setReceivedShapes] = useState([]);
+    // const [receivedShapes, setReceivedShapes] = useState([]);
     //Load 5 states as well//
+   
+    //SAVE//
+    const handleSave = async () => {
 
-    const handleLoad = (Path) => {
+        const fileName = prompt("Enter file name");
+        if (!fileName || fileName === "") {
+            alert("Unsuitable file name!");
+            return;
+        }
+    
+        const path = prompt("Enter path:\n(As: C:\\Users\\User\\Desktop\\)");
+        if (!path || path === "") {
+            alert("Unsuitable file path!");
+            return;
+        }
+    
+        try {
 
-        let data = {
-            Path: Path,
+            // data to be sent
+            let data = {
+                Path: path, //String
+                FileName: fileName, //String
+    
+                zIndexTracker: zIndexTracker, //Int
+            };
+
+            // response is json
+            let response;
+            
+            if (tool === Tool.SaveJSON){
+                response = await sendShape(data, EndPoints.Savejson)
+            }
+
+            else if (tool === Tool.SaveXML){
+                response = await sendShape(data, EndPoints.Savexml)
+            }
+
+            //DEBUG//
+            console.log(response)
+            /////////
+            
+            if (!response || response === 'null' || response === '') {
+                alert("Path doesn't exist!");
+                return;
+            }
+
+            alert("Your file is saved successfully");
         } 
+        catch (error) {
+            alert("Error saving the file");
+        }
+    }
+
+    const handleLoad = async () => {
+
+        const path = prompt("Enter path:\n(As: C:\\Users\\User\\Desktop\\file)");
+        if (!path || path === "") {
+            alert("Unsuitable file path!");
+            return;
+        }
+    
+        try {
+
+            // data to be sent
+            let data = {
+                Path: path, //String
+                // FileName: fileName, //String
+            };
+
+            // response is json
+            let response;
+            
+            if (tool === Tool.LoadJSON){
+                response = await sendShape(data, EndPoints.Loadjson)
+            }
+
+            else if (tool === Tool.LoadXML){
+                response = await sendShape(data, EndPoints.Loadxml)
+            }
+
+            //DEBUG//
+            console.log(response)
+            /////////
+
+            if (!response || response === 'null' || response === '') {
+                alert("Path or file doesn't exist!");
+                return;
+            }
+
+            alert("Your file is being loaded");
+    
+            
+
+        } 
+
+        catch (error) {
+            alert("Error loading the file");
+        }
+
         
-        if (tool === Tool.LoadJSON){
-            sendShape(data, EndPoints.Loadjson)
-        }
-
-        else if (tool === Tool.LoadXML){
-            sendShape(data, EndPoints.Loadxml)
-        }
-
-        let receivedData = responseData;
-        consonle.log(receivedData)
-
         // Reset all shapes to empty
         setScribbles([]);
         setLines([]);
@@ -139,6 +214,9 @@ const Paint = () => {
         setCircle([]);
         setEllipse([]);
         setTriangles([]);
+        
+        let receivedShapes = response.Shapes;
+        setZIndexTracker(response.zIndexTracker);
 
         const addShape = (shape, setShape) => {
             setShape((prevShapes) => [
@@ -196,26 +274,6 @@ const Paint = () => {
         });
     
     };
-
-    //SAVE//
-    const handleSave = (Path, FileName) => {
-
-        let data = {
-            Path: Path, //String
-            FileName: FileName, //String
-
-            zIndexTracker: zIndexTracker, //Int
-        };
-
-        if (tool === Tool.SaveJSON){
-            sendShape(data, EndPoints.Savejson)
-        }
-
-        else if (tool === Tool.SaveXML){
-            sendShape(data, EndPoints.Savexml)
-        }
-    }
-
 
     //////////Connection to Spring////////////
 
@@ -1100,6 +1158,7 @@ const Paint = () => {
         return () => window.removeEventListener('resize', updateCanvasSize);
     }, []);
 
+    // Makes the render of shapes (layers of them / one shape being on top of another ) correct
     const renderShapes = [...squares, ...triangles,...rectangles, ...circles,...ellipses, ...lines,...scribbles].sort((a, b) => a.zIndex - b.zIndex);
     return (
         <div className="container">
@@ -1424,16 +1483,16 @@ const Paint = () => {
             <button className="toolbar-button" title="Paste" onClick={() => setTool(Tool.Paste)}>
                 <img src="../icons/paste.svg" alt="Paste" />
             </button>
-            <button className="toolbar-button" title="Save XML" onClick={() => {setTool(Tool.SaveXML); }}>
+            <button className="toolbar-button" title="Save XML" onClick={() => {setTool(Tool.SaveXML); handleSave()}}>
                 <img src="../icons/save.svg" alt="Save" />
             </button>
-            <button className="toolbar-button" title="Load XML" onClick={() => {setTool(Tool.LoadXML); }}>
+            <button className="toolbar-button" title="Load XML" onClick={() => {setTool(Tool.LoadXML); handleLoad()}}>
                 <img src="../icons/load.svg" alt="Load" />
             </button>
-            <button className="toolbar-button" title="Save JSON" onClick={() => {setTool(Tool.SaveJSON); }}>
+            <button className="toolbar-button" title="Save JSON" onClick={() => {setTool(Tool.SaveJSON); handleSave()}}>
                 <img src="../icons/save.svg" alt="Save" />
             </button>
-            <button className="toolbar-button" title="Load JSON" onClick={() => {setTool(Tool.LoadJSON); }}>
+            <button className="toolbar-button" title="Load JSON" onClick={() => {setTool(Tool.LoadJSON); handleLoad()}}>
                 <img src="../icons/load.svg" alt="Load" />
             </button>
         </div>
