@@ -57,16 +57,14 @@ const EndPoints = {
 const Paint = () => {
 
     //////////Connection to Spring////////////
-    // const [response, setResponse] = useState("");
-    // const [receivedMessage, setReceivedMessage] = useState("");
+    const response = useRef(null);
+    const [responseData, setResponseData] = useState(null);
+    // const dataToSend = useRef(null);
+    const lastSentShapeRef = useRef(null); // To track the last shape sent
 
-    // GET request (Receive)
-    // useEffect(() => {
-        
-    // }, []);
+    const sendShape = async (object, endpointURL) => {
 
-    // POST request (Send)
-    const sendShape = async (object, endpoint ="draw") => {
+        console.log("Sending to back the following: ", object)
         try {
 
             let endpointURL = "";
@@ -78,16 +76,200 @@ const Paint = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(object),
-            }).then(() => {console.log("Sent Data Successfully: ", object)})
-
-            // const responseData = await response.text();
-            // setReceivedMessage(responseData); // Update received message state
-            // return data; // Return the response for further processing
+            })
+            console.log("Sent Data Successfully: ", object)
+            const responseData = await response.json();
+            setResponseData(responseData); // Update response message state
+            return responseData; // Return the response for further processing
         } 
         catch (error) {
-            console.error("Error: ", error);
+            console.error("Error Communicating: ", error);
         }
     };
+    
+
+    //Send upon Saving: tool, strokeColor, strokeWidth, fillColor, zIndexTracker
+    //Upon Loading: recieve the 5 states i saved and all the shapes
+    
+    //LOAD//
+    // const [receivedShapes, setReceivedShapes] = useState([]);
+    //Load 5 states as well//
+   
+    //SAVE//
+    const handleSave = async (type) => {
+
+        const fileName = prompt("Enter file name");
+        if (!fileName || fileName === "") {
+            alert("Unsuitable file name!");
+            return;
+        }
+    
+        const path = prompt("Enter path:\n(As: C:\\Users\\User\\Desktop\\)");
+        if (!path || path === "") {
+            alert("Unsuitable file path!");
+            return;
+        }
+    
+        try {
+
+            // data to be sent
+            let data = {
+                Path: path, //String
+                FileName: fileName, //String
+    
+                zIndexTracker: zIndexTracker, //Int
+            };
+
+            // response is json
+            let responseNow;
+
+            if (type === Tool.SaveJSON){
+                console.log("Save Json")
+                responseNow = await sendShape(data, EndPoints.Savejson)
+            }
+
+            else if (type === Tool.SaveXML){
+                console.log("Save XML")
+                responseNow = await sendShape(data, EndPoints.Savexml)
+            }
+
+            //DEBUG//
+            console.log("Response", responseNow)
+            /////////
+            
+            if (!responseNow || responseNow === 'null' || responseNow === '') {
+                alert("Path doesn't exist!");
+                return;
+            }
+
+            alert("Your file is saved successfully");
+        } 
+        catch (error) {
+            alert("Error saving the file");
+        }
+    }
+
+    const handleLoad = async (type) => {
+
+        const path = prompt("Enter path:\n(As: C:\\Users\\User\\Desktop\\file)");
+        if (!path || path === "") {
+            alert("Unsuitable file path!");
+            return;
+        }
+        
+        let responseNow;
+
+        try {
+
+            // data to be sent
+            let data = {
+                Path: path, //String
+                // FileName: fileName, //String
+            };
+
+            
+
+            if (type === Tool.LoadJSON){
+                console.log("Load JSON")
+                responseNow = await sendShape(data, EndPoints.Loadjson)
+            }
+
+            else if (type === Tool.LoadXML){
+                console.log("Load XML")
+                responseNow = await sendShape(data, EndPoints.Loadxml)
+            }
+
+            //DEBUG//
+            console.log("response", responseNow)
+            /////////
+
+            if (!responseNow || responseNow === 'null' || responseNow === '') {
+                alert("Path or file doesn't exist!");
+                return;
+            }
+
+            alert("Your file is being loaded");
+    
+            
+
+        } 
+
+        catch (error) {
+            alert("Error loading the file");
+        }
+
+        
+        // Reset all shapes to empty
+        setScribbles([]);
+        setLines([]);
+        setRectangles([]);
+        setSquares([]);
+        setCircle([]);
+        setEllipse([]);
+        setTriangles([]);
+        
+        let receivedShapes = responseNow.Shapes;
+        setZIndexTracker(responseNow.zIndexTracker);
+
+        const addShape = (shape, setShape) => {
+            setShape((prevShapes) => [
+                ...prevShapes,
+                {
+                    ...Properties,
+                    ID: shape.ID,
+                    type: shape.type,
+                    x: shape.x,
+                    y: shape.y,
+                    fill_Colour: shape.fill_Colour,
+                    stroke_Colour: shape.stroke_Colour,
+                    strokeWidth: shape.strokeWidth,
+                    scaleX: shape.scaleX,
+                    scaleY: shape.scaleY,
+                    width: shape.width,
+                    height: shape.height,
+                    radius: shape.radius,
+                    radiusX: shape.radiusX,
+                    radiusY: shape.radiusY,
+                    points: shape.points,
+                    rotation: shape.rotation,
+                    deleted: shape.deleted,
+                    zIndex: shape.zIndex,
+                }
+            ]);
+        };
+
+        receivedShapes.forEach((shape) => {
+            switch (shape.type) {
+                case Tool.Scribble:
+                    addShape(shape, setScribbles);
+                    break;
+                case Tool.Line:
+                    addShape(shape, setLines);
+                    break;
+                case Tool.Rectangle:
+                    addShape(shape, setRectangles);
+                    break;
+                case Tool.Square:
+                    addShape(shape, setSquares);
+                    break;
+                case Tool.Triangle:
+                    addShape(shape, setTriangles);
+                    break;
+                case Tool.Circle:
+                    addShape(shape, setCircle);
+                    break;
+                case Tool.Ellipse:
+                    addShape(shape, setEllipse);
+                    break;
+                default:
+                    console.warn(`Unhandled shape type: ${shape.type}`);
+            }
+        });
+    
+    };
+
+    
+
     //////////Connection to Spring////////////
 
 
@@ -330,8 +512,25 @@ const Paint = () => {
         }
     }
 
-    
+    // Helper function for handleDelete
+    const deleteShape = async (type, id, setState) => {
+        
+        await setState((prevShapes) =>
+            prevShapes.map((shape) => {
+                if (shape.ID === id) {
+                    const updatedShape = { ...shape, deleted: true };
+                    lastModifiedShapeRef.current = updatedShape;
+                    return updatedShape;
+                }
+                return shape;
+            })
+        );
+        
+        sendShape(lastModifiedShapeRef.current, EndPoints.Delete)
+        
+    };
 
+    
     const handleDelete = (id,type) =>{
         if(tool === Tool.Delete)
             {
@@ -399,6 +598,25 @@ const Paint = () => {
             }
     }
 
+    // Helper function for handleFill
+    const colorShape = async (id, setState, color) => {
+        
+        await setState((prevShapes) =>
+            prevShapes.map((shape) =>{
+                if (shape.ID === id){
+                    const updatedShape = { ...shape, fill_Colour: color }
+                    lastModifiedShapeRef.current = updatedShape;
+                    return updatedShape;
+                }
+
+                return shape;
+            })
+        );
+
+        sendShape(lastModifiedShapeRef.current, EndPoints.Edit);
+        
+
+    };
     
     const handleFill = (id,type) =>{
         
@@ -522,46 +740,35 @@ const Paint = () => {
         }
         
     }
-    const handleDragEnd = (e, id,type) => {
+
+    // Helper function for handleDragEnd
+    const updateShapePosition = async (id, x, y, setState) => {
+    
+        await setState((prevShapes) =>
+            prevShapes.map((shape) => {
+                if (shape.ID === id) {
+                    const updatedShape = { ...shape, x, y };
+                    lastModifiedShapeRef.current = updatedShape;
+                    return updatedShape;
+                }
+                return shape;
+            })
+        );
+
+        sendShape(lastModifiedShapeRef.current, EndPoints.Edit);
+    
+    };
+    
+    const handleDragEnd = (e, id, type) => {
         const { x, y } = e.target.position();
-        console.log("drag", lines)
-        switch(type){
-            case Tool.Scribble:{
-                setScribbles((prevScribbles) =>
-                    prevScribbles.map((scribble) =>{
-                        if(scribble.ID === id) {
-                            return { 
-                                ...scribble,
-                                x:x,
-                                y:y,
-                        }} 
-                        return scribble;
-                }));
-                break;     
+    
+        switch (type) {
+            case Tool.Scribble: {
+                updateShapePosition(id, x, y, setScribbles);
+                break;
             }
-            case Tool.Line:{
-                setLines((prevLines) =>
-                    prevLines.map((line) =>{
-                        if(line.ID === id) {
-                            const dx=x-line.points[0];
-                            const dy=y-line.points[1];
-                            return { ...line,
-                                 x:x,
-                                 y:y,
-                    } 
-                } return line;
-            }
-                        
-                )
-            );
-        break;     
-        }
-            case Tool.Circle:{
-                setCircle((prevCircles) =>
-                    prevCircles.map((circle) =>
-                    circle.ID === id ?  { ...circle, x:x, y:y } : circle
-                )
-                );
+            case Tool.Line: {
+                updateShapePosition(id, x, y, setLines);
                 break;
             }
             case Tool.Ellipse:{
@@ -753,9 +960,16 @@ const Paint = () => {
 
     }
 
+    // Sends Well
     function handleMouseUp(){
         // User is not clicking anymore
         isDrawing.current = false;
+
+        // If mouseUp and we were drawing (using one of the 7 drawing tools), send the final shape to backend
+        if (shapeTools.includes(tool) && lastModifiedShapeRef.current){
+            console.log("handleMouseUp Send Shape")
+            sendShape(lastModifiedShapeRef.current, EndPoints.Draw);
+        }
     }
 
     // We can only drag shapes if we select them
@@ -788,6 +1002,26 @@ const Paint = () => {
           }
         }
       }, [selectedId]);
+
+    
+    // Helper function for handleTransformerEnd
+    const updateShapeTransform = async (id, x, y, rotation, scaleX, scaleY, setState) => {
+    
+        await setState((prevShapes) =>
+            prevShapes.map((shape) => {
+                if (shape.ID === id) {
+                    const updatedShape = { ...shape, x, y, rotation, scaleX, scaleY};
+                    lastModifiedShapeRef.current = updatedShape;
+                    return updatedShape;
+                }
+                return shape;
+            })
+        );
+
+        sendShape(lastModifiedShapeRef.current, EndPoints.Edit);
+    
+        
+    }
 
     const handleTransformerEnd = (e, id, type) => {
         console.log("Transform End", e.target);
@@ -959,6 +1193,7 @@ const Paint = () => {
         }
     }
 
+    // Sends Well
     const handlePaste = (e) => {
         if (tool === Tool.Paste && copiedShape){
             //Get position of cursor from stageRef
@@ -1368,16 +1603,16 @@ const Paint = () => {
             <button className="toolbar-button" title="Paste" onClick={() => setTool(Tool.Paste)}>
                 <img src="../icons/paste.svg" alt="Paste" />
             </button>
-            <button className="toolbar-button" title="Save XML" onClick={() => setTool(Tool.SaveXML)}>
+            <button className="toolbar-button" title="Save XML" onClick={() => {setTool(Tool.SaveXML); handleSave(Tool.SaveXML)}}>
                 <img src="../icons/save.svg" alt="Save" />
             </button>
-            <button className="toolbar-button" title="Load XML" onClick={() => setTool(Tool.LoadXML)}>
+            <button className="toolbar-button" title="Load XML" onClick={() => {setTool(Tool.LoadXML); handleLoad(Tool.LoadXML)}}>
                 <img src="../icons/load.svg" alt="Load" />
             </button>
-            <button className="toolbar-button" title="Save JSON" onClick={() => setTool(Tool.SaveJSON)}>
+            <button className="toolbar-button" title="Save JSON" onClick={() => {setTool(Tool.SaveJSON); handleSave(Tool.SaveJSON)}}>
                 <img src="../icons/save.svg" alt="Save" />
             </button>
-            <button className="toolbar-button" title="Load JSON" onClick={() => setTool(Tool.LoadXML)}>
+            <button className="toolbar-button" title="Load JSON" onClick={() => {setTool(Tool.LoadJSON); handleLoad(Tool.LoadJSON)}}>
                 <img src="../icons/load.svg" alt="Load" />
             </button>
         </div>
