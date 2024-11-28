@@ -710,7 +710,7 @@ const Paint = () => {
             case Tool.Scribble:{
                 setScribbles((prevScribbles) =>
                     prevScribbles.map((scribble) =>{
-                        if(scribble.id === id) {
+                        if(scribble.ID === id) {
                             return { ...scribble,
                                 zIndex:zIndexTracker
                     }
@@ -724,7 +724,7 @@ const Paint = () => {
             case Tool.Line:{
                 setLines((prevLines) =>
                     prevLines.map((line) =>{
-                        if(line.id === id) {
+                        if(line.ID === id) {
                             return { ...line,
                                 zIndex:zIndexTracker
                     } 
@@ -738,7 +738,7 @@ const Paint = () => {
             case Tool.Circle:{
                 setCircle((prevCircles) =>
                     prevCircles.map((circle) =>
-                    circle.id === id ?  { ...circle, zIndex:zIndexTracker } : circle
+                    circle.ID === id ?  { ...circle, zIndex:zIndexTracker } : circle
                 )
                 );
                 break;
@@ -746,7 +746,7 @@ const Paint = () => {
             case Tool.Ellipse:{
                 setEllipse((prevEllipses) =>
                     prevEllipses.map((Ellipse) =>
-                    Ellipse.id === id ? { ...Ellipse, zIndex:zIndexTracker } : Ellipse
+                    Ellipse.ID === id ? { ...Ellipse, zIndex:zIndexTracker } : Ellipse
                 )
                 );
                 break;
@@ -754,7 +754,7 @@ const Paint = () => {
             case Tool.Rectangle:{
                 setRectangles((prevRectangles) =>
                     prevRectangles.map((rectangle) =>
-                    rectangle.id === id ? { ...rectangle, zIndex:zIndexTracker } : rectangle
+                    rectangle.ID === id ? { ...rectangle, zIndex:zIndexTracker } : rectangle
                 )
                 );
                 break;
@@ -762,7 +762,7 @@ const Paint = () => {
             case Tool.Square:{
                 setSquares((prevSquares) =>
                     prevSquares.map((square) =>
-                    square.id === id ? { ...square,zIndex:zIndexTracker } : square
+                    square.ID === id ? { ...square,zIndex:zIndexTracker } : square
                 )
                 );
                 break;
@@ -770,7 +770,7 @@ const Paint = () => {
             case Tool.Triangle:{
                 setTriangles((prevTriangles) =>
                     prevTriangles.map((triangle) =>
-                    triangle.id === id ? { ...triangle,zIndex:zIndexTracker } : triangle
+                    triangle.ID === id ? { ...triangle,zIndex:zIndexTracker } : triangle
                     )
                 );
                 break;
@@ -1347,7 +1347,7 @@ const Paint = () => {
                                     lineJoin="round"
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
@@ -1379,7 +1379,7 @@ const Paint = () => {
                                     y = {shape.y}
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
@@ -1408,7 +1408,7 @@ const Paint = () => {
                                     fill={shape.fill_Colour}
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
@@ -1438,7 +1438,7 @@ const Paint = () => {
                                     fill={shape.fill_Colour}
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
@@ -1469,7 +1469,7 @@ const Paint = () => {
                                     fill={shape.fill_Colour}
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
@@ -1496,7 +1496,7 @@ const Paint = () => {
                                     fill={shape.fill_Colour}
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
@@ -1524,7 +1524,7 @@ const Paint = () => {
                                     fill={shape.fill_Colour}
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
