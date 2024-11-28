@@ -1,4 +1,3 @@
-import { shapes } from 'konva/lib/Shape';
 import React, { useRef, useState, useEffect  } from 'react';
 import { Layer, Line, Stage, Rect, RegularPolygon , Circle, Ellipse, Transformer } from 'react-konva';
 // for generating unique id's for shapes
@@ -25,6 +24,16 @@ const Tool = {
     LoadJSON: "loadjson",
     //more may be added//
 };
+
+const shapeTools = [
+    Tool.Rectangle,
+    Tool.Square,
+    Tool.Circle,
+    Tool.Ellipse,
+    Tool.Scribble,
+    Tool.Line,
+    Tool.Triangle,
+];
 
 const Properties = {
     ID: null,
@@ -53,6 +62,18 @@ const EndPoints = {
     Edit: "http://localhost:8080/api/edit",
     Delete: "http://localhost:8080/api/delete",
 
+    Copy: "http://localhost:8080/api/copy",
+    Paste: "http://localhost:8080/api/paste",
+
+
+    Savexml: "http://localhost:8080/api/savexml",
+    Loadxml: "http://localhost:8080/api/loadxml",
+    Savejson: "http://localhost:8080/api/savejson",
+    Loadjson: "http://localhost:8080/api/loadjson",
+
+    Undo: "http://localhost:8080/api/undo",
+    Redo: "http://localhost:8080/api/redo",
+
 }
 const Paint = () => {
 
@@ -66,11 +87,6 @@ const Paint = () => {
 
         console.log("Sending to back the following: ", object)
         try {
-
-            let endpointURL = "";
-            if (endpoint === "draw") endpointURL = EndPoints.Draw;
-            else if (endpoint === "edit") endpointURL = EndPoints.Edit;
-            else if (endpoint === "delete") endpointURL = EndPoints.Delete;
 
             const response = await fetch(endpointURL , {
                 method: "POST",
@@ -268,9 +284,60 @@ const Paint = () => {
     
     };
 
-    
-
     //////////Connection to Spring////////////
+
+    ////UNDO REDO////
+    const [undoStack, setUndoStack] = useState([]);
+    const [redoStack, setRedoStack] = useState([]);
+
+    const saveToHistory = () => {
+        const currentState = {
+            scribbles,
+            lines,
+            rectangles,
+            squares,
+            triangles,
+            circles,
+            ellipses,
+            zIndexTracker,
+        };
+        setUndoStack((prev) => [...prev, currentState]);
+        setRedoStack([]);
+    };
+    const handleUndo = () => {
+        if (undoStack.length === 0) return;
+    
+        const lastState = undoStack.pop();
+        setRedoStack((prev) => [...prev, {
+            scribbles, lines, rectangles, squares, triangles, circles, ellipses, zIndexTracker
+        }]);
+        restoreState(lastState);
+    };
+    
+    const handleRedo = () => {
+        if (redoStack.length === 0) return;
+    
+        const nextState = redoStack.pop();
+        setUndoStack((prev) => [...prev, {
+            scribbles, lines, rectangles, squares, triangles, circles, ellipses, zIndexTracker
+        }]);
+        restoreState(nextState);
+    };
+    
+    const restoreState = (state) => {
+        setScribbles(state.scribbles);
+        setLines(state.lines);
+        setRectangles(state.rectangles);
+        setSquares(state.squares);
+        setTriangles(state.triangles);
+        setCircle(state.circles);
+        setEllipse(state.ellipses);
+        setZIndexTracker(state.zIndexTracker);
+        setSelectedId(null);
+        transformerRef.current.nodes([]);
+    };
+
+    ////UNDO REDO////
 
 
 
@@ -294,10 +361,12 @@ const Paint = () => {
     //zIndexTracker for showing correct render of shapes (layering of them)
     const [zIndexTracker, setZIndexTracker] = useState(0); 
     
-    
+    //Tracking last shapeModified/Created to send to backend
+    const lastModifiedShapeRef = useRef(null);
 
     function handleMouseDown(){
         if (tool === Tool.Select) return;
+        
         //Debugging//
         console.log(tool)
 
@@ -310,6 +379,22 @@ const Paint = () => {
         //Generate unique id for the shape and stores the current shape id in ref for usage in handleMouseMove()
         const id = uuidv4();
         currentShapeId.current = id;
+        
+
+        //Undo Redo//
+        // Save the current state to undo stack before making changes
+        saveToHistory({
+            scribbles,
+            lines,
+            rectangles,
+            squares,
+            triangles,
+            circles,
+            ellipses,
+            zIndexTracker
+        });
+        /////////////
+
 
         switch(tool){
             // We add a new scribble object with the following properties to the old scribbles
@@ -525,7 +610,7 @@ const Paint = () => {
                 return shape;
             })
         );
-        
+        saveToHistory();
         sendShape(lastModifiedShapeRef.current, EndPoints.Delete)
         
     };
@@ -535,64 +620,37 @@ const Paint = () => {
         if(tool === Tool.Delete)
             {
                 console.log("will delete");
-                switch(type){
-                    case Tool.Scribble:{
-                        setScribbles((prevScribbles) =>
-                            prevScribbles.map((scribble) =>
-                              scribble.ID === id ? { ...scribble, deleted:true } : scribble
-                            )
-                          );
+                switch (type) {
+                    case Tool.Scribble: {
+                        deleteShape(type, id, setScribbles);
                         break;
                     }
-                    case Tool.Line:{
-                        setLines((prevLines) =>
-                            prevLines.map((line) =>
-                              line.ID === id ? { ...line, deleted:true } : line
-                            )
-                          );
+                    case Tool.Line: {
+                        deleteShape(type, id, setLines);
                         break;
                     }
-                    case Tool.Rectangle:{
-                        setRectangles((prevRectangles) =>
-                            prevRectangles.map((rectangle) =>
-                              rectangle.ID === id ? { ...rectangle, deleted:true } : rectangle
-                            )
-                          );
+                    case Tool.Rectangle: {
+                        deleteShape(type, id, setRectangles);
                         break;
                     }
-                    case Tool.Square:{
-                        setSquares((prevSquares) =>
-                            prevSquares.map((square) =>
-                              square.ID === id ? { ...square, deleted:true } : square
-                            )
-                          );
+                    case Tool.Square: {
+                        deleteShape(type, id, setSquares);
                         break;
                     }
-                    case Tool.Triangle:{
-                        setTriangles((prevTriangles) =>
-                            prevTriangles.map((triangle) =>
-                              triangle.ID === id ? { ...triangle, deleted:true } : triangle
-                            )
-                          );
+                    case Tool.Triangle: {
+                        deleteShape(type, id, setTriangles);
                         break;
                     }
-                    case Tool.Circle:{
-                        setCircle((prevCircles) =>
-                            prevCircles.map((circle) =>
-                              circle.ID === id ? { ...circle, deleted:true } : circle
-                            )
-                          );
+                    case Tool.Circle: {
+                        deleteShape(type, id, setCircle);
                         break;
                     }
-                    case Tool.Ellipse:{
-                        setEllipse((prevEllipses) =>
-                            prevEllipses.map((Ellipse) =>
-                              Ellipse.ID === id ? { ...Ellipse, deleted:true } : Ellipse
-                            )
-                          );
+                    case Tool.Ellipse: {
+                        deleteShape(type, id, setEllipse);
                         break;
                     }
                 }
+
                 setSelectedId(null);
                 transformerRef.current.nodes([]);
             }
@@ -612,7 +670,7 @@ const Paint = () => {
                 return shape;
             })
         );
-
+        saveToHistory();
         sendShape(lastModifiedShapeRef.current, EndPoints.Edit);
         
 
@@ -620,59 +678,39 @@ const Paint = () => {
     
     const handleFill = (id,type) =>{
         
-        if(tool==Tool.fillColor)
-        {
-            switch(type){
-                case Tool.Circle:{
-                    setCircle((prevCircles) =>
-                        prevCircles.map((circle) =>
-                          circle.ID === id ? { ...circle, fill_Colour: strokeColor } : circle
-                        )
-                      );
+        if(tool === Tool.fillColor){
+            switch (type) {
+                case Tool.Circle: {
+                    colorShape(id, setCircle, strokeColor);
                     break;
                 }
-                case Tool.Ellipse:{
-                    setEllipse((prevEllipses) =>
-                        prevEllipses.map((Ellipse) =>
-                          Ellipse.ID === id ? { ...Ellipse, fill_Colour: strokeColor } : Ellipse
-                        )
-                      );
+                case Tool.Ellipse: {
+                    colorShape(id, setEllipse, strokeColor);
                     break;
                 }
-                case Tool.Rectangle:{
-                    setRectangles((prevRectangles) =>
-                        prevRectangles.map((rectangle) =>
-                          rectangle.ID === id ? { ...rectangle, fill_Colour: strokeColor } : rectangle
-                        )
-                      );
+                case Tool.Rectangle: {
+                    colorShape(id, setRectangles, strokeColor);
                     break;
                 }
-                case Tool.Square:{
-                    setSquares((prevSquares) =>
-                        prevSquares.map((square) =>
-                          square.ID === id ? { ...square, fill_Colour: strokeColor } : square
-                        )
-                      );
+                case Tool.Square: {
+                    colorShape(id, setSquares, strokeColor);
                     break;
                 }
-                case Tool.Triangle:{
-                    setTriangles((prevTriangles) =>
-                        prevTriangles.map((triangle) =>
-                          triangle.ID === id ? { ...triangle, fill_Colour: strokeColor } : triangle
-                        )
-                      );
+                case Tool.Triangle: {
+                    colorShape(id, setTriangles, strokeColor);
                     break;
                 }
             }
         }
     }
+
     const handleDragStart = (id,type) => {
         setZIndexTracker(zIndexTracker + 1);
         switch(type){
             case Tool.Scribble:{
                 setScribbles((prevScribbles) =>
                     prevScribbles.map((scribble) =>{
-                        if(scribble.ID === id) {
+                        if(scribble.id === id) {
                             return { ...scribble,
                                 zIndex:zIndexTracker
                     }
@@ -686,7 +724,7 @@ const Paint = () => {
             case Tool.Line:{
                 setLines((prevLines) =>
                     prevLines.map((line) =>{
-                        if(line.ID === id) {
+                        if(line.id === id) {
                             return { ...line,
                                 zIndex:zIndexTracker
                     } 
@@ -700,7 +738,7 @@ const Paint = () => {
             case Tool.Circle:{
                 setCircle((prevCircles) =>
                     prevCircles.map((circle) =>
-                    circle.ID === id ?  { ...circle, zIndex:zIndexTracker } : circle
+                    circle.id === id ?  { ...circle, zIndex:zIndexTracker } : circle
                 )
                 );
                 break;
@@ -708,7 +746,7 @@ const Paint = () => {
             case Tool.Ellipse:{
                 setEllipse((prevEllipses) =>
                     prevEllipses.map((Ellipse) =>
-                    Ellipse.ID === id ? { ...Ellipse, zIndex:zIndexTracker } : Ellipse
+                    Ellipse.id === id ? { ...Ellipse, zIndex:zIndexTracker } : Ellipse
                 )
                 );
                 break;
@@ -716,7 +754,7 @@ const Paint = () => {
             case Tool.Rectangle:{
                 setRectangles((prevRectangles) =>
                     prevRectangles.map((rectangle) =>
-                    rectangle.ID === id ? { ...rectangle, zIndex:zIndexTracker } : rectangle
+                    rectangle.id === id ? { ...rectangle, zIndex:zIndexTracker } : rectangle
                 )
                 );
                 break;
@@ -724,7 +762,7 @@ const Paint = () => {
             case Tool.Square:{
                 setSquares((prevSquares) =>
                     prevSquares.map((square) =>
-                    square.ID === id ? { ...square,zIndex:zIndexTracker } : square
+                    square.id === id ? { ...square,zIndex:zIndexTracker } : square
                 )
                 );
                 break;
@@ -732,7 +770,7 @@ const Paint = () => {
             case Tool.Triangle:{
                 setTriangles((prevTriangles) =>
                     prevTriangles.map((triangle) =>
-                    triangle.ID === id ? { ...triangle,zIndex:zIndexTracker } : triangle
+                    triangle.id === id ? { ...triangle,zIndex:zIndexTracker } : triangle
                     )
                 );
                 break;
@@ -754,7 +792,7 @@ const Paint = () => {
                 return shape;
             })
         );
-
+        saveToHistory();
         sendShape(lastModifiedShapeRef.current, EndPoints.Edit);
     
     };
@@ -771,40 +809,29 @@ const Paint = () => {
                 updateShapePosition(id, x, y, setLines);
                 break;
             }
-            case Tool.Ellipse:{
-                setEllipse((prevEllipses) =>
-                    prevEllipses.map((Ellipse) =>
-                    Ellipse.ID === id ? { ...Ellipse, x:x, y:y } : Ellipse
-                )
-                );
+            case Tool.Circle: {
+                updateShapePosition(id, x, y, setCircle);
                 break;
             }
-            case Tool.Rectangle:{
-                setRectangles((prevRectangles) =>
-                    prevRectangles.map((rectangle) =>
-                    rectangle.ID === id ? { ...rectangle, x:x, y:y } : rectangle
-                )
-                );
+            case Tool.Ellipse: {
+                updateShapePosition(id, x, y, setEllipse);
                 break;
             }
-            case Tool.Square:{
-                setSquares((prevSquares) =>
-                    prevSquares.map((square) =>
-                    square.ID === id ? { ...square,x:x, y:y } : square
-                )
-                );
+            case Tool.Rectangle: {
+                updateShapePosition(id, x, y, setRectangles);
                 break;
             }
-            case Tool.Triangle:{
-                setTriangles((prevTriangles) =>
-                    prevTriangles.map((triangle) =>
-                    triangle.ID === id ? { ...triangle, x:x, y:y } : triangle
-                    )
-                );
+            case Tool.Square: {
+                updateShapePosition(id, x, y, setSquares);
+                break;
+            }
+            case Tool.Triangle: {
+                updateShapePosition(id, x, y, setTriangles);
                 break;
             }
         }
-      };
+    };
+    
 
     function handleMouseMove() {
         // If user is not drawing (clicking) and moving the cursor, nothing should happen
@@ -824,10 +851,13 @@ const Paint = () => {
                 setScribbles((prevScribbles) => prevScribbles.map((scribble) => {
                     // We search for the current scribble that was initialized in handleMouseDown and append new (x, y) to its points[] array
                     if (scribble.ID === currentShapeId.current){
-                        return {
+                        const updatedScribble = {
                             ...scribble,
                             points: [...scribble.points, x, y]
                         }
+
+                        lastModifiedShapeRef.current = updatedScribble;
+                        return updatedScribble;
                     }
 
                     return scribble;
@@ -844,10 +874,13 @@ const Paint = () => {
 
                 setLines((prevLines) => prevLines.map((line) => {
                     if (line.ID === currentShapeId.current){
-                        return {
+                        const updatedLine = {
                             ...line,
                             points: [line.points[0], line.points[1], x, y]
                         }
+
+                        lastModifiedShapeRef.current = updatedLine;
+                        return updatedLine;
                     }
 
                     return line;
@@ -863,11 +896,14 @@ const Paint = () => {
                  setRectangles((prevRectangles) => prevRectangles.map((rectangle) => {
 
                     if (rectangle.ID === currentShapeId.current){
-                        return {
+                        const updatedRectangle = {
                         ...rectangle,
                             width:x-rectangle.x,
                             height:y-rectangle.y
                         }
+
+                        lastModifiedShapeRef.current = updatedRectangle;
+                        return updatedRectangle;
                     }
 
                     return rectangle;
@@ -883,12 +919,15 @@ const Paint = () => {
                 setSquares((prevSquares) => prevSquares.map((square) => {
 
                     if (square.ID === currentShapeId.current){
-                       const D = (y - square.y<0) ? -1 : 1
-                       return {
-                       ...square,
-                           width:x-square.x,
-                           height:D*((x-square.x>0)*(x-square.x)+(x-square.x<0)*-1*(x-square.x)),
-                       }
+                        const D = (y - square.y<0) ? -1 : 1
+                        const updatedSquare = {
+                        ...square,
+                            width:x-square.x,
+                            height:D*((x-square.x>0)*(x-square.x)+(x-square.x<0)*-1*(x-square.x)),
+                        }
+
+                        lastModifiedShapeRef.current = updatedSquare;
+                        return updatedSquare;
                    }
 
                    return square;
@@ -905,11 +944,13 @@ const Paint = () => {
                     if (triangle.ID === currentShapeId.current){
                     const r = Math.sqrt(Math.pow(x-triangle.x,2)+Math.pow(y-triangle.y,2))
                     const d= Math.atan2((x-triangle.x),(triangle.y-y))*(180/Math.PI)
-                    return {
-                    ...triangle,
+                    const updatedTriangle = {
+                        ...triangle,
                         radius:r,
                         rotation:d,
                     }
+                    lastModifiedShapeRef.current = updatedTriangle;
+                    return updatedTriangle;
                 }
 
                 return triangle;
@@ -926,10 +967,13 @@ const Paint = () => {
                             const radius = Math.sqrt(
                                 Math.pow(x - circle.x, 2) + Math.pow(y - circle.y, 2)
                             ); 
-                            return {
+                            const updatedCircle = {
                                 ...circle,
                                 radius: radius,
                             };
+
+                            lastModifiedShapeRef.current = updatedCircle;
+                            return updatedCircle;
                         }
                         return circle;
                     })
@@ -945,11 +989,14 @@ const Paint = () => {
                             const radiusX = Math.abs(x - ellipse.x);
                             const radiusY = Math.abs(y - ellipse.y); 
             
-                            return {
+                            const updatedEllipse = {
                                 ...ellipse,
                                 radiusX: radiusX,
                                 radiusY: radiusY,
                             };
+
+                            lastModifiedShapeRef.current = updatedEllipse;
+                            return updatedEllipse;
                         }
                         return ellipse;
                     })
@@ -971,6 +1018,9 @@ const Paint = () => {
             sendShape(lastModifiedShapeRef.current, EndPoints.Draw);
         }
     }
+
+    ///////////////
+    //Transformer//
 
     // We can only drag shapes if we select them
     const isDraggable = (tool === Tool.Select);
@@ -1017,7 +1067,7 @@ const Paint = () => {
                 return shape;
             })
         );
-
+        // saveToHistory();
         sendShape(lastModifiedShapeRef.current, EndPoints.Edit);
     
         
@@ -1033,153 +1083,49 @@ const Paint = () => {
 
         console.log("ScaleX:", scaleX, "ScaleY:", scaleY, "Rotation:", rotation, node.type);
 
-        // Reset scale to 1 after transformation, idk wether this is really correct
+        // Reset scale to 1 after transformation, idk whether this is really correct
         node.scaleX(1);
         node.scaleY(1);
 
-        switch(type){
-            case Tool.Scribble:{
-                setScribbles((prevScribbles) => prevScribbles.map((scribble) => {
-                    if (scribble.ID === id){
-                        
-                        return {
-                            ...scribble,
-                            x: node.x(),
-                            y: node.y(),
-                            rotation: rotation,
-                            scaleX: scaleX,
-                            scaleY: scaleY,
-                        }
-                    }
-                    
-                    return scribble;
-                })
-                )
+        saveToHistory(); ////
+
+        switch (type) {
+            case Tool.Scribble: {
+                updateShapeTransform(id, node.x(), node.y(), rotation, scaleX, scaleY, setScribbles);
                 break;
             }
-
-            case Tool.Line:{
-                setLines((prevLines) => prevLines.map((line) => {
-                    if (line.ID === id){
-                        return {
-                            ...line,
-                            x: node.x(),
-                            y: node.y(),
-                            rotation: rotation,
-                            scaleX: scaleX,
-                            scaleY: scaleY,
-                        }
-                    }
-
-                    return line;
-                }))
-
+            case Tool.Line: {
+                updateShapeTransform(id, node.x(), node.y(), rotation, scaleX, scaleY, setLines);
                 break;
             }
-
-            case Tool.Rectangle:{
-                 setRectangles((prevRectangles) => prevRectangles.map((rectangle) => {
-                    if (rectangle.ID === id){
-                        return {
-                            ...rectangle,
-                            x: node.x(),
-                            y: node.y(),
-                            rotation: rotation,
-                            scaleX: scaleX,
-                            scaleY: scaleY,
-                        }
-                    }
-
-                    return rectangle;
-                }))
-
+            case Tool.Rectangle: {
+                updateShapeTransform(id, node.x(), node.y(), rotation, scaleX, scaleY, setRectangles);
                 break;
             }
-
-            case Tool.Square:{
-                setSquares((prevSquares) => prevSquares.map((square) => {
-                    if (square.ID === id){
-                       return {
-                        ...square,
-                        x: node.x(),
-                        y: node.y(),
-                        rotation: rotation,
-                        scaleX: scaleX,
-                        scaleY: scaleY,
-                       }
-                   }
-
-                   return square;
-               }))
-
-               break;
-            }
-            case Tool.Triangle:{
-                setTriangles((prevTriangles) => prevTriangles.map((triangle) => {
-
-                    if (triangle.ID === id){
-                    
-                    return {
-                        ...triangle,
-                        x: node.x(),
-                        y: node.y(),
-                        rotation: rotation,
-                        scaleX: scaleX,
-                        scaleY: scaleY,
-                    }
-                }
-
-                return triangle;
-                }))
-
+            case Tool.Square: {
+                updateShapeTransform(id, node.x(), node.y(), rotation, scaleX, scaleY, setSquares);
                 break;
             }
-
+            case Tool.Triangle: {
+                updateShapeTransform(id, node.x(), node.y(), rotation, scaleX, scaleY, setTriangles);
+                break;
+            }
             case Tool.Circle: {
-                setCircle((prevCircles) =>
-                    prevCircles.map((circle) => {
-                        if (circle.ID === id) {
-                            return {
-                                ...circle,
-                                x: node.x(),
-                                y: node.y(),
-                                rotation: rotation,
-                                scaleX: scaleX,
-                                scaleY: scaleY,
-                            };
-                        }
-                        return circle;
-                    })
-                );
+                updateShapeTransform(id, node.x(), node.y(), rotation, scaleX, scaleY, setCircle);
                 break;
             }
-
             case Tool.Ellipse: {
-                setEllipse((prevEllipses) =>
-                    prevEllipses.map((ellipse) => {
-                        if (ellipse.ID === id) {
-                            return {
-                                ...ellipse,
-                                x: node.x(),
-                                y: node.y(),
-                                rotation: rotation,
-                                scaleX: scaleX,
-                                scaleY: scaleY,
-                            };
-                        }
-                        return ellipse;
-                    })
-                );
+                updateShapeTransform(id, node.x(), node.y(), rotation, scaleX, scaleY, setEllipse);
                 break;
             }
         }
-        
-    };
-    
-    //Copy and Paste
+    }
+
+    //////////////////
+    //Copy and Paste//
+
     const [copiedShape, setCopiedShape] = useState()
     
-    ////Ali////
     //Send to backend for prototype//
     const handleCopy = (e, shape) => {
         const {x, y} = stageRef.current.getPointerPosition();
@@ -1217,7 +1163,7 @@ const Paint = () => {
             //We calulate relative position and add it to the copiedShape x, y 
 
             console.log("Paste...,", pastedShape);
-
+            saveToHistory();
             switch(copiedShape.type){
 
                 case Tool.Scribble:{
@@ -1251,9 +1197,17 @@ const Paint = () => {
                 }
     
             }
+
+            if (copiedShape && shapeTools.includes(copiedShape.type)){
+                
+                sendShape(copiedShape, EndPoints.Copy);
+                sendShape(pastedShape, EndPoints.Paste);
+                
+            }
         }
     }
 
+    //Stage Size Handling//
     //Avoiding problems when resizing the page
     const canvasRef = useRef(null);
     const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
@@ -1279,6 +1233,7 @@ const Paint = () => {
         return () => window.removeEventListener('resize', updateCanvasSize);
     }, []);
 
+    // Makes the render of shapes (layers of them / one shape being on top of another ) correct
     const renderShapes = [...squares, ...triangles,...rectangles, ...circles,...ellipses, ...lines,...scribbles].sort((a, b) => a.zIndex - b.zIndex);
     return (
         <div className="container">
@@ -1324,11 +1279,11 @@ const Paint = () => {
                 </button>
 
                 <button className="toolbar-button" title="Undo">
-                    <img src="../icons/arrow-rotate-left-undo.svg" alt="Undo" onClick={() => setTool(Tool.Undo)}/>
+                    <img src="../icons/arrow-rotate-left-undo.svg" alt="Undo" onClick={handleUndo}/>
                 </button>
 
                 <button className="toolbar-button" title="Redo">
-                    <img src="../icons/arrow-rotate-right-redo.svg" alt="Redo" onClick={() => setTool(Tool.Redo)}/>
+                    <img src="../icons/arrow-rotate-right-redo.svg" alt="Redo" onClick={handleRedo}/>
                 </button>
 
                 <button className="toolbar-button" title="Select" onClick={() => setTool(Tool.Select)}>
@@ -1392,7 +1347,7 @@ const Paint = () => {
                                     lineJoin="round"
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
@@ -1424,7 +1379,7 @@ const Paint = () => {
                                     y = {shape.y}
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
@@ -1453,7 +1408,7 @@ const Paint = () => {
                                     fill={shape.fill_Colour}
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
@@ -1483,7 +1438,7 @@ const Paint = () => {
                                     fill={shape.fill_Colour}
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
@@ -1514,7 +1469,7 @@ const Paint = () => {
                                     fill={shape.fill_Colour}
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
@@ -1541,7 +1496,7 @@ const Paint = () => {
                                     fill={shape.fill_Colour}
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
@@ -1569,7 +1524,7 @@ const Paint = () => {
                                     fill={shape.fill_Colour}
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation
