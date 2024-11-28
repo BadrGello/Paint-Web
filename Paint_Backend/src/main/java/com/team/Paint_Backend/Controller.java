@@ -1,6 +1,7 @@
 package com.team.Paint_Backend;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.micrometer.common.lang.NonNull;
@@ -18,15 +19,17 @@ public class Controller {
     Service service = new Service();
     ShapeFactory factory = new ShapeFactory();
 
-    @PostMapping("/draw")    
+    @PostMapping("/draw") 
+    @ResponseBody   
     public void drawShape ( @RequestBody @NonNull DefaultShape s){
          service.addShape(factory.createShape(s.getDeleted(),s.getZIndex(),s.getID(), s.getType(), s.getX(), s.getY(), s.getFill_Colour()
          , s.getStroke_Colour(), s.getStrokeWidth(), s.getScaleX(), s.getScaleY(),s.getRotation(), s.getWidth()
          , s.getHeight(), s.getRadius(), s.getRadiusX(), s.getRadiusY(), s.getPoints()));
     }
     @PostMapping("/edit")
+    @ResponseBody
     public void editShape (@RequestBody  @NonNull DefaultShape s){
-        service.addShape(factory.createShape(s.getDeleted(),s.getZIndex(),s.getID(), s.getType(), s.getX(), s.getY(), s.getFill_Colour()
+        service.edit(factory.createShape(s.getDeleted(),s.getZIndex(),s.getID(), s.getType(), s.getX(), s.getY(), s.getFill_Colour()
         , s.getStroke_Colour(), s.getStrokeWidth(), s.getScaleX(), s.getScaleY(),s.getRotation(), s.getWidth()
         , s.getHeight(), s.getRadius(), s.getRadiusX(), s.getRadiusY(), s.getPoints()));
    }
