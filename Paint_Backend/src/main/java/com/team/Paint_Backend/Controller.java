@@ -6,9 +6,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.micrometer.common.lang.NonNull;
 
+import java.io.IOException;
+import java.util.Vector;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -33,5 +39,20 @@ public class Controller {
         , s.getStroke_Colour(), s.getStrokeWidth(), s.getScaleX(), s.getScaleY(),s.getRotation(), s.getWidth()
         , s.getHeight(), s.getRadius(), s.getRadiusX(), s.getRadiusY(), s.getPoints()));
    }
+   @GetMapping("/save/json")
+   @ResponseBody
+   public String saveJson(@RequestParam String filename, @RequestParam String path) {   
+      try{ return service.saveJson(filename, path);}
+      catch (IOException e){
+          return("Error while saving");
+      }
+   }
+   
+   @GetMapping("/load/json")
+   @ResponseBody
+   public Vector<DefaultShape> loadJson(@RequestParam String path) {
+       return service.loadJson(path);
+   }
+   
 
 }
