@@ -16,8 +16,10 @@ import java.util.Vector;
 public class Service {
     Vector<Shape> shapes = new Vector<>();
     
-    public Service() {
-            
+    
+        @Override
+        public String toString() {
+            return "shape{ID='" + this.shapes.get(shapes.size()-1).getID() + "', strokeColor=" + this.shapes.get(shapes.size()-1).getStroke_Colour() + "}";
     }
 
     public void addShape (Shape s){
@@ -26,18 +28,22 @@ public class Service {
     public void edit (Shape s){
         shapes.add(s);
     }
-    public String saveJson (String filename, String path) throws IOException{
+    public void saveJson (String filename, String path, int zIndexTracker) throws IOException{
         if (Files.isDirectory(Path.of(path))) {
-        
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(ShapesToDefault());
+            // Prepare data to save
+            SaveData saveData = new SaveData(zIndexTracker, ShapesToDefault());
     
-            
+            // Convert to JSON
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(saveData);
+            System.out.println("hello");
+            // Write JSON to file
             try (FileWriter file = new FileWriter(Path.of(path).resolve(filename + ".json").toFile(), false)) {
+                System.out.println("Error while saving1");
                 file.write(json);
             }
     
-            return "Saved successfully: " + filename + ".json";
+            System.out.println("Saved successfully: " + filename + ".json"); ;
         } else {
             throw new IOException("Invalid path: " + path + " is not a directory.");
         }
