@@ -27,7 +27,8 @@ public class Controller {
 
     @PostMapping("/draw") 
     @ResponseBody   
-    public void drawShape ( @RequestBody @NonNull DefaultShape s){
+    public void drawShape ( @RequestBody @NonNull DefaultShape s){   
+         System.out.println(1);
          service.addShape(factory.createShape(s.getDeleted(),s.getZIndex(),s.getID(), s.getType(), s.getX(), s.getY(), s.getFill_Colour()
          , s.getStroke_Colour(), s.getStrokeWidth(), s.getScaleX(), s.getScaleY(),s.getRotation(), s.getWidth()
          , s.getHeight(), s.getRadius(), s.getRadiusX(), s.getRadiusY(), s.getPoints()));
@@ -35,6 +36,7 @@ public class Controller {
     @PostMapping("/edit")
     @ResponseBody
     public void editShape (@RequestBody  @NonNull DefaultShape s){
+        System.out.println(2);
         service.edit(factory.createShape(s.getDeleted(),s.getZIndex(),s.getID(), s.getType(), s.getX(), s.getY(), s.getFill_Colour()
         , s.getStroke_Colour(), s.getStrokeWidth(), s.getScaleX(), s.getScaleY(),s.getRotation(), s.getWidth()
         , s.getHeight(), s.getRadius(), s.getRadiusX(), s.getRadiusY(), s.getPoints()));
