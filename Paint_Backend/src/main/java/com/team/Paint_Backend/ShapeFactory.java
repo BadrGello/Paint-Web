@@ -7,25 +7,26 @@ public class ShapeFactory {
                              String stroke_Colour,double strokeWidth, double scaleX, double scaleY, double rotation,double width, 
                              double height,double radius,double radiusX, double radiusY, Vector<Double> points){
       switch (type) {
-        case "Square":
+        case "square":
+           System.out.println("square drawing");
             return new Square(deleted, zIndex,ID, type, x, y, fill_Colour, stroke_Colour,strokeWidth, scaleX, scaleY, rotation, width);
             
-        case "Rectangle":
+        case "rectangle":
             return new Rectangle(deleted, zIndex,ID, type, x, y, fill_Colour, stroke_Colour,strokeWidth, scaleX, scaleY, rotation, width, height);
             
-        case "Triangle":
+        case "triangle":
             return new Triangle(deleted, zIndex,ID, type, x, y, fill_Colour, stroke_Colour,strokeWidth, scaleX, scaleY, rotation, radius);
             
-        case "Circle":
+        case "circle":
             return new Circle(deleted, zIndex,ID, type, x, y, fill_Colour, stroke_Colour,strokeWidth, scaleX, scaleY, rotation, radius);
             
-        case "Ellipse":
+        case "ellipse":
             return new Ellipse(deleted, zIndex,ID, type, x, y, fill_Colour, stroke_Colour,strokeWidth, scaleX, scaleY, rotation, radiusX, radiusY);
             
-        case "LineSegment":
+        case "line":
             return new LineSegment(deleted, zIndex,ID, type, x, y, fill_Colour, stroke_Colour,strokeWidth, scaleX, scaleY, rotation, points);
             
-        case "FreeDrawing":
+        case "scribble":
             return new FreeDrawing(deleted, zIndex,ID, type, x, y, fill_Colour, stroke_Colour,strokeWidth, scaleX, scaleY, rotation, points);
                     
         default:

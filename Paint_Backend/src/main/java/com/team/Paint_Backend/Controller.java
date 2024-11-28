@@ -32,6 +32,7 @@ public class Controller {
          service.addShape(factory.createShape(s.getDeleted(),s.getZIndex(),s.getID(), s.getType(), s.getX(), s.getY(), s.getFill_Colour()
          , s.getStroke_Colour(), s.getStrokeWidth(), s.getScaleX(), s.getScaleY(),s.getRotation(), s.getWidth()
          , s.getHeight(), s.getRadius(), s.getRadiusX(), s.getRadiusY(), s.getPoints()));
+         System.out.println(service.toString());
     }
     @PostMapping("/edit")
     @ResponseBody
@@ -41,16 +42,18 @@ public class Controller {
         , s.getStroke_Colour(), s.getStrokeWidth(), s.getScaleX(), s.getScaleY(),s.getRotation(), s.getWidth()
         , s.getHeight(), s.getRadius(), s.getRadiusX(), s.getRadiusY(), s.getPoints()));
    }
-   @GetMapping("/save/json")
+   @PostMapping("/savejson")
    @ResponseBody
-   public String saveJson(@RequestParam String filename, @RequestParam String path) {   
-      try{ return service.saveJson(filename, path);}
-      catch (IOException e){
-          return("Error while saving");
+   public void saveJson(@RequestBody SavedData data) {   
+      try {
+          service.saveJson(data.getFileName(), data.getPath(), data.getZIndexTracker());
+      } catch (IOException e) {
+          System.out.println("Error while saving: " + e.getMessage());
+          e.printStackTrace();
       }
    }
    
-   @GetMapping("/load/json")
+   @GetMapping("/loadjson")
    @ResponseBody
    public Vector<DefaultShape> loadJson(@RequestParam String path) {
        return service.loadJson(path);
