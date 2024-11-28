@@ -275,6 +275,59 @@ const Paint = () => {
     
     };
 
+
+    
+    const [undoStack, setUndoStack] = useState([]);
+    const [redoStack, setRedoStack] = useState([]);
+
+    const saveToHistory = () => {
+        const currentState = {
+            scribbles,
+            lines,
+            rectangles,
+            squares,
+            triangles,
+            circles,
+            ellipses,
+            zIndexTracker,
+        };
+        setUndoStack((prev) => [...prev, currentState]);
+        setRedoStack([]);
+    };
+    const handleUndo = () => {
+        if (undoStack.length === 0) return;
+    
+        const lastState = undoStack.pop();
+        setRedoStack((prev) => [...prev, {
+            scribbles, lines, rectangles, squares, triangles, circles, ellipses, zIndexTracker
+        }]);
+        restoreState(lastState);
+    };
+    
+    const handleRedo = () => {
+        if (redoStack.length === 0) return;
+    
+        const nextState = redoStack.pop();
+        setUndoStack((prev) => [...prev, {
+            scribbles, lines, rectangles, squares, triangles, circles, ellipses, zIndexTracker
+        }]);
+        restoreState(nextState);
+    };
+    
+    const restoreState = (state) => {
+        setScribbles(state.scribbles);
+        setLines(state.lines);
+        setRectangles(state.rectangles);
+        setSquares(state.squares);
+        setTriangles(state.triangles);
+        setCircle(state.circles);
+        setEllipse(state.ellipses);
+        setZIndexTracker(state.zIndexTracker);
+        setSelectedId(null);
+        transformerRef.current.nodes([]);
+    };
+
+
     //////////Connection to Spring////////////
 
     const stageRef = useRef()
@@ -315,6 +368,19 @@ const Paint = () => {
         //Generate unique id for the shape and stores the current shape id in ref for usage in handleMouseMove()
         const id = uuidv4();
         currentShapeId.current = id;
+
+
+        // Save the current state to undo stack before making changes
+        saveToHistory({
+            scribbles,
+            lines,
+            rectangles,
+            squares,
+            triangles,
+            circles,
+            ellipses,
+            zIndexTracker
+        });
 
         switch(tool){
             // We add a new scribble object with the following properties to the old scribbles
@@ -531,6 +597,7 @@ const Paint = () => {
                 return shape;
             })
         );
+        saveToHistory();
     
         // Send the last modified shape to the backend
         if (lastModified) {
@@ -594,6 +661,7 @@ const Paint = () => {
                 return shape;
             })
         );
+        saveToHistory();
 
         // Send the last modified shape to the backend
         if (lastModified) {
@@ -718,6 +786,7 @@ const Paint = () => {
                 return shape;
             })
         );
+        saveToHistory();
     
         // Send the last modified shape to the backend
         if (lastModified) {
@@ -1015,6 +1084,8 @@ const Paint = () => {
         node.scaleX(1);
         node.scaleY(1);
 
+        saveToHistory();
+
         switch (type) {
             case Tool.Scribble: {
                 updateShapeTransform(id, node.x(), node.y(), rotation, scaleX, scaleY, setScribbles);
@@ -1088,7 +1159,7 @@ const Paint = () => {
             //We calulate relative position and add it to the copiedShape x, y 
 
             console.log("Paste...,", pastedShape);
-
+            saveToHistory();
             switch(copiedShape.type){
 
                 case Tool.Scribble:{
@@ -1204,11 +1275,11 @@ const Paint = () => {
                 </button>
 
                 <button className="toolbar-button" title="Undo">
-                    <img src="../icons/arrow-rotate-left-undo.svg" alt="Undo" onClick={() => setTool(Tool.Undo)}/>
+                    <img src="../icons/arrow-rotate-left-undo.svg" alt="Undo" onClick={handleUndo}/>
                 </button>
 
                 <button className="toolbar-button" title="Redo">
-                    <img src="../icons/arrow-rotate-right-redo.svg" alt="Redo" onClick={() => setTool(Tool.Redo)}/>
+                    <img src="../icons/arrow-rotate-right-redo.svg" alt="Redo" onClick={handleRedo}/>
                 </button>
 
                 <button className="toolbar-button" title="Select" onClick={() => setTool(Tool.Select)}>
