@@ -3,12 +3,13 @@ package com.team.Paint_Backend;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import io.micrometer.common.lang.NonNull;
 
 import java.io.IOException;
-import java.util.Vector;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +30,7 @@ public class Controller {
     @ResponseBody   
     public void drawShape ( @RequestBody @NonNull DefaultShape s){   
          System.out.println(1);
+         System.out.println(s.getID());
          service.addShape(factory.createShape(s.getDeleted(),s.getZIndex(),s.getID(), s.getType(), s.getX(), s.getY(), s.getFill_Colour()
          , s.getStroke_Colour(), s.getStrokeWidth(), s.getScaleX(), s.getScaleY(),s.getRotation(), s.getWidth()
          , s.getHeight(), s.getRadius(), s.getRadiusX(), s.getRadiusY(), s.getPoints()));
@@ -38,15 +40,19 @@ public class Controller {
     @ResponseBody
     public void editShape (@RequestBody  @NonNull DefaultShape s){
         System.out.println(2);
+        System.out.println(s.getID());
         service.edit(factory.createShape(s.getDeleted(),s.getZIndex(),s.getID(), s.getType(), s.getX(), s.getY(), s.getFill_Colour()
         , s.getStroke_Colour(), s.getStrokeWidth(), s.getScaleX(), s.getScaleY(),s.getRotation(), s.getWidth()
         , s.getHeight(), s.getRadius(), s.getRadiusX(), s.getRadiusY(), s.getPoints()));
    }
    @PostMapping("/savejson")
    @ResponseBody
-   public void saveJson(@RequestBody SavedData data) {   
+   public void saveJson(@RequestParam String fileName , @RequestParam String path , @RequestParam int zIndexTracker) {   
       try {
-          service.saveJson(data.getFileName(), data.getPath(), data.getZIndexTracker());
+          System.out.println(fileName);
+          System.out.println(path);
+          System.out.println(zIndexTracker);
+          service.saveJson(fileName, path, zIndexTracker);
       } catch (IOException e) {
           System.out.println("Error while saving: " + e.getMessage());
           e.printStackTrace();
@@ -55,9 +61,16 @@ public class Controller {
    
    @GetMapping("/loadjson")
    @ResponseBody
-   public Vector<DefaultShape> loadJson(@RequestParam String path) {
-       return service.loadJson(path);
-   }
+   public SaveData loadJson(@RequestParam String path) {
+    System.out.println("Decoded Path: " + path);
+
+    try {
+        // Use the decoded path to load the JSON file
+        return service.loadJson(path);
+    } catch (RuntimeException e) {
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error loading JSON", e);
+    }
+}
    
 
 }

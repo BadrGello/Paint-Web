@@ -36,10 +36,10 @@ public class Service {
             // Convert to JSON
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(saveData);
-            System.out.println("hello");
+     
             // Write JSON to file
             try (FileWriter file = new FileWriter(Path.of(path).resolve(filename + ".json").toFile(), false)) {
-                System.out.println("Error while saving1");
+               
                 file.write(json);
             }
     
@@ -49,20 +49,24 @@ public class Service {
         }
             
     }
-     public Vector<DefaultShape> loadJson(String path) throws RuntimeException {
+    public SaveData loadJson(String path) throws RuntimeException {
         File file = new File(path);
         ObjectMapper mapper = new ObjectMapper();
-      
+    
         try {
-            // Read JSON array into List of DefaultShape objects
-            Vector<DefaultShape> shapes = mapper.readValue(file, mapper.getTypeFactory().constructCollectionType(Vector.class, DefaultShape.class));
-            shapes.forEach(System.out::println);
-            return shapes;
+            // Read the JSON file into a SaveData object
+            SaveData saveData = mapper.readValue(file, SaveData.class);
+    
+            // Debugging output
+            System.out.println("Loaded SaveData:");
+            System.out.println("zIndexTracker: " + saveData.getzIndexTracker());
+            System.out.println("Shapes: " + saveData.getShapes());
+    
+            return saveData;
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("Error reading JSON file", e); 
+            throw new RuntimeException("Error reading JSON file", e);
         }
-       
     }
     public DefaultShape ShapeToDefault(Shape s) {
         DefaultShape Default = new DefaultShape();

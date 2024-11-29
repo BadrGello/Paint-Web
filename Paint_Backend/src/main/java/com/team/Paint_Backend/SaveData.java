@@ -6,6 +6,10 @@ public class SaveData {
     private int zIndexTracker;
     private Vector<DefaultShape> shapes;
 
+
+    public SaveData() {
+    }
+
  
     public SaveData(int zIndexTracker, Vector<DefaultShape> shapes) {
         this.zIndexTracker = zIndexTracker;

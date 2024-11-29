@@ -102,6 +102,54 @@ const Paint = () => {
             console.error("Error Communicating: ", error);
         }
     };
+    const saveShape = async (fileName, path, zIndexTracker, endpointURL) => {
+        const formData = new URLSearchParams();
+        formData.append("fileName", fileName);
+        formData.append("path", path);
+        formData.append("zIndexTracker", zIndexTracker);
+    
+        try {
+            const response = await fetch(endpointURL, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: formData.toString(), // Send form-encoded data
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const responseData = await response.json();
+            console.log("Received Response: ", responseData);
+            return responseData;
+        } catch (error) {
+            console.error("Error Communicating: ", error);
+            throw error;
+        }
+    };
+    const loadShape = async (path, endpointURL) => {
+        try {
+            // Append the path as a query parameter
+            const urlWithParams = `${endpointURL}?path=${encodeURIComponent(path)}`;
+    
+            const response = await fetch(urlWithParams, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }, // Content-Type not strictly required for GET
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const responseData = await response.json();
+            console.log("Received Response: ", responseData);
+            return responseData;
+        } catch (error) {
+            console.error("Error Communicating: ", error);
+            throw error;
+        }
+    };
+    
     
 
     //Send upon Saving: tool, strokeColor, strokeWidth, fillColor, zIndexTracker
@@ -141,7 +189,7 @@ const Paint = () => {
 
             if (type === Tool.SaveJSON){
                 console.log("Save Json")
-                responseNow = await sendShape(data, EndPoints.Savejson)
+                responseNow = await saveShape(fileName,path,zIndexTracker, EndPoints.Savejson)
             }
 
             else if (type === Tool.SaveXML){
@@ -187,7 +235,7 @@ const Paint = () => {
 
             if (type === Tool.LoadJSON){
                 console.log("Load JSON")
-                responseNow = await sendShape(data, EndPoints.Loadjson)
+                responseNow = await loadShape(path, EndPoints.Loadjson)
             }
 
             else if (type === Tool.LoadXML){
@@ -1379,7 +1427,7 @@ const Paint = () => {
                                     y = {shape.y}
 
                                     draggable = {isDraggable}
-                                    onDragStart={() => handleDragStart(shape.Id,shape.type)}
+                                    onDragStart={() => handleDragStart(shape.ID,shape.type)}
                                     onDragEnd={(e) => handleDragEnd(e, shape.ID,shape.type)}
 
                                     //For transformation

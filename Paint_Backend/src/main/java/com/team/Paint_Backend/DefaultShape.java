@@ -22,7 +22,10 @@ public class DefaultShape {
     private double radiusY;
     private Vector<Double> points;
 
+    public DefaultShape() {
+    }
 
+    
     public boolean isDeleted() {
         return this.deleted;
     }
