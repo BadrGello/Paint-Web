@@ -36,6 +36,7 @@ public class Service {
             // Convert to JSON
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(saveData);
+            System.out.println(json);
      
             // Write JSON to file
             try (FileWriter file = new FileWriter(Path.of(path).resolve(filename + ".json").toFile(), false)) {
@@ -81,13 +82,14 @@ public class Service {
         Default.setScaleX(s.getScaleX());
         Default.setScaleY(s.getScaleY());
         Default.setDeleted(s.isDeleted());
+        Default.setStrokeWidth(s.getStrokeWidth());
         if ((s instanceof Circle)) {
             Default.setRadius(((Circle) s).getRadius());
         }else if((s instanceof Square)){
             Default.setWidth(((Square)s).getWidth());
         } else if((s instanceof Rectangle)){
             Default.setWidth(((Rectangle)s).getWidth());
-            Default.setHeight(((Rectangle)s).getWidth());
+            Default.setHeight(((Rectangle)s).getHeight());
         }else if (s instanceof Triangle) {
             Default.setRadius(((Triangle) s).getRadius());
         } else if (s instanceof Ellipse) {

@@ -12,6 +12,7 @@ public class Rectangle  extends Shape {
         super(deleted, zIndex, ID,  type,  x,  y,  fill_Colour,  stroke_Colour,strokeWidth,  scaleX,  scaleY, rotation);
         this.width = width;
         this.height = height;
+        System.out.println(strokeWidth);
     }
 
     public double getWidth() {

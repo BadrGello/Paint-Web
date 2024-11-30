@@ -274,7 +274,6 @@ const Paint = () => {
         setZIndexTracker(responseNow.zIndexTracker);
 
         const addShape = (shape, setShape) => {
-            console.log("lines",lines)
         setShape((prevShapes) => [
             
             ...(Array.isArray(prevShapes) ? prevShapes : []), // Ensure prevShapes is an array
