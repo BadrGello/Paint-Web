@@ -1,5 +1,6 @@
 package com.team.Paint_Backend;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -99,6 +100,43 @@ public class Service {
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("Error reading JSON file", e);
+        }
+    }
+    public void saveXml(String filename, String path, int zIndexTracker) throws IOException {
+        if (Files.isDirectory(Path.of(path))) {
+            // Create XmlMapper for XML serialization
+            XmlMapper xmlMapper = new XmlMapper();
+            this.intialSaveData = new SaveData(this.zIndexTracker, ShapesToDefault());
+            String xml = xmlMapper.writeValueAsString(this.intialSaveData);
+            System.out.println(xml);
+
+            // Write XML to file
+            try (FileWriter file = new FileWriter(Path.of(path).resolve(filename + ".xml").toFile(), false)) {
+                file.write(xml);
+            }
+
+            System.out.println("Saved successfully: " + filename + ".xml");
+        } else {
+            throw new IOException("Invalid path: " + path + " is not a directory.");
+        }
+    }
+    public SaveData loadXml(String path) throws RuntimeException {
+        File file = new File(path);
+        XmlMapper xmlMapper = new XmlMapper();
+    
+        try {
+            // Read the XML file into a SaveData object
+            SaveData saveData = xmlMapper.readValue(file, SaveData.class);
+    
+            // Debugging output
+            System.out.println("Loaded SaveData:");
+            System.out.println("zIndexTracker: " + saveData.getzIndexTracker());
+            System.out.println("Shapes: " + saveData.getShapes());
+    
+            return saveData;
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error reading XML file", e);
         }
     }
     public DefaultShape ShapeToDefault(Shape s) {

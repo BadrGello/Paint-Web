@@ -102,7 +102,7 @@ const Paint = () => {
             console.error("Error Communicating: ", error);
         }
     };
-    const saveShape = async (fileName, path, zIndexTracker, endpointURL) => {
+    const saveData = async (fileName, path, zIndexTracker, endpointURL) => {
         const formData = new URLSearchParams();
         formData.append("fileName", fileName);
         formData.append("path", path);
@@ -151,7 +151,7 @@ const Paint = () => {
             throw error;
         }
     };
-    const loadShape = async (path, endpointURL) => {
+    const loadData = async (path, endpointURL) => {
         try {
             // Append the path as a query parameter
             const urlWithParams = `${endpointURL}?path=${encodeURIComponent(path)}`;
@@ -212,12 +212,12 @@ const Paint = () => {
 
             if (type === Tool.SaveJSON){
                 console.log("Save Json")
-                responseNow = await saveShape(fileName,path,zIndexTracker, EndPoints.Savejson)
+                responseNow = await saveData(fileName,path,zIndexTracker, EndPoints.Savejson)
             }
 
             else if (type === Tool.SaveXML){
                 console.log("Save XML")
-                responseNow = await sendShape(data, EndPoints.Savexml)
+                responseNow = await saveData(fileName,path,zIndexTracker, EndPoints.Savexml)
             }
 
             //DEBUG//
@@ -258,12 +258,12 @@ const Paint = () => {
 
             if (type === Tool.LoadJSON){
                 console.log("Load JSON")
-                responseNow = await loadShape(path, EndPoints.Loadjson)
+                responseNow = await loadData(path, EndPoints.Loadjson)
             }
 
             else if (type === Tool.LoadXML){
                 console.log("Load XML")
-                responseNow = await sendShape(data, EndPoints.Loadxml)
+                responseNow = await loadData(path, EndPoints.Loadxml)
             }
 
             //DEBUG//
