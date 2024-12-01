@@ -46,6 +46,11 @@ public class Controller {
         , s.getHeight(), s.getRadius(), s.getRadiusX(), s.getRadiusY(), s.getPoints()));
         System.out.println(service.toString());
    }
+   @PostMapping("/delete")
+   @ResponseBody
+   public void delete(@RequestParam String id){
+       service.delete(id);
+   }
    @PostMapping("/savejson")
    @ResponseBody
    public void saveJson(@RequestParam String fileName , @RequestParam String path , @RequestParam int zIndexTracker) {   
