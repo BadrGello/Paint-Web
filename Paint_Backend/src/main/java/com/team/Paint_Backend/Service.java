@@ -46,7 +46,8 @@ public class Service {
                 this.shapes.setElementAt(s.clone(),index);
                 System.out.println("Last shape deleted property " + (this.shapes.get(shapes.size()-1).getDeleted()));
 
-            }     
+            }
+            UndoRedoHandle();     
     }
     public void delete(String id){
         int indexDrawing=-1;
