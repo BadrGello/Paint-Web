@@ -144,7 +144,7 @@ public class Service {
             this.Redo=new Stack<>();
             this.Undo.push(currentState);
     }
-    public void Undo() throws JsonProcessingException{
+    public SaveData Undo() throws JsonProcessingException{
         if(!this.Undo.isEmpty()){
             this.Redo.push(this.Undo.pop());
             if(!this.Undo.isEmpty()){
@@ -155,8 +155,10 @@ public class Service {
             defaultToShapes(currentState.getShapes());
             this.zIndexTracker=currentState.getzIndexTracker();     
         }
+        System.out.println(this.currentState.getzIndexTracker());
+        return this.currentState;
     }
-    public void Redo() throws JsonProcessingException{
+    public SaveData Redo() throws JsonProcessingException{
         System.out.print("thnx");
         if(!this.Redo.isEmpty()){
             this.Undo.push(this.Redo.pop());
@@ -169,6 +171,7 @@ public class Service {
             defaultToShapes(currentState.getShapes());
             this.zIndexTracker=currentState.getzIndexTracker();    
         }
+        return this.currentState;
     }
 
     public Vector<DefaultShape> ShapesToDefault() {

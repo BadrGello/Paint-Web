@@ -353,6 +353,73 @@ const Paint = () => {
         });
     };
 
+    const handleLoadedData = (responseNow) => {
+                // Reset all shapes to empty
+                setScribbles([]);
+                setLines([]);
+                setRectangles([]);
+                setSquares([]);
+                setCircle([]);
+                setEllipse([]);
+                setTriangles([]);
+                let receivedShapes = responseNow.shapes;
+                setZIndexTracker(responseNow.zIndexTracker);
+                const addShape = (shape, setShape) => {
+                    console.log(squares)
+                setShape((prevShapes) => [
+                    ...(Array.isArray(prevShapes) ? prevShapes : []),
+                    {
+                        id: shape.id || 'default-id',
+                        type: shape.type || 'default-type',
+                        x: shape.x || 0,
+                        y: shape.y || 0,
+                        fill_Colour: shape.fill_Colour || '#000000',
+                        stroke_Colour: shape.stroke_Colour || '#000000',
+                        strokeWidth: shape.strokeWidth || 1,
+                        scaleX: shape.scaleX || 1,
+                        scaleY: shape.scaleY || 1,
+                        width: shape.width || 0,
+                        height: shape.height || 0,
+                        radius: shape.radius || 0,
+                        radiusX: shape.radiusX || 0,
+                        radiusY: shape.radiusY || 0,
+                        points: shape.points || [],
+                        rotation: shape.rotation || 0,
+                        deleted: shape.deleted || false,
+                        zindex: shape.zindex || 0,
+                    }
+                ]);}
+        
+                receivedShapes.forEach((shape) => {
+                    switch (shape.type) {
+                        case Tool.Scribble:
+                            addShape(shape, setScribbles);
+                            break;
+                        case Tool.Line:
+                            addShape(shape, setLines);
+                            break;
+                        case Tool.Rectangle:
+                            addShape(shape, setRectangles);
+                            break;
+                        case Tool.Square:
+                            shape.height=shape.width;
+                            addShape(shape, setSquares);
+                            break;
+                        case Tool.Triangle:
+                            addShape(shape, setTriangles);
+                            break;
+                        case Tool.Circle:
+                            addShape(shape, setCircle);
+                            break;
+                        case Tool.Ellipse:
+                            addShape(shape, setEllipse);
+                            break;
+                        default:
+                            console.warn(`Unhandled shape type: ${shape.type}`);
+                    }
+                });
+    }
+
     //////////Connection to Spring////////////
 
     ////UNDO REDO////
@@ -374,25 +441,23 @@ const Paint = () => {
         setRedoStack([]);
     };
     const handleUndo = async () => {
-        if (undoStack.length === 0) return;
-    
-        const lastState = undoStack.pop();
-        setRedoStack((prev) => [...prev, {
-            scribbles, lines, rectangles, squares, triangles, circles, ellipses, zIndexTracker
-        }]);
-        restoreState(lastState);
-        const response = await fetch(EndPoints.Undo);
+        const response = await fetch(EndPoints.Undo, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }, // Content-Type not strictly required for GET
+        });
+        let responseNow = await response.json();
+        console.log("undo",responseNow);
+        handleLoadedData(responseNow)
     };
     
     const handleRedo = async () => {
-        if (redoStack.length === 0) return;
-    
-        const nextState = redoStack.pop();
-        setUndoStack((prev) => [...prev, {
-            scribbles, lines, rectangles, squares, triangles, circles, ellipses, zIndexTracker
-        }]);
-        restoreState(nextState);
-        const response = await fetch(EndPoints.Redo);
+        const response = await fetch(EndPoints.Redo, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }, // Content-Type not strictly required for GET
+        });
+        let responseNow = await response.json();
+        console.log("redo",responseNow);
+        handleLoadedData(responseNow)
     };
     
     const restoreState = (state) => {

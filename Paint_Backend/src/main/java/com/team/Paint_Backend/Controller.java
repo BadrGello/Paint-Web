@@ -81,13 +81,13 @@ public class Controller {
 }
     @GetMapping("/undo")
     @ResponseBody
-    public void  undo() throws JsonProcessingException{
-        service.Undo();
+    public SaveData  undo() throws JsonProcessingException{
+        return service.Undo();
     }
     @GetMapping("/redo")
     @ResponseBody
-    public void  redo() throws JsonProcessingException{
-        service.Redo();
+    public SaveData  redo() throws JsonProcessingException{
+        return service.Redo();
     }
 
 }
