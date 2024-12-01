@@ -19,11 +19,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class Service {
     Vector<Shape> shapes = new Vector<>();
-    Stack<String> Undo=new Stack<String>();
-    Stack<String> Redo=new Stack<String>();
-    String currentState="";
-    int zIndexTracker=0;
     SaveData intialSaveData = new SaveData(this.zIndexTracker,ShapesToDefault());
+    Stack<SaveData> Undo=new Stack<SaveData>();
+    Stack<SaveData> Redo=new Stack<SaveData>();
+    SaveData currentState= new SaveData(this.zIndexTracker,ShapesToDefault());
+    int zIndexTracker=0;
         @Override
         public String toString() {
             return "shape{ID='" + this.shapes.get(shapes.size()-1).getID() + "', zindex=" + this.shapes.get(shapes.size()-1).getZIndex() + "}";
@@ -64,12 +64,8 @@ public class Service {
     }
     public void saveJson (String filename, String path, int zIndexTracker) throws IOException{
         if (Files.isDirectory(Path.of(path))) {
-            if(currentState==""){
-                ObjectMapper mapper = new ObjectMapper();
-                this.intialSaveData = new SaveData(this.zIndexTracker,ShapesToDefault());
-                this.currentState=mapper.writeValueAsString(this.intialSaveData);
-            }
-            String json = this.currentState;
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(this.currentState);
             System.out.println(json);
      
             // Write JSON to file
@@ -96,7 +92,9 @@ public class Service {
             System.out.println("Loaded SaveData:");
             System.out.println("zIndexTracker: " + saveData.getzIndexTracker());
             System.out.println("Shapes: " + saveData.getShapes());
-    
+            
+            defaultToShapes(saveData.getShapes());
+            this.zIndexTracker=saveData.getzIndexTracker();
             return saveData;
         } catch (IOException e) {
             e.printStackTrace();
@@ -138,16 +136,13 @@ public class Service {
         return Default;
     }
 
+
     public void UndoRedoHandle(){
             SaveData saveData = new SaveData(this.zIndexTracker,ShapesToDefault());
-            ObjectMapper mapper = new ObjectMapper();
-        try {
-            this.currentState = mapper.writeValueAsString(saveData);
+            this.currentState = saveData;
             this.zIndexTracker++;
             this.Redo=new Stack<>();
             this.Undo.push(currentState);
-        } catch (JsonProcessingException ex) {
-        }
     }
     public void Undo() throws JsonProcessingException{
         if(!this.Undo.isEmpty()){
@@ -155,9 +150,10 @@ public class Service {
             if(!this.Undo.isEmpty()){
                 this.currentState=this.Undo.peek();}
             else{
-                ObjectMapper mapper = new ObjectMapper();
-                this.currentState=mapper.writeValueAsString(this.intialSaveData);
-            }    
+                this.currentState=this.intialSaveData;
+            }
+            defaultToShapes(currentState.getShapes());
+            this.zIndexTracker=currentState.getzIndexTracker();     
         }
     }
     public void Redo() throws JsonProcessingException{
@@ -168,9 +164,10 @@ public class Service {
                 this.currentState=this.Undo.peek();
             }
             else{
-                ObjectMapper mapper = new ObjectMapper();
-                this.currentState=mapper.writeValueAsString(this.intialSaveData);
-            }    
+                this.currentState=this.intialSaveData;
+            }
+            defaultToShapes(currentState.getShapes());
+            this.zIndexTracker=currentState.getzIndexTracker();    
         }
     }
 
@@ -180,5 +177,14 @@ public class Service {
             DefShapes.addElement(ShapeToDefault(this.shapes.elementAt(i)));
         }
         return DefShapes;
+    }
+    public void defaultToShapes(Vector<DefaultShape> defaultShapes){
+        ShapeFactory factory = new ShapeFactory();
+        this.shapes = new Vector<>();
+        for (int i = 0; i < defaultShapes.size(); i++) {
+            this.shapes.add(factory.createShape(defaultShapes.elementAt(i).getDeleted(),defaultShapes.elementAt(i).getZIndex(),defaultShapes.elementAt(i).getID(), defaultShapes.elementAt(i).getType(), defaultShapes.elementAt(i).getX(), defaultShapes.elementAt(i).getY(), defaultShapes.elementAt(i).getFill_Colour()
+            , defaultShapes.elementAt(i).getStroke_Colour(), defaultShapes.elementAt(i).getStrokeWidth(), defaultShapes.elementAt(i).getScaleX(), defaultShapes.elementAt(i).getScaleY(),defaultShapes.elementAt(i).getRotation(), defaultShapes.elementAt(i).getWidth()
+            , defaultShapes.elementAt(i).getHeight(), defaultShapes.elementAt(i).getRadius(), defaultShapes.elementAt(i).getRadiusX(), defaultShapes.elementAt(i).getRadiusY(), defaultShapes.elementAt(i).getPoints()));
+        }
     }
 }
