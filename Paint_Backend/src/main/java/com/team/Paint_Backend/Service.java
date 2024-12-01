@@ -25,8 +25,18 @@ public class Service {
     public void addShape (Shape s){
         shapes.add(s);
     }
-    public void edit (Shape s){
-        shapes.add(s);
+    public void edit (Shape s){       
+            int index=-1;    
+            for(int i=this.shapes.size()-1;i>=0;i--){
+                if(s.getID().equals(this.shapes.elementAt(i).getID())){
+                    index=i;
+                    break;
+                }
+            }
+            if(index>=0){
+                this.shapes.setElementAt(s.clone(),index);
+
+            }     
     }
     public void saveJson (String filename, String path, int zIndexTracker) throws IOException{
         if (Files.isDirectory(Path.of(path))) {
