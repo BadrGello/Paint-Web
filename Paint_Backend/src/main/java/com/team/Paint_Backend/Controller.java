@@ -1,22 +1,23 @@
 package com.team.Paint_Backend;
 
+import java.io.IOException;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import io.micrometer.common.lang.NonNull;
-
-import java.io.IOException;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import io.micrometer.common.lang.NonNull;
 
 
 
@@ -55,15 +56,25 @@ public class Controller {
    }
    @PostMapping("/savejson")
    @ResponseBody
-   public void saveJson(@RequestParam String fileName , @RequestParam String path , @RequestParam int zIndexTracker) {   
+   public ResponseEntity<Map<String, String>>  saveJson(@RequestParam String fileName , @RequestParam String path , @RequestParam int zIndexTracker) {   
       try {
           System.out.println(fileName);
           System.out.println(path);
           System.out.println(zIndexTracker);
           service.saveJson(fileName, path, zIndexTracker);
+          Map<String, String> response = Map.of(
+            "status", "success",
+            "message", "Data saved successfully"
+        );
+          return ResponseEntity.ok(response);
       } catch (IOException e) {
           System.out.println("Error while saving: " + e.getMessage());
           e.printStackTrace();
+          Map<String, String> response = Map.of(
+            "status", "failed",
+            "message", e.getMessage()
+        );
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
       }
    }
    
@@ -82,15 +93,25 @@ public class Controller {
     
     @PostMapping("/savexml")
     @ResponseBody
-    public void saveXml(@RequestParam String fileName , @RequestParam String path , @RequestParam int zIndexTracker) {   
+    public  ResponseEntity saveXml(@RequestParam String fileName , @RequestParam String path , @RequestParam int zIndexTracker) {   
         try {
             System.out.println(fileName);
             System.out.println(path);
             System.out.println(zIndexTracker);
             service.saveXml(fileName, path, zIndexTracker);
+            Map<String, String> response = Map.of(
+                "status", "success",
+                "message", "Data saved successfully"
+            );
+              return ResponseEntity.ok(response);
         } catch (IOException e) {
             System.out.println("Error while saving: " + e.getMessage());
             e.printStackTrace();
+            Map<String, String> response = Map.of(
+                "status", "failed",
+                "message", e.getMessage()
+            );
+              return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
     

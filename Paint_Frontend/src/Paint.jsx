@@ -213,6 +213,7 @@ const Paint = () => {
             if (type === Tool.SaveJSON){
                 console.log("Save Json")
                 responseNow = await saveData(fileName,path,zIndexTracker, EndPoints.Savejson)
+                console.log(responseNow);
             }
 
             else if (type === Tool.SaveXML){
