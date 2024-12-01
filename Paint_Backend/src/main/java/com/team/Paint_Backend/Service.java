@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Stack;
+import java.util.Objects;import java.util.Stack;
 
 import java.util.Vector;
 
@@ -26,16 +26,38 @@ public class Service {
     SaveData intialSaveData = new SaveData(this.zIndexTracker,ShapesToDefault());
         @Override
         public String toString() {
-            return "shape{ID='" + this.shapes.get(shapes.size()-1).getID() + "', strokeColor=" + this.shapes.get(shapes.size()-1).getStroke_Colour() + "}";
+            return "shape{ID='" + this.shapes.get(shapes.size()-1).getID() + "', zindex=" + this.shapes.get(shapes.size()-1).getZIndex() + "}";
     }
 
     public void addShape (Shape s){
         shapes.add(s);
         UndoRedoHandle();
     }
-    public void edit (Shape s ){
-        shapes.add(s);
-        UndoRedoHandle();
+    public void edit (Shape s){       
+            int index=-1;    
+            for(int i=this.shapes.size()-1;i>=0;i--){
+                if(s.getID().equals(this.shapes.elementAt(i).getID())){
+                    index=i;
+                    break;
+                }
+            }
+            if(index>=0){
+                this.shapes.setElementAt(s.clone(),index);
+
+            }     
+    }
+    public void delete(String id){
+        int indexDrawing=-1;
+        for(int i=shapes.size()-1;i>=0;i--) {
+            if (Objects.equals(shapes.elementAt(i).getID(), id)) {
+                indexDrawing = i;
+                break;
+            }
+        }
+        System.out.println(indexDrawing);
+        if(shapes.size()!=0)
+            shapes.removeElementAt(indexDrawing);
+        UndoRedoHandle();    
     }
     public void saveJson (String filename, String path, int zIndexTracker) throws IOException{
         if (Files.isDirectory(Path.of(path))) {

@@ -1,7 +1,7 @@
 package com.team.Paint_Backend;
 
 public class Circle  extends Shape {
-     private double radius;
+     protected double radius;
 
 
     public Circle(boolean deleted,int zIndex,String ID, String type, double x, double y, String fill_Colour
@@ -9,6 +9,11 @@ public class Circle  extends Shape {
 
         super(deleted, zIndex, ID,  type,  x,  y,  fill_Colour,  stroke_Colour,strokeWidth,  scaleX,  scaleY, rotation);            
         this.radius = radius;
+    }
+    @Override
+    public Circle clone(){
+        Circle copy = new Circle(this.deleted, this.zIndex, this.ID,  this.type, this. x, this. y,  this.fill_Colour,  this.stroke_Colour,this.strokeWidth,  this.scaleX, this. scaleY,this.rotation,this.radius);
+        return copy;
     }
 
     public double getRadius() {

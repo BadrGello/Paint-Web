@@ -127,6 +127,30 @@ const Paint = () => {
             throw error;
         }
     };
+    const deleteShapes = async (id, endpointURL) => {
+        const formData = new URLSearchParams();
+        formData.append("id", id);
+
+    
+        try {
+            const response = await fetch(endpointURL, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: formData.toString(), // Send form-encoded data
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const responseData = await response.json();
+            console.log("Received Response: ", responseData);
+            return responseData;
+        } catch (error) {
+            console.error("Error Communicating: ", error);
+            throw error;
+        }
+    };
     const loadShape = async (path, endpointURL) => {
         try {
             // Append the path as a query parameter
@@ -656,7 +680,7 @@ const Paint = () => {
             })
         );
         saveToHistory();
-        sendShape(lastModifiedShapeRef.current, EndPoints.Delete)
+        deleteShapes(id, EndPoints.Delete)
         
     };
 

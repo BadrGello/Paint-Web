@@ -10,6 +10,11 @@ public class Triangle extends Shape {
         super(deleted, zIndex, ID,  type,  x,  y,  fill_Colour,  stroke_Colour,strokeWidth,  scaleX,  scaleY, rotation);            
         this.radius = radius;
     }
+    @Override
+    public Triangle clone(){
+        Triangle copy = new Triangle(this.deleted, this.zIndex, this.ID,  this.type, this. x, this. y,  this.fill_Colour,  this.stroke_Colour,this.strokeWidth,  this.scaleX, this. scaleY,this.radius,this.rotation);
+        return copy;
+    }
 
     public double getRadius() {
         return this.radius;
