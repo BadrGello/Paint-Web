@@ -78,7 +78,35 @@ public class Controller {
     } catch (RuntimeException e) {
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error loading JSON", e);
     }
-}
+    }
+    
+    @PostMapping("/savexml")
+    @ResponseBody
+    public void saveXml(@RequestParam String fileName , @RequestParam String path , @RequestParam int zIndexTracker) {   
+        try {
+            System.out.println(fileName);
+            System.out.println(path);
+            System.out.println(zIndexTracker);
+            service.saveXml(fileName, path, zIndexTracker);
+        } catch (IOException e) {
+            System.out.println("Error while saving: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    @GetMapping("/loadxml")
+    @ResponseBody
+    public SaveData loadXml(@RequestParam String path) {
+        System.out.println("Decoded Path: " + path);
+
+        try {
+            // Use the decoded path to load the JSON file
+            return service.loadXml(path);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error loading XML", e);
+        }
+    }
+
     @GetMapping("/undo")
     @ResponseBody
     public void  undo() throws JsonProcessingException{

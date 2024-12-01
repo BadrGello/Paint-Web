@@ -2,24 +2,63 @@ package com.team.Paint_Backend;
 
 import java.util.Vector;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+
 public class DefaultShape {
+    @JacksonXmlProperty(localName = "Deleted")
     private boolean deleted;
+
+    @JacksonXmlProperty(localName = "ZIndex")
     private int zIndex;
+
+    @JacksonXmlProperty(localName = "ID")
     private String ID;
+
+    @JacksonXmlProperty(localName = "Type")
     private String type;
+
+    @JacksonXmlProperty(localName = "X")
     private double x;
+
+    @JacksonXmlProperty(localName = "Y")
     private double y;
+
+    @JacksonXmlProperty(localName = "FillColour")
     private String fill_Colour;
+
+    @JacksonXmlProperty(localName = "StrokeColour")
     private String stroke_Colour;
+
+    @JacksonXmlProperty(localName = "StrokeWidth")
     private double strokeWidth;
+
+    @JacksonXmlProperty(localName = "ScaleX")
     private double scaleX;
+
+    @JacksonXmlProperty(localName = "ScaleY")
     private double scaleY;
+
+    @JacksonXmlProperty(localName = "Rotation")
     private double rotation;
+
+    @JacksonXmlProperty(localName = "Width")
     private double width;
+
+    @JacksonXmlProperty(localName = "Height")
     private double height;
+
+    @JacksonXmlProperty(localName = "Radius")
     private double radius;
+
+    @JacksonXmlProperty(localName = "RadiusX")
     private double radiusX;
+
+    @JacksonXmlProperty(localName = "RadiusY")
     private double radiusY;
+
+    @JacksonXmlElementWrapper(localName = "Points") // Wrapper for the list of points
+    @JacksonXmlProperty(localName = "Point")       // Element name for each point in the list
     private Vector<Double> points;
 
     public DefaultShape() {

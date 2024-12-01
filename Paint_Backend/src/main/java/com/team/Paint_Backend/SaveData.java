@@ -2,8 +2,16 @@ package com.team.Paint_Backend;
 
 import java.util.Vector;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+
 public class SaveData {
+    @JacksonXmlProperty(localName = "zIndexTracker")
     private int zIndexTracker;
+
+    @JacksonXmlElementWrapper(localName = "Shapes") // Wrapper element for the collection
+    @JacksonXmlProperty(localName = "Shape")       // Element name for each item in the collection
+
     private Vector<DefaultShape> shapes;
 
 
