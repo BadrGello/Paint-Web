@@ -5,7 +5,7 @@ public class Triangle extends Shape {
 
 
     public Triangle(boolean deleted,int zIndex,String ID, String type, double x, double y, String fill_Colour
-                   ,String stroke_Colour,double strokeWidth, double scaleX, double scaleY,double radius, double rotation) {
+                   ,String stroke_Colour,double strokeWidth, double scaleX, double scaleY,double rotation,double radius ) {
 
         super(deleted, zIndex, ID,  type,  x,  y,  fill_Colour,  stroke_Colour,strokeWidth,  scaleX,  scaleY, rotation);            
         this.radius = radius;

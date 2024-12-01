@@ -23,5 +23,9 @@ public class Square  extends Shape  {
     public void setWidth(double width) {
         this.width = width;
     }
+    public double getHeight() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getHeight'");
+    }
     
 }

@@ -127,30 +127,6 @@ const Paint = () => {
             throw error;
         }
     };
-    const deleteShapes = async (id, endpointURL) => {
-        const formData = new URLSearchParams();
-        formData.append("id", id);
-
-    
-        try {
-            const response = await fetch(endpointURL, {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: formData.toString(), // Send form-encoded data
-            });
-    
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-    
-            const responseData = await response.json();
-            console.log("Received Response: ", responseData);
-            return responseData;
-        } catch (error) {
-            console.error("Error Communicating: ", error);
-            throw error;
-        }
-    };
     const loadShape = async (path, endpointURL) => {
         try {
             // Append the path as a query parameter
@@ -322,10 +298,10 @@ const Paint = () => {
             }
         ]);}
 
-        receivedShapes.forEach(async (shape) => {
+        receivedShapes.forEach((shape) => {
             switch (shape.type) {
                 case Tool.Scribble:
-                    await addShape(shape, setScribbles);
+                    addShape(shape, setScribbles);
                     break;
                 case Tool.Line:
                     addShape(shape, setLines);
@@ -334,7 +310,8 @@ const Paint = () => {
                     addShape(shape, setRectangles);
                     break;
                 case Tool.Square:
-                    await addShape(shape, setSquares);
+                    shape.height=shape.width;
+                    addShape(shape, setSquares);
                     break;
                 case Tool.Triangle:
                     addShape(shape, setTriangles);
@@ -680,7 +657,7 @@ const Paint = () => {
             })
         );
         saveToHistory();
-        deleteShapes(id, EndPoints.Delete)
+        sendShape(lastModifiedShapeRef.current, EndPoints.Delete)
         
     };
 

@@ -117,6 +117,7 @@ public class Service {
             Default.setRadius(((Circle) s).getRadius());
         }else if((s instanceof Square)){
             Default.setWidth(((Square)s).getWidth());
+            System.out.println(((Square)s).getWidth());
         } else if((s instanceof Rectangle)){
             Default.setWidth(((Rectangle)s).getWidth());
             Default.setHeight(((Rectangle)s).getHeight());
