@@ -93,12 +93,12 @@ public class Service {
             System.out.println("Loaded SaveData:");
             System.out.println("zIndexTracker: " + saveData.getzIndexTracker());
             System.out.println("Shapes: " + saveData.getShapes());
-            
-            defaultToShapes(saveData.getShapes());
-            this.zIndexTracker=saveData.getzIndexTracker();
             shapes.removeAllElements();
             Undo.removeAllElements();
             Redo.removeAllElements();
+            defaultToShapes(saveData.getShapes());
+            this.zIndexTracker=saveData.getzIndexTracker();
+            
             return saveData;
         } catch (IOException e) {
             e.printStackTrace();
@@ -135,6 +135,8 @@ public class Service {
             System.out.println("Loaded SaveData:");
             System.out.println("zIndexTracker: " + saveData.getzIndexTracker());
             System.out.println("Shapes: " + saveData.getShapes());
+            defaultToShapes(saveData.getShapes());
+            this.zIndexTracker=saveData.getzIndexTracker();
             shapes.removeAllElements();
             Undo.removeAllElements();
             Redo.removeAllElements();
