@@ -97,7 +97,6 @@ const Paint = () => {
             return responseData; // Return the response for further processing
         } 
         catch (error) {
-            console.error("Error Communicating: ", error);
         }
     };
     const saveData = async (fileName, path, zIndexTracker, endpointURL) => {
@@ -940,7 +939,6 @@ const Paint = () => {
     
     function handleMouseLeave() {
         isDrawing.current = false;
-        console.log("Mouse left the canvas, stopping drawing.");
     }
     
     // Attach event listeners to the stage
