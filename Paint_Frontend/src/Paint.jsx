@@ -227,7 +227,9 @@ const Paint = () => {
 
     const handleLoad = async (type) => {
 
-        const path = prompt("Enter path:\n(As: C:\\Users\\User\\Desktop\\file)");
+        
+        const path = prompt(`Enter path:\n(As: C:\\Users\\User\\Desktop\\file.${type === Tool.LoadJSON ? "json" : "xml"})`);
+
         if (!path || path === "") {
             alert("Unsuitable file path!");
             return;
@@ -936,6 +938,25 @@ const Paint = () => {
         }
     };
     
+    function handleMouseLeave() {
+        isDrawing.current = false;
+        console.log("Mouse left the canvas, stopping drawing.");
+    }
+    
+    // Attach event listeners to the stage
+    useEffect(() => {
+        const stage = stageRef.current;
+    
+        if (stage) {
+            stage.on("mouseleave", handleMouseLeave);
+        }
+    
+        return () => {
+            if (stage) {
+                stage.off("mouseleave", handleMouseLeave);
+            }
+        };
+    }, []);
 
     function handleMouseMove() {
         // If user is not drawing (clicking) and moving the cursor, nothing should happen
