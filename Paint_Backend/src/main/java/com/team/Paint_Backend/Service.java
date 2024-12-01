@@ -1,12 +1,16 @@
 package com.team.Paint_Backend;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Stack;
 
 import java.util.Vector;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 
 
@@ -15,8 +19,11 @@ import java.util.Vector;
 
 public class Service {
     Vector<Shape> shapes = new Vector<>();
-    
-    
+    Stack<String> Undo=new Stack<String>();
+    Stack<String> Redo=new Stack<String>();
+    String currentState="";
+    int zIndexTracker=0;
+    SaveData intialSaveData = new SaveData(this.zIndexTracker,ShapesToDefault());
         @Override
         public String toString() {
             return "shape{ID='" + this.shapes.get(shapes.size()-1).getID() + "', strokeColor=" + this.shapes.get(shapes.size()-1).getStroke_Colour() + "}";
@@ -24,18 +31,19 @@ public class Service {
 
     public void addShape (Shape s){
         shapes.add(s);
+        UndoRedoHandle();
     }
-    public void edit (Shape s){
+    public void edit (Shape s ){
         shapes.add(s);
+        UndoRedoHandle();
     }
     public void saveJson (String filename, String path, int zIndexTracker) throws IOException{
         if (Files.isDirectory(Path.of(path))) {
-            // Prepare data to save
-            SaveData saveData = new SaveData(zIndexTracker, ShapesToDefault());
-    
-            // Convert to JSON
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(saveData);
+            if(currentState==""){
+                ObjectMapper mapper = new ObjectMapper();
+                this.currentState=mapper.writeValueAsString(this.intialSaveData);
+            }
+            String json = this.currentState;
             System.out.println(json);
      
             // Write JSON to file
@@ -101,6 +109,42 @@ public class Service {
             Default.setPoints(((FreeDrawing) s).getPoints());
         }
         return Default;
+    }
+
+    public void UndoRedoHandle(){
+            SaveData saveData = new SaveData(this.zIndexTracker,ShapesToDefault());
+            ObjectMapper mapper = new ObjectMapper();
+        try {
+            this.currentState = mapper.writeValueAsString(saveData);
+            this.zIndexTracker++;
+            this.Redo=new Stack<>();
+            this.Undo.push(currentState);
+        } catch (JsonProcessingException ex) {
+        }
+    }
+    public void Undo() throws JsonProcessingException{
+        if(!this.Undo.isEmpty()){
+            this.Redo.push(this.Undo.pop());
+            if(!this.Undo.isEmpty()){
+                this.currentState=this.Undo.peek();}
+            else{
+                ObjectMapper mapper = new ObjectMapper();
+                this.currentState=mapper.writeValueAsString(this.intialSaveData);
+            }    
+        }
+    }
+    public void Redo() throws JsonProcessingException{
+        System.out.print("thnx");
+        if(!this.Redo.isEmpty()){
+            this.Undo.push(this.Redo.pop());
+            if(!this.Undo.isEmpty()){
+                this.currentState=this.Undo.peek();
+            }
+            else{
+                ObjectMapper mapper = new ObjectMapper();
+                this.currentState=mapper.writeValueAsString(this.intialSaveData);
+            }    
+        }
     }
 
     public Vector<DefaultShape> ShapesToDefault() {

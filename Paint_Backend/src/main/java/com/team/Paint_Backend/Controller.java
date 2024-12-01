@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 
 
 @RestController
@@ -71,6 +73,15 @@ public class Controller {
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error loading JSON", e);
     }
 }
-   
+    @GetMapping("/undo")
+    @ResponseBody
+    public void  undo() throws JsonProcessingException{
+        service.Undo();
+    }
+    @GetMapping("/redo")
+    @ResponseBody
+    public void  redo() throws JsonProcessingException{
+        service.Redo();
+    }
 
 }

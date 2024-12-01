@@ -272,10 +272,9 @@ const Paint = () => {
     
         let receivedShapes = responseNow.shapes;
         setZIndexTracker(responseNow.zIndexTracker);
-
         const addShape = (shape, setShape) => {
+            console.log(squares)
         setShape((prevShapes) => [
-            
             ...(Array.isArray(prevShapes) ? prevShapes : []), // Ensure prevShapes is an array
             {
                 id: shape.id || 'default-id', // Add default values if necessary
@@ -299,10 +298,10 @@ const Paint = () => {
             }
         ]);}
 
-        receivedShapes.forEach((shape) => {
+        receivedShapes.forEach(async (shape) => {
             switch (shape.type) {
                 case Tool.Scribble:
-                    addShape(shape, setScribbles);
+                    await addShape(shape, setScribbles);
                     break;
                 case Tool.Line:
                     addShape(shape, setLines);
@@ -311,7 +310,7 @@ const Paint = () => {
                     addShape(shape, setRectangles);
                     break;
                 case Tool.Square:
-                    addShape(shape, setSquares);
+                    await addShape(shape, setSquares);
                     break;
                 case Tool.Triangle:
                     addShape(shape, setTriangles);
@@ -348,7 +347,7 @@ const Paint = () => {
         setUndoStack((prev) => [...prev, currentState]);
         setRedoStack([]);
     };
-    const handleUndo = () => {
+    const handleUndo = async () => {
         if (undoStack.length === 0) return;
     
         const lastState = undoStack.pop();
@@ -356,9 +355,10 @@ const Paint = () => {
             scribbles, lines, rectangles, squares, triangles, circles, ellipses, zIndexTracker
         }]);
         restoreState(lastState);
+        const response = await fetch(EndPoints.Undo);
     };
     
-    const handleRedo = () => {
+    const handleRedo = async () => {
         if (redoStack.length === 0) return;
     
         const nextState = redoStack.pop();
@@ -366,6 +366,7 @@ const Paint = () => {
             scribbles, lines, rectangles, squares, triangles, circles, ellipses, zIndexTracker
         }]);
         restoreState(nextState);
+        const response = await fetch(EndPoints.Redo);
     };
     
     const restoreState = (state) => {
