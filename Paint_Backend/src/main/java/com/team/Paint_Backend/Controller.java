@@ -59,7 +59,6 @@ public class Controller {
         );
           return ResponseEntity.ok(response);
       } catch (IOException e) {
-          e.printStackTrace();
           Map<String, String> response = Map.of(
             "status", "failed",
             "message", e.getMessage()
@@ -91,7 +90,6 @@ public class Controller {
             );
               return ResponseEntity.ok(response);
         } catch (IOException e) {
-            e.printStackTrace();
             Map<String, String> response = Map.of(
                 "status", "failed",
                 "message", e.getMessage()
