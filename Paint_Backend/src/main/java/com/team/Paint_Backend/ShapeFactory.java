@@ -10,11 +10,9 @@ public class ShapeFactory {
                              double height,double radius,double radiusX, double radiusY, Vector<Double> points){
       switch (type) {
         case "square":
-           System.out.println("square drawing");
             return new Square(deleted, zIndex,ID, type, x, y, fill_Colour, stroke_Colour,strokeWidth, scaleX, scaleY, rotation, width);
             
         case "rectangle":
-            System.out.println(height);
             return new Rectangle(deleted, zIndex,ID, type, x, y, fill_Colour, stroke_Colour,strokeWidth, scaleX, scaleY, rotation, width, height);
             
         case "triangle":

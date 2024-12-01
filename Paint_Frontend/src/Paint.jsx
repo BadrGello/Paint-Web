@@ -85,7 +85,6 @@ const Paint = () => {
 
     const sendShape = async (object, endpointURL) => {
 
-        console.log("Sending to back the following: ", object)
         try {
 
             const response = await fetch(endpointURL , {
@@ -93,7 +92,6 @@ const Paint = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(object),
             })
-            console.log("Sent Data Successfully: ", object)
             const responseData = await response.json();
             setResponseData(responseData); // Update response message state
             return responseData; // Return the response for further processing
@@ -120,7 +118,6 @@ const Paint = () => {
             }
     
             const responseData = await response.json();
-            console.log("Received Response: ", responseData);
             return responseData;
         } catch (error) {
             console.error("Error Communicating: ", error);
@@ -144,7 +141,6 @@ const Paint = () => {
             }
     
             const responseData = await response.json();
-            console.log("Received Response: ", responseData);
             return responseData;
         } catch (error) {
             console.error("Error Communicating: ", error);
@@ -166,8 +162,6 @@ const Paint = () => {
             }
     
             const responseData = await response.json();
-            console.log("Load Response Data ", restoreState)
-            console.log("Received Response: ", responseData);
             return responseData;
         } catch (error) {
             console.error("Error Communicating: ", error);
@@ -211,19 +205,13 @@ const Paint = () => {
             let responseNow;
 
             if (type === Tool.SaveJSON){
-                console.log("Save Json")
                 responseNow = await saveData(fileName,path,zIndexTracker, EndPoints.Savejson)
-                console.log(responseNow);
             }
 
             else if (type === Tool.SaveXML){
-                console.log("Save XML")
                 responseNow = await saveData(fileName,path,zIndexTracker, EndPoints.Savexml)
             }
 
-            //DEBUG//
-            console.log("Response", responseNow)
-            /////////
             
             if (!responseNow || responseNow === 'null' || responseNow === '') {
                 alert("Path doesn't exist!");
@@ -258,18 +246,12 @@ const Paint = () => {
             
 
             if (type === Tool.LoadJSON){
-                console.log("Load JSON")
                 responseNow = await loadData(path, EndPoints.Loadjson)
             }
 
             else if (type === Tool.LoadXML){
-                console.log("Load XML")
                 responseNow = await loadData(path, EndPoints.Loadxml)
             }
-
-            //DEBUG//
-            console.log("response", responseNow)
-            /////////
 
             if (!responseNow || responseNow === 'null' || responseNow === '') {
                 alert("Path or file doesn't exist!");
@@ -284,6 +266,7 @@ const Paint = () => {
 
         catch (error) {
             alert("Error loading the file");
+            return;
         }
 
         
@@ -299,7 +282,6 @@ const Paint = () => {
         let receivedShapes = responseNow.shapes;
         setZIndexTracker(responseNow.zIndexTracker);
         const addShape = (shape, setShape) => {
-            console.log(squares)
         setShape((prevShapes) => [
             ...(Array.isArray(prevShapes) ? prevShapes : []),
             {
@@ -366,7 +348,6 @@ const Paint = () => {
                 let receivedShapes = responseNow.shapes;
                 setZIndexTracker(responseNow.zIndexTracker);
                 const addShape = (shape, setShape) => {
-                    console.log(squares)
                 setShape((prevShapes) => [
                     ...(Array.isArray(prevShapes) ? prevShapes : []),
                     {
@@ -447,7 +428,6 @@ const Paint = () => {
             headers: { "Content-Type": "application/json" }, // Content-Type not strictly required for GET
         });
         let responseNow = await response.json();
-        console.log("undo",responseNow);
         handleLoadedData(responseNow)
     };
     
@@ -457,7 +437,6 @@ const Paint = () => {
             headers: { "Content-Type": "application/json" }, // Content-Type not strictly required for GET
         });
         let responseNow = await response.json();
-        console.log("redo",responseNow);
         handleLoadedData(responseNow)
     };
     
@@ -503,9 +482,6 @@ const Paint = () => {
 
     function handleMouseDown(){
         if (tool === Tool.Select) return;
-        
-        //Debugging//
-        console.log(tool)
 
         // User is clicking
         isDrawing.current = true;
@@ -536,9 +512,6 @@ const Paint = () => {
         switch(tool){
             // We add a new scribble object with the following properties to the old scribbles
             case Tool.Scribble:{
-                //Debugging//
-                console.log("Start Scribble")
-                //         //
                 //increment zIndexTracker 
                 setZIndexTracker(zIndexTracker + 1);
 
@@ -583,14 +556,12 @@ const Paint = () => {
                         deleted: false,
                     }
                 ])
-                // console.log(lines[lines.length-1]);
                 break;
             }
 
             case Tool.Rectangle:{
                 //increment zIndexTracker 
-                setZIndexTracker(zIndexTracker + 1);
-                console.log("Start Rectangle")
+                setZIndexTracker(zIndexTracker + 1)
                 setRectangles((prevRectangles) => [
                     ...prevRectangles,
                     {
@@ -618,7 +589,6 @@ const Paint = () => {
             case Tool.Square:{
                 //increment zIndexTracker 
                 setZIndexTracker(zIndexTracker + 1);
-                console.log("Start Square")
                 setSquares((prevSquares) => [
                     ...prevSquares,
                     {
@@ -640,14 +610,12 @@ const Paint = () => {
                         deleted: false,
                     }
                 ])
-                // console.log(squares[squares.length-1])
                 break;
             }
 
             case Tool.Triangle:{
                 //increment zIndexTracker 
                 setZIndexTracker(zIndexTracker + 1);
-                console.log("Start triangle")
                 setTriangles((prevTriangles) => [
                     ...prevTriangles,
                     {
@@ -675,7 +643,6 @@ const Paint = () => {
             case Tool.Circle:{
                 //increment zIndexTracker 
                 setZIndexTracker(zIndexTracker + 1);
-                console.log("Start Circle")
                 setCircle((prevCircles) => [
                     ...prevCircles,
                     {
@@ -705,7 +672,6 @@ const Paint = () => {
             case Tool.Ellipse:{
                 //increment zIndexTracker 
                 setZIndexTracker(zIndexTracker + 1);
-                console.log("Start Ellipse")
                 setEllipse((prevEllipses) => [
                     ...prevEllipses,
                     {
@@ -758,7 +724,6 @@ const Paint = () => {
     const handleDelete = (id,type) =>{
         if(tool === Tool.Delete)
             {
-                console.log("will delete");
                 switch (type) {
                     case Tool.Scribble: {
                         deleteShape(type, id, setScribbles);
@@ -983,9 +948,6 @@ const Paint = () => {
         switch(tool){
             // Append new x, y to points[] array, to the object that has same id as currentShapeid ref
             case Tool.Scribble:{
-                //Debugging//
-                console.log("Scribbling...")
-                //         //
 
                 setScribbles((prevScribbles) => prevScribbles.map((scribble) => {
                     // We search for the current scribble that was initialized in handleMouseDown and append new (x, y) to its points[] array
@@ -1007,9 +969,6 @@ const Paint = () => {
             }
 
             case Tool.Line:{
-                //Debugging//
-                console.log("Line...")
-                //         //
 
                 setLines((prevLines) => prevLines.map((line) => {
                     if (line.id === currentShapeid.current){
@@ -1029,9 +988,6 @@ const Paint = () => {
             }
 
             case Tool.Rectangle:{
-                 //Debugging//
-                 console.log("Rectangling...")
-                 //         //
                  setRectangles((prevRectangles) => prevRectangles.map((rectangle) => {
 
                     if (rectangle.id === currentShapeid.current){
@@ -1052,9 +1008,6 @@ const Paint = () => {
             }
 
             case Tool.Square:{
-                //Debugging//
-                console.log("Squaring...")
-                //         //
                 setSquares((prevSquares) => prevSquares.map((square) => {
 
                     if (square.id === currentShapeid.current){
@@ -1076,7 +1029,6 @@ const Paint = () => {
             }
             case Tool.Triangle:{
                 //Debugging//
-                console.log("triangling...")
                 //         //
                 setTriangles((prevTriangles) => prevTriangles.map((triangle) => {
 
@@ -1099,7 +1051,6 @@ const Paint = () => {
             }
 
             case Tool.Circle: {
-                console.log("Drawing Circle...");
                 setCircle((prevCircles) =>
                     prevCircles.map((circle) => {
                         if (circle.id === currentShapeid.current) {
@@ -1121,7 +1072,6 @@ const Paint = () => {
             }
 
             case Tool.Ellipse: {
-                console.log("Drawing Ellipse...");
                 setEllipse((prevEllipses) =>
                     prevEllipses.map((ellipse) => {
                         if (ellipse.id === currentShapeid.current) {
@@ -1153,7 +1103,6 @@ const Paint = () => {
 
         // If mouseUp and we were drawing (using one of the 7 drawing tools), send the final shape to backend
         if (shapeTools.includes(tool) && lastModifiedShapeRef.current){
-            console.log("handleMouseUp Send Shape")
             sendShape(lastModifiedShapeRef.current, EndPoints.Draw);
         }
     }
@@ -1174,7 +1123,6 @@ const Paint = () => {
     };
 
     const handleDeselect = (e) => {
-        console.log(squares[squares.length-1])
         if (e.target === e.target.getStage()) {
             setSelectedid(null);
             transformerRef.current.nodes([]);
@@ -1213,14 +1161,12 @@ const Paint = () => {
     }
 
     const handleTransformerEnd = (e, id, type) => {
-        console.log("Transform End", e.target);
         const node = e.target; // Get the transformed node (Shape)
     
         const scaleX = node.scaleX();
         const scaleY = node.scaleY();
         const rotation = node.rotation();
 
-        console.log("ScaleX:", scaleX, "ScaleY:", scaleY, "Rotation:", rotation, node.type);
 
         // Reset scale to 1 after transformation, idk whether this is really correct
         node.scaleX(1);
@@ -1272,7 +1218,6 @@ const Paint = () => {
         setyCopy(y);
 
         if (tool === Tool.Copy && shape){
-            console.log(shape)
 
             setCopiedShape(shape);
         }
@@ -1301,13 +1246,11 @@ const Paint = () => {
             }
             //We calulate relative position and add it to the copiedShape x, y 
 
-            console.log("Paste...,", pastedShape);
             saveToHistory();
             switch(copiedShape.type){
 
                 case Tool.Scribble:{
                     setScribbles((prevScribbles) => [...prevScribbles, pastedShape]);
-                    console.log(scribbles)
                     break;
                 }
                 case Tool.Line:{
@@ -1450,11 +1393,9 @@ const Paint = () => {
                     height={canvasSize.height}
                     onMouseDown={(e) => {
                         if (tool === Tool.Select){
-                            console.log("handleDeselect")
                             handleDeselect(e);
                         }
                         else if (tool === Tool.Paste){
-                            console.log("handlePaste")
                             handlePaste(e);
                         }
                         else {
@@ -1472,7 +1413,6 @@ const Paint = () => {
                             if(shape.deleted) return;
                             switch(shape.type){
                             case Tool.Scribble:  
-                            // console.log("Scribble",shape.x, shape.y,shape)
                             return (
                                 <Line
                                     key = {shape.id}
@@ -1504,7 +1444,6 @@ const Paint = () => {
                         
                         
                         case Tool.Line :
-                            // console.log("Line Coords", shape.x, shape.y, shape)
                             return (
                                 <Line
                                     key = {shape.id}

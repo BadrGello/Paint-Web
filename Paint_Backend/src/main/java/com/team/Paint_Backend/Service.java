@@ -43,10 +43,7 @@ public class Service {
                 }
             }
             if(index>=0){
-                System.out.println("Delete " + s.getDeleted());
                 this.shapes.setElementAt(s.clone(),index);
-                System.out.println("Last shape deleted property " + (this.shapes.get(shapes.size()-1).getDeleted()));
-
             }
             UndoRedoHandle();     
     }
@@ -58,7 +55,6 @@ public class Service {
                 break;
             }
         }
-        System.out.println(indexDrawing);
         if(shapes.size()!=0)
             shapes.removeElementAt(indexDrawing);
         UndoRedoHandle();    
@@ -67,15 +63,12 @@ public class Service {
         if (Files.isDirectory(Path.of(path))) {
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(this.currentState);
-            System.out.println(json);
      
             // Write JSON to file
             try (FileWriter file = new FileWriter(Path.of(path).resolve(filename + ".json").toFile(), false)) {
                
                 file.write(json);
             }
-    
-            System.out.println("Saved successfully: " + filename + ".json"); ;
         } else {
             throw new IOException("Invalid path: " + path + " is not a directory.");
         }
@@ -90,9 +83,6 @@ public class Service {
             SaveData saveData = mapper.readValue(file, SaveData.class);
     
             // Debugging output
-            System.out.println("Loaded SaveData:");
-            System.out.println("zIndexTracker: " + saveData.getzIndexTracker());
-            System.out.println("Shapes: " + saveData.getShapes());
             shapes.removeAllElements();
             Undo.removeAllElements();
             Redo.removeAllElements();
@@ -101,8 +91,8 @@ public class Service {
             
             return saveData;
         } catch (IOException e) {
-            e.printStackTrace();
             throw new RuntimeException("Error reading JSON file", e);
+            
         }
     }
     public void saveXml(String filename, String path, int zIndexTracker) throws IOException {
@@ -111,14 +101,11 @@ public class Service {
             XmlMapper xmlMapper = new XmlMapper();
             this.intialSaveData = new SaveData(this.zIndexTracker, ShapesToDefault());
             String xml = xmlMapper.writeValueAsString(this.intialSaveData);
-            System.out.println(xml);
 
             // Write XML to file
             try (FileWriter file = new FileWriter(Path.of(path).resolve(filename + ".xml").toFile(), false)) {
                 file.write(xml);
             }
-
-            System.out.println("Saved successfully: " + filename + ".xml");
         } else {
             throw new IOException("Invalid path: " + path + " is not a directory.");
         }
@@ -132,9 +119,6 @@ public class Service {
             SaveData saveData = xmlMapper.readValue(file, SaveData.class);
     
             // Debugging output
-            System.out.println("Loaded SaveData:");
-            System.out.println("zIndexTracker: " + saveData.getzIndexTracker());
-            System.out.println("Shapes: " + saveData.getShapes());
             shapes.removeAllElements();
             Undo.removeAllElements();
             Redo.removeAllElements();
@@ -143,7 +127,6 @@ public class Service {
             
             return saveData;
         } catch (IOException e) {
-            e.printStackTrace();
             throw new RuntimeException("Error reading XML file", e);
         }
     }
@@ -165,7 +148,6 @@ public class Service {
             Default.setRadius(((Circle) s).getRadius());
         }else if((s instanceof Square)){
             Default.setWidth(((Square)s).getWidth());
-            System.out.println(((Square)s).getWidth());
         } else if((s instanceof Rectangle)){
             Default.setWidth(((Rectangle)s).getWidth());
             Default.setHeight(((Rectangle)s).getHeight());
@@ -201,11 +183,9 @@ public class Service {
             defaultToShapes(currentState.getShapes());
             this.zIndexTracker=currentState.getzIndexTracker();     
         }
-        System.out.println(this.currentState.getzIndexTracker());
         return this.currentState;
     }
     public SaveData Redo() throws JsonProcessingException{
-        System.out.print("thnx");
         if(!this.Redo.isEmpty()){
             this.Undo.push(this.Redo.pop());
             if(!this.Undo.isEmpty()){

@@ -32,22 +32,16 @@ public class Controller {
     @PostMapping("/draw") 
     @ResponseBody   
     public void drawShape ( @RequestBody @NonNull DefaultShape s){   
-         System.out.println(1);
-         System.out.println(s.getID());
          service.addShape(factory.createShape(s.getDeleted(),s.getZIndex(),s.getID(), s.getType(), s.getX(), s.getY(), s.getFill_Colour()
          , s.getStroke_Colour(), s.getStrokeWidth(), s.getScaleX(), s.getScaleY(),s.getRotation(), s.getWidth()
          , s.getHeight(), s.getRadius(), s.getRadiusX(), s.getRadiusY(), s.getPoints()));
-         System.out.println(service.toString());
     }
     @PostMapping("/edit")
     @ResponseBody
     public void editShape (@RequestBody  @NonNull DefaultShape s){
-        System.out.println(2);
-        System.out.println(s.getID());
         service.edit(factory.createShape(s.getDeleted(),s.getZIndex(),s.getID(), s.getType(), s.getX(), s.getY(), s.getFill_Colour()
         , s.getStroke_Colour(), s.getStrokeWidth(), s.getScaleX(), s.getScaleY(),s.getRotation(), s.getWidth()
         , s.getHeight(), s.getRadius(), s.getRadiusX(), s.getRadiusY(), s.getPoints()));
-        System.out.println(service.toString());
    }
    @PostMapping("/delete")
    @ResponseBody
@@ -58,9 +52,6 @@ public class Controller {
    @ResponseBody
    public ResponseEntity<Map<String, String>>  saveJson(@RequestParam String fileName , @RequestParam String path , @RequestParam int zIndexTracker) {   
       try {
-          System.out.println(fileName);
-          System.out.println(path);
-          System.out.println(zIndexTracker);
           service.saveJson(fileName, path, zIndexTracker);
           Map<String, String> response = Map.of(
             "status", "success",
@@ -68,7 +59,6 @@ public class Controller {
         );
           return ResponseEntity.ok(response);
       } catch (IOException e) {
-          System.out.println("Error while saving: " + e.getMessage());
           e.printStackTrace();
           Map<String, String> response = Map.of(
             "status", "failed",
@@ -81,7 +71,6 @@ public class Controller {
    @GetMapping("/loadjson")
    @ResponseBody
    public SaveData loadJson(@RequestParam String path) {
-    System.out.println("Decoded Path: " + path);
 
     try {
         // Use the decoded path to load the JSON file
@@ -95,9 +84,6 @@ public class Controller {
     @ResponseBody
     public  ResponseEntity saveXml(@RequestParam String fileName , @RequestParam String path , @RequestParam int zIndexTracker) {   
         try {
-            System.out.println(fileName);
-            System.out.println(path);
-            System.out.println(zIndexTracker);
             service.saveXml(fileName, path, zIndexTracker);
             Map<String, String> response = Map.of(
                 "status", "success",
@@ -105,7 +91,6 @@ public class Controller {
             );
               return ResponseEntity.ok(response);
         } catch (IOException e) {
-            System.out.println("Error while saving: " + e.getMessage());
             e.printStackTrace();
             Map<String, String> response = Map.of(
                 "status", "failed",
@@ -118,7 +103,6 @@ public class Controller {
     @GetMapping("/loadxml")
     @ResponseBody
     public SaveData loadXml(@RequestParam String path) {
-        System.out.println("Decoded Path: " + path);
 
         try {
             // Use the decoded path to load the JSON file
