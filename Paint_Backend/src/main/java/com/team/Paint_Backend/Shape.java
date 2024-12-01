@@ -1,18 +1,18 @@
 package com.team.Paint_Backend;
 
 public abstract class Shape {
-     private boolean deleted;
-     private int zIndex;
-     private String ID;
-     private String type;
-     private double x;
-     private double y;
-     private String fill_Colour;
-     private String stroke_Colour;
-     private double strokeWidth;
-     private double scaleX;
-     private double scaleY;
-     private double rotation;
+     protected boolean deleted;
+     protected int zIndex;
+     protected String ID;
+     protected String type;
+     protected double x;
+     protected double y;
+     protected String fill_Colour;
+     protected String stroke_Colour;
+     protected double strokeWidth;
+     protected double scaleX;
+     protected double scaleY;
+     protected double rotation;
 
     public Shape(boolean deleted,int zIndex,String ID, String type, double x, double y, String fill_Colour, String stroke_Colour,double strokeWidth, double scaleX, double scaleY, double rotation) {
         this.deleted = deleted;
@@ -130,5 +130,7 @@ public abstract class Shape {
     public void setRotation(double rotation) {
         this.rotation = rotation;
     }
-
+    public Shape clone(){
+        return null;
+    }
 }

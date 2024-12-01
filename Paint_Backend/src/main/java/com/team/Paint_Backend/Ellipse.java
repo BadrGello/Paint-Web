@@ -11,6 +11,11 @@ public class Ellipse  extends Shape {
         this.radiusX = radiusX;
         this.radiusY = radiusY;
     }
+    @Override
+    public Ellipse clone(){
+        Ellipse copy = new Ellipse(this.deleted, this.zIndex, this.ID,  this.type, this. x, this. y,  this.fill_Colour,  this.stroke_Colour,this.strokeWidth,  this.scaleX, this. scaleY,this.rotation,this.radiusX,this.radiusY);
+        return copy;
+    }
 
     public double getRadiusX() {
         return this.radiusX;

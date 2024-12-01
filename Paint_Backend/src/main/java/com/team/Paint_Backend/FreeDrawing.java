@@ -11,7 +11,11 @@ public class FreeDrawing  extends Shape {
         super(deleted, zIndex, ID,  type,  x,  y,  fill_Colour,  stroke_Colour, strokeWidth,  scaleX,  scaleY, rotation);
         this.points = points;
     }
-
+    @Override
+    public FreeDrawing clone(){
+        FreeDrawing copy = new FreeDrawing(this.deleted, this.zIndex, this.ID,  this.type, this. x, this. y,  this.fill_Colour,  this.stroke_Colour,this.strokeWidth,  this.scaleX, this. scaleY,this.rotation,this.points);
+        return copy;
+    }
 
     public Vector<Double> getPoints() {
         return this.points;

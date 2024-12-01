@@ -14,6 +14,11 @@ public class Rectangle  extends Shape {
         this.height = height;
         System.out.println(strokeWidth);
     }
+    @Override
+    public Rectangle clone(){
+         Rectangle copy = new Rectangle(this.deleted, this.zIndex, this.ID, this.type, this.x, this.y, this.fill_Colour, this.stroke_Colour, this.strokeWidth,this.scaleX, this.scaleY, this.rotation,this.width, this.height);
+         return copy;
+    }
 
     public double getWidth() {
         return this.width;
