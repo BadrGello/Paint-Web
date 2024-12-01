@@ -12,7 +12,7 @@ public class Triangle extends Shape {
     }
     @Override
     public Triangle clone(){
-        Triangle copy = new Triangle(this.deleted, this.zIndex, this.ID,  this.type, this. x, this. y,  this.fill_Colour,  this.stroke_Colour,this.strokeWidth,  this.scaleX, this. scaleY,this.radius,this.rotation);
+        Triangle copy = new Triangle(this.deleted, this.zIndex, this.ID,  this.type, this. x, this. y,  this.fill_Colour,  this.stroke_Colour,this.strokeWidth,  this.scaleX, this. scaleY, this.rotation, this.radius );
         return copy;
     }
 

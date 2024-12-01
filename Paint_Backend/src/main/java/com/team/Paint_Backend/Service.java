@@ -42,7 +42,9 @@ public class Service {
                 }
             }
             if(index>=0){
+                System.out.println("Delete " + s.getDeleted());
                 this.shapes.setElementAt(s.clone(),index);
+                System.out.println("Last shape deleted property " + (this.shapes.get(shapes.size()-1).getDeleted()));
 
             }     
     }
@@ -63,6 +65,7 @@ public class Service {
         if (Files.isDirectory(Path.of(path))) {
             if(currentState==""){
                 ObjectMapper mapper = new ObjectMapper();
+                this.intialSaveData = new SaveData(this.zIndexTracker,ShapesToDefault());
                 this.currentState=mapper.writeValueAsString(this.intialSaveData);
             }
             String json = this.currentState;

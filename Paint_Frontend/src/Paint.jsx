@@ -127,6 +127,30 @@ const Paint = () => {
             throw error;
         }
     };
+    const deleteShapes = async (id, endpointURL) => {
+        const formData = new URLSearchParams();
+        formData.append("id", id);
+
+    
+        try {
+            const response = await fetch(endpointURL, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: formData.toString(), // Send form-encoded data
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const responseData = await response.json();
+            console.log("Received Response: ", responseData);
+            return responseData;
+        } catch (error) {
+            console.error("Error Communicating: ", error);
+            throw error;
+        }
+    };
     const loadShape = async (path, endpointURL) => {
         try {
             // Append the path as a query parameter
@@ -142,6 +166,7 @@ const Paint = () => {
             }
     
             const responseData = await response.json();
+            console.log("Load Response Data ", restoreState)
             console.log("Received Response: ", responseData);
             return responseData;
         } catch (error) {
@@ -275,9 +300,9 @@ const Paint = () => {
         const addShape = (shape, setShape) => {
             console.log(squares)
         setShape((prevShapes) => [
-            ...(Array.isArray(prevShapes) ? prevShapes : []), // Ensure prevShapes is an array
+            ...(Array.isArray(prevShapes) ? prevShapes : []),
             {
-                id: shape.id || 'default-id', // Add default values if necessary
+                id: shape.id || 'default-id',
                 type: shape.type || 'default-type',
                 x: shape.x || 0,
                 y: shape.y || 0,
@@ -657,7 +682,9 @@ const Paint = () => {
             })
         );
         saveToHistory();
-        sendShape(lastModifiedShapeRef.current, EndPoints.Delete)
+        // sendShape(lastModifiedShapeRef.current, EndPoints.Edit)
+        deleteShapes(id, EndPoints.Delete)
+
         
     };
 
@@ -1246,8 +1273,8 @@ const Paint = () => {
 
             if (copiedShape && shapeTools.includes(copiedShape.type)){
                 
-                sendShape(copiedShape, EndPoints.Copy);
-                sendShape(pastedShape, EndPoints.Paste);
+                // sendShape(copiedShape, EndPoints.Copy);
+                sendShape(pastedShape, EndPoints.Draw);
                 
             }
         }
