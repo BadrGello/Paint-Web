@@ -192,14 +192,6 @@ const Paint = () => {
     
         try {
 
-            // data to be sent
-            let data = {
-                Path: path, //String
-                FileName: fileName, //String
-    
-                zIndexTracker: zIndexTracker, //Int
-            };
-
             // response is json
             let responseNow;
 
@@ -237,14 +229,6 @@ const Paint = () => {
         let responseNow;
 
         try {
-
-            // data to be sent
-            let data = {
-                Path: path, //String
-                // FileName: fileName, //String
-            };
-
-            
 
             if (type === Tool.LoadJSON){
                 responseNow = await loadData(path, EndPoints.Loadjson)
@@ -430,6 +414,8 @@ const Paint = () => {
         });
         let responseNow = await response.json();
         handleLoadedData(responseNow)
+        setSelectedid(null);
+        transformerRef.current.nodes([]);
     };
     
     const handleRedo = async () => {
@@ -439,6 +425,8 @@ const Paint = () => {
         });
         let responseNow = await response.json();
         handleLoadedData(responseNow)
+        setSelectedid(null);
+        transformerRef.current.nodes([]);
     };
     
     const restoreState = (state) => {
@@ -493,6 +481,9 @@ const Paint = () => {
         //Generate unique id for the shape and stores the current shape id in ref for usage in handleMouseMove()
         const id = uuidv4();
         currentShapeid.current = id;
+
+        setSelectedid(null);
+        transformerRef.current.nodes([]);
         
 
         //Undo Redo//
@@ -806,6 +797,8 @@ const Paint = () => {
                     break;
                 }
             }
+            setSelectedid(null);
+            transformerRef.current.nodes([]);
         }
     }
 
@@ -1239,6 +1232,8 @@ const Paint = () => {
         if (tool === Tool.Copy && shape){
 
             setCopiedShape(shape);
+            setSelectedid(null);
+            transformerRef.current.nodes([]);
         }
     }
 
@@ -1305,6 +1300,8 @@ const Paint = () => {
                 sendShape(pastedShape, EndPoints.Draw);
                 
             }
+            //setSelectedid(null);
+            //transformerRef.current.nodes([]);
         }
     }
 
