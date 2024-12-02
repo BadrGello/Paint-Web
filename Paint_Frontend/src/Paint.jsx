@@ -1376,12 +1376,12 @@ const Paint = () => {
                     <img src="../icons/triangle.svg" alt="Triangle" />  
                 </button>
 
-                <button className="toolbar-button" title="Undo">
-                    <img src="../icons/arrow-rotate-left-undo.svg" alt="Undo" onClick={handleUndo}/>
+                <button className="toolbar-button" title="Undo" onClick={handleUndo}>
+                    <img src="../icons/arrow-rotate-left-undo.svg" alt="Undo" />
                 </button>
 
-                <button className="toolbar-button" title="Redo">
-                    <img src="../icons/arrow-rotate-right-redo.svg" alt="Redo" onClick={handleRedo}/>
+                <button className="toolbar-button" title="Redo" onClick={handleRedo}>
+                    <img src="../icons/arrow-rotate-right-redo.svg" alt="Redo"/>
                 </button>
 
                 <button className="toolbar-button" title="Select" onClick={() => setTool(Tool.Select)}>
