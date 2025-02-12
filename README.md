@@ -34,7 +34,7 @@ Implemented for **copy-paste functionality**. Shapes are cloned using a prototyp
    ⚠️ Note: If you refresh the frontend, restart the backend as well.
 
 ## 📷 UI Snapshots
-![image](https://github.com/user-attachments/assets/9d742135-d9fd-4fcd-98fb-30ad7d612424)
+![image](https://github.com/user-attachments/assets/15dc5010-679c-448d-a0c5-8ccfbea4c85b)
 
 ## 📘 Contributors
 - Badr Elsayed - 22010664
