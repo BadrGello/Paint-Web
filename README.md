@@ -35,6 +35,7 @@ Implemented for **copy-paste functionality**. Shapes are cloned using a prototyp
 
 ## 📷 UI Snapshots
 ![image](https://github.com/user-attachments/assets/15dc5010-679c-448d-a0c5-8ccfbea4c85b)
+Credit: Nour 
 
 ## 📘 Contributors
 - Badr Elsayed - 22010664
