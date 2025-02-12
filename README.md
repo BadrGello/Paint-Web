@@ -1,4 +1,4 @@
-# 🎨 Paint Application
+# 🎨 Paint Application (For Programming 2 [223 CSE] Course)
 
 A web-based paint application built using **Spring Boot** for the backend and **React.js** for the frontend. Users can draw shapes, select, resize, copy, paste, undo/redo, and save their drawings in **XML or JSON format**.
 
